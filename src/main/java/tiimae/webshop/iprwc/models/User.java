@@ -53,13 +53,14 @@ public class User {
 
     public User() { }
 
-    public User(String firstName, String middleName, String lastName, String email, String password, Set<UserAddress> addresses, Set<Role> roles) {
+    public User(String firstName, String middleName, String lastName, String email, String password, Set<UserAddress> addresses, Set<Order> orders, Set<Role> roles) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.addresses = addresses;
+        this.orders = orders;
         this.roles = roles;
     }
 }
