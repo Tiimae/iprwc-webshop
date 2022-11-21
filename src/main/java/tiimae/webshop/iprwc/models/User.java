@@ -39,6 +39,10 @@ public class User {
     @JsonManagedReference
     private Set<UserAddress> addresses = new HashSet<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Order> orders = new HashSet<>();
+
     @ManyToMany
     @JoinTable(
             name = "userroles",

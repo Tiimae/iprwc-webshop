@@ -11,7 +11,7 @@ import java.util.UUID;
 @Getter
 @Entity
 @Table(name = "\"orderitem\"")
-public class OrderItem {
+public class OrderProduct {
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -19,4 +19,10 @@ public class OrderItem {
     @Column(name = "id", columnDefinition = "VARCHAR(255)")
     private UUID id;
 
+    @Column(nullable = false)
+    private Long amount;
+
+    @Column(nullable = false)
+    private String status;
+    
 }

@@ -19,4 +19,10 @@ public class Review {
     @Column(name = "id", columnDefinition = "VARCHAR(255)")
     private UUID id;
 
+    @Column(nullable = false)
+    private Long stars;
+
+    @Column(nullable = false)
+    private String description;
+
 }

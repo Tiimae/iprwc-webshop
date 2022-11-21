@@ -10,8 +10,8 @@ import java.util.UUID;
 @Setter
 @Getter
 @Entity
-@Table(name = "\"brand\"")
-public class Brand {
+@Table(name = "\"productimage\"")
+public class ProductImage {
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -19,11 +19,7 @@ public class Brand {
     @Column(name = "id", columnDefinition = "VARCHAR(255)")
     private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String brandName;
-
-    private String webPage;
-
-    private String logoUrl;
+    @Column(nullable = false)
+    private String imagePath;
 
 }

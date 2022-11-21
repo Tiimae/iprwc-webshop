@@ -19,4 +19,7 @@ public class Category {
     @Column(name = "id", columnDefinition = "VARCHAR(255)")
     private UUID id;
 
+    @Column(unique = true, nullable = false)
+    private String categoryName;
+
 }
