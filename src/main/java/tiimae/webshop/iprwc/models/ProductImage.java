@@ -1,5 +1,6 @@
 package tiimae.webshop.iprwc.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -22,4 +23,14 @@ public class ProductImage {
     @Column(nullable = false)
     private String imagePath;
 
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Product product;
+
+    public ProductImage() { }
+
+    public ProductImage(String imagePath, Product product) {
+        this.imagePath = imagePath;
+        this.product = product;
+    }
 }

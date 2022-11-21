@@ -1,10 +1,13 @@
 package tiimae.webshop.iprwc.models;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Setter
@@ -34,4 +37,18 @@ public class Supplier {
     @Column(nullable = false)
     private String country;
 
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Product> products = new HashSet<>();
+
+    public Supplier() { }
+
+    public Supplier(String name, String address, String zipcode, String city, String country, Set<Product> products) {
+        this.name = name;
+        this.address = address;
+        this.zipcode = zipcode;
+        this.city = city;
+        this.country = country;
+        this.products = products;
+    }
 }

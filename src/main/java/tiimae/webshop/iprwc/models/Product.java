@@ -1,10 +1,14 @@
 package tiimae.webshop.iprwc.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Setter
@@ -25,4 +29,43 @@ public class Product {
     @Column(nullable = false)
     private String description;
 
+    @Column(nullable = false)
+    private Float price;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Brand brand;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Category category;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonBackReference
+    private Supplier supplier;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<ProductImage> images = new HashSet<>();
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Review> reviews = new HashSet<>();
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<OrderProduct> orderProducts = new HashSet<>();
+
+    public Product() { }
+
+    public Product(String productName, String description, Brand brand, Category category, Supplier supplier, Set<ProductImage> images, Set<Review> reviews, Set<OrderProduct> orderProducts) {
+        this.productName = productName;
+        this.description = description;
+        this.brand = brand;
+        this.category = category;
+        this.supplier = supplier;
+        this.images = images;
+        this.reviews = reviews;
+        this.orderProducts = orderProducts;
+    }
 }
