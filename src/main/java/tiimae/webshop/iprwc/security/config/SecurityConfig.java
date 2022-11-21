@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
+import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.security.filter.JWTFilter;
 import tiimae.webshop.iprwc.service.MyUserDetailService;
 
@@ -38,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/api/meetingroom/**").hasRole("USER")
 //                .antMatchers("/api/role/**").hasRole("USER")
 //                .antMatchers("/api/user/**").hasRole("USER")
-                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers(ApiConstant.apiPrefix + "auth/**").permitAll()
                 .and()
                 .userDetailsService(uds)
                 .exceptionHandling()

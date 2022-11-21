@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
+import tiimae.webshop.iprwc.DTO.LoginDTO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.mapper.UserMapper;
@@ -14,9 +16,9 @@ import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.security.util.JWTUtil;
 import tiimae.webshop.iprwc.service.ApiResponseService;
 
+import javax.naming.AuthenticationException;
 import java.util.HashMap;
 import java.util.Optional;
-import java.util.Set;
 
 @RestController
 @RequestMapping(
@@ -26,14 +28,15 @@ import java.util.Set;
 )
 public class AuthController {
 
-    @Autowired
     private UserRepository userRepo;
     @Autowired private JWTUtil jwtUtil;
     @Autowired private AuthenticationManager authManager;
     @Autowired private PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
-    public AuthController(UserMapper userMapper){
+
+    public AuthController(UserMapper userMapper, UserRepository userRepo){
         this.userMapper = userMapper;
+        this.userRepo = userRepo;
     }
 
     @PostMapping(ApiConstant.register)
@@ -54,6 +57,28 @@ public class AuthController {
         newUserData.put("jwtToken", jwtToken);
         newUserData.put("userId", String.valueOf(savedUser.getId()));
 
-        return new ApiResponseService(HttpStatus.CREATED, newUserData);
+        return new ApiResponseService<>(HttpStatus.CREATED, newUserData);
+    }
+
+    @PostMapping(ApiConstant.login)
+    @ResponseBody
+    public ApiResponseService<HashMap<String, String>> login(@RequestBody LoginDTO loginDTO) throws AuthenticationException {
+        UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
+
+        this.authManager.authenticate(authInputToken);
+
+        String token = this.jwtUtil.generateToken(loginDTO.getEmail());
+
+        final Optional<User> loggedUser = this.userRepo.findByEmail(loginDTO.getEmail());
+
+        if (loggedUser.isEmpty()) {
+            return new ApiResponseService<>(HttpStatus.UNAUTHORIZED, "The credentials doesnt match");
+        }
+
+        HashMap<String, String> userData = new HashMap<>();
+        userData.put("jwtToken", token);
+        userData.put("userId", String.valueOf(loggedUser.get().getId()));
+
+        return new ApiResponseService<>(HttpStatus.ACCEPTED, userData);
     }
 }

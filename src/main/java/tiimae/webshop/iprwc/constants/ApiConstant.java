@@ -2,9 +2,10 @@ package tiimae.webshop.iprwc.constants;
 
 public class ApiConstant {
 
-    private static final String apiPrefix = "/api/v1.0/";
+    public static final String apiPrefix = "/api/v1.0/";
 
     // authentication api calls
-    public static final String register = apiPrefix + "register";
+    public static final String register = apiPrefix + "auth/register";
+    public static final String login = apiPrefix + "auth/login";
 
 }

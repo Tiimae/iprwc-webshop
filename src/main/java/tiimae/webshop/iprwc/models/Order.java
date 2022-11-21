@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;

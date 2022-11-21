@@ -1,15 +1,13 @@
 package tiimae.webshop.iprwc.service;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
 @Getter
-@Setter
 public class ApiResponseService<Type> {
-    private long code;
+    private final long code;
     private Type payload;
-    private String message;
+    private final String message;
 
     public ApiResponseService(HttpStatus code, Type payload) {
         this.code = code.value();
