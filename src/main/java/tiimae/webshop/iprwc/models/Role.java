@@ -35,6 +35,19 @@ public class Role {
 
     public Role(String name, Set<User> users) {
         this.name = name;
-        this.users = users;
+
+        for (User user : users) {
+            this.addUser(user);
+        }
+    }
+
+    public void addUser(User user) {
+        this.getUsers().add(user);
+        user.getRoles().add(this);
+    }
+
+    public void removeUser(User user) {
+        this.getUsers().remove(user);
+        user.getRoles().remove(this);
     }
 }

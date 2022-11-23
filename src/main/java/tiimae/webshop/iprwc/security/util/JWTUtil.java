@@ -8,8 +8,11 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import tiimae.webshop.iprwc.models.Role;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class JWTUtil {
@@ -17,12 +20,13 @@ public class JWTUtil {
     @Value("${jwt_secret}")
     private String secret;
 
-    public String generateToken(String email) throws IllegalArgumentException, JWTCreationException {
+    public String generateToken(String email, List<String> roles) throws IllegalArgumentException, JWTCreationException {
         return JWT.create()
                 .withSubject("User Details")
                 .withClaim("email", email)
                 .withIssuedAt(new Date())
                 .withIssuer("groep8.ipsen2")
+                .withClaim("roles", roles)
                 .sign(Algorithm.HMAC256(secret));
     }
 

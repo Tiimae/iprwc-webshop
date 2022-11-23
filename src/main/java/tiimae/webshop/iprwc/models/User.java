@@ -63,6 +63,19 @@ public class User {
         this.password = password;
         this.addresses = addresses;
         this.orders = orders;
-        this.roles = roles;
+
+        for (Role role : roles) {
+            this.addRole(role);
+        }
+    }
+
+    public void addRole(Role role) {
+        this.getRoles().add(role);
+        role.getUsers().add(this);
+    }
+
+    public void removeRole(Role role) {
+        this.getRoles().remove(role);
+        role.getUsers().remove(this);
     }
 }

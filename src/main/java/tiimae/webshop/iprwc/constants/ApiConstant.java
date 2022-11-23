@@ -8,4 +8,6 @@ public class ApiConstant {
     public static final String register = apiPrefix + "auth/register";
     public static final String login = apiPrefix + "auth/login";
 
+    // User API calls
+    public static final String getOneUser = apiPrefix + "user/{userId}";
 }
