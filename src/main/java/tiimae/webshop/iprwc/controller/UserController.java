@@ -35,7 +35,13 @@ public class UserController {
             return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
         }
 
-        return new ApiResponseService<>(HttpStatus.FOUND, user.get());
+        final User user1 = user.get();
+        user1.getRoles().clear();
+        user1.getOrders().clear();
+        user1.getAddresses().clear();
+        user1.setPassword("");
+
+        return new ApiResponseService<>(HttpStatus.FOUND, user1);
     }
 
 }

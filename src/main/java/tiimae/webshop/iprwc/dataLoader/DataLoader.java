@@ -18,13 +18,9 @@ import java.util.Set;
 @Component
 public class DataLoader implements ApplicationRunner {
     private RoleRepository roleRepository;
-    private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
 
-    public DataLoader(RoleRepository roleRepository, UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public DataLoader(RoleRepository roleRepository) {
         this.roleRepository = roleRepository;
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
