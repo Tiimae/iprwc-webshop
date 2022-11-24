@@ -25,8 +25,12 @@ public class DataLoader implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        this.roleRepository.save(new Role("Owner", new HashSet<>()));
-        this.roleRepository.save(new Role("Admin", new HashSet<>()));
-        this.roleRepository.save(new Role("User", new HashSet<>()));
+        final List<Role> all = this.roleRepository.findAll();
+
+        if (all.isEmpty()) {
+            this.roleRepository.save(new Role("Owner", new HashSet<>()));
+            this.roleRepository.save(new Role("Admin", new HashSet<>()));
+            this.roleRepository.save(new Role("User", new HashSet<>()));
+        }
     }
 }

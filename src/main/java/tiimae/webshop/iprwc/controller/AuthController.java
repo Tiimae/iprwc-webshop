@@ -83,8 +83,6 @@ public class AuthController {
 
         this.authManager.authenticate(authInputToken);
 
-
-
         final Optional<User> loggedUser = this.userRepo.findByEmail(loginDTO.getEmail());
 
         if (loggedUser.isEmpty()) {

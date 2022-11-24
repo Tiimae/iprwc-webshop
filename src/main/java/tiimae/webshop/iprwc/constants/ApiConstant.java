@@ -10,4 +10,5 @@ public class ApiConstant {
 
     // User API calls
     public static final String getOneUser = apiPrefix + "user/{userId}";
+    public static final String getUsersWithRoles = apiPrefix + "user/roles";
 }

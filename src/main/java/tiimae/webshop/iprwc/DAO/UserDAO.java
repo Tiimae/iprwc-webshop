@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.models.User;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -18,5 +19,9 @@ public class UserDAO {
 
     public Optional<User> getUser(UUID userId) {
         return this.userRepository.findById(userId);
+    }
+
+    public List<User> getAllUsers() {
+        return this.userRepository.findAll();
     }
 }

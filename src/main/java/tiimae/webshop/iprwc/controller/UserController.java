@@ -8,6 +8,7 @@ import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.service.ApiResponseService;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,6 +43,21 @@ public class UserController {
         user1.setPassword("");
 
         return new ApiResponseService<>(HttpStatus.FOUND, user1);
+    }
+
+    @GetMapping(ApiConstant.getUsersWithRoles)
+    @ResponseBody
+    @CrossOrigin
+    public ApiResponseService getUserWithRoles() {
+        final List<User> allUsers = this.userDAO.getAllUsers();
+
+        for (User user : allUsers) {
+            user.getAddresses().clear();
+            user.getOrders().clear();
+            user.setPassword("");
+        }
+
+        return new ApiResponseService<>(HttpStatus.OK, allUsers);
     }
 
 }
