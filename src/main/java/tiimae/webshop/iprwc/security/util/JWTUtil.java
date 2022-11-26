@@ -13,6 +13,7 @@ import tiimae.webshop.iprwc.models.Role;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 @Component
 public class JWTUtil {
@@ -20,10 +21,11 @@ public class JWTUtil {
     @Value("${jwt_secret}")
     private String secret;
 
-    public String generateToken(String email, List<String> roles) throws IllegalArgumentException, JWTCreationException {
+    public String generateToken(UUID id, String email, List<String> roles) throws IllegalArgumentException, JWTCreationException {
         return JWT.create()
                 .withSubject("User Details")
                 .withClaim("email", email)
+                .withClaim("userId", String.valueOf(id))
                 .withIssuedAt(new Date())
                 .withIssuer("groep8.ipsen2")
                 .withClaim("roles", roles)

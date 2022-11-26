@@ -1,12 +1,16 @@
 package tiimae.webshop.iprwc.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import tiimae.webshop.iprwc.DAO.repo.RoleRepository;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.DTO.LoginDTO;
@@ -17,11 +21,15 @@ import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.security.util.JWTUtil;
 import tiimae.webshop.iprwc.service.ApiResponseService;
+import tiimae.webshop.iprwc.service.EncryptionService;
 
 import javax.naming.AuthenticationException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Optional;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.time.Instant;
+import java.util.*;
 
 @RestController
 @RequestMapping(
@@ -37,6 +45,9 @@ public class AuthController {
     @Autowired private PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
     private RoleRepository roleRepository;
+
+    @Value("${jwt_secret}")
+    private String jwtSecret;
 
     public AuthController(UserMapper userMapper, UserRepository userRepo, RoleRepository roleRepository){
         this.userMapper = userMapper;
@@ -66,11 +77,12 @@ public class AuthController {
             roles.add(role.getName());
         }
 
-        String jwtToken = this.jwtUtil.generateToken(savedUser.getEmail(), roles);
+        String jwtToken = this.jwtUtil.generateToken(savedUser.getId(), savedUser.getEmail(), roles);
 
         final HashMap<String, String> newUserData = new HashMap<>();
         newUserData.put("jwtToken", jwtToken);
         newUserData.put("userId", String.valueOf(savedUser.getId()));
+        newUserData.put("destination", "to-cookie");
 
         return new ApiResponseService<>(HttpStatus.CREATED, newUserData);
     }
@@ -78,7 +90,7 @@ public class AuthController {
     @PostMapping(ApiConstant.login)
     @ResponseBody
     @CrossOrigin
-    public ApiResponseService<HashMap<String, String>> login(@RequestBody LoginDTO loginDTO) throws AuthenticationException {
+    public ApiResponseService login(@RequestBody LoginDTO loginDTO) throws AuthenticationException, IOException {
         UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
 
         this.authManager.authenticate(authInputToken);
@@ -94,12 +106,62 @@ public class AuthController {
             roles.add(role.getName());
         }
 
-        String token = this.jwtUtil.generateToken(loginDTO.getEmail(), roles);
+        String token = this.jwtUtil.generateToken(loggedUser.get().getId(), loginDTO.getEmail(), roles);
 
         HashMap<String, String> userData = new HashMap<>();
         userData.put("jwtToken", token);
         userData.put("userId", String.valueOf(loggedUser.get().getId()));
+        userData.put("destination", "to-cookie");
 
         return new ApiResponseService<>(HttpStatus.ACCEPTED, userData);
+    }
+
+    @GetMapping(value = ApiConstant.toCookie, consumes = MediaType.ALL_VALUE)
+    public ModelAndView redirectWithUsingForwardPrefix(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
+
+        model.addAttribute("attribute", "forwardWithForwardPrefix");
+        response.addCookie(this.createCookie());
+        return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "auth/login", model);
+    }
+
+    @GetMapping(value = ApiConstant.secret, consumes = MediaType.ALL_VALUE)
+    @ResponseBody()
+    public ApiResponseService secret(HttpServletRequest request){
+        String secret = null;
+
+        if(request.getCookies() != null){
+            secret =  Arrays.stream(request.getCookies())
+                    .filter(c -> c.getName().equals("secret"))
+                    .findFirst()
+                    .map(Cookie::getValue)
+                    .orElse(null);
+        }
+
+        if(secret == null || secret.isBlank() || secret.isEmpty()){
+            return new ApiResponseService(HttpStatus.FORBIDDEN, "You are not authenticated");
+        }
+
+        secret = new EncryptionService().decrypt(secret, jwtSecret);
+
+        return new ApiResponseService(HttpStatus.ACCEPTED, secret);
+    }
+
+    public String createSecret(){
+        String randomSecret = Date.from(Instant.now()).toString() + String.valueOf((new Random()).nextInt());
+        return EncryptionService.getMd5(randomSecret);
+    }
+
+    private Cookie createCookie(){
+        String secret = this.createSecret();
+        secret = new EncryptionService().encrypt(secret, jwtSecret);
+        Cookie cookie = new Cookie("secret", secret);
+
+        cookie.setHttpOnly(true);
+        cookie.setPath(ApiConstant.secret);
+        //expires in 7 days
+        cookie.setMaxAge(7 * 24 * 60 * 60);
+//        cookie.set
+        cookie.setDomain("localhost");
+        return cookie;
     }
 }

@@ -28,8 +28,6 @@ public class MyUserDetailService implements UserDetailsService {
 
         User user = userRes.get();
 
-        System.out.println(user.getRoles());
-
         List<GrantedAuthority> listAuthorities = new ArrayList<GrantedAuthority>();
 
         for (Role role : user.getRoles()) {

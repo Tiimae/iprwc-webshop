@@ -34,12 +34,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors()
                 .and()
                 .authorizeHttpRequests()
-//                .antMatchers("/api/building/**").hasRole("USER")
-//                .antMatchers("/api/wing/**").hasRole("USER")
-//                .antMatchers("/api/meetingroom/**").hasRole("USER")
-//                .antMatchers("/api/role/**").hasRole("USER")
-//                .antMatchers("/api/user/**").hasRole("USER")
-                .antMatchers(ApiConstant.apiPrefix + "auth/**").permitAll()
+//                .antMatchers("/api/building/**").hasRole("User")
+//                .antMatchers("/api/wing/**").hasRole("User")
+//                .antMatchers("/api/meetingroom/**").hasRole("User")
+//                .antMatchers("/api/role/**").hasRole("User")
+//                .antMatchers("/api/user/**").hasRole("User")
+                .antMatchers("/api/auth/**").permitAll()
                 .and()
                 .userDetailsService(uds)
                 .exceptionHandling()
@@ -49,7 +49,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 )
                 .and()
                 .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .enableSessionUrlRewriting(true);
 
         http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
     }
