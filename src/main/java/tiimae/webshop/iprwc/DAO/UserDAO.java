@@ -30,6 +30,10 @@ public class UserDAO {
         return this.userRepository.findAll();
     }
 
+    public User create(User user) {
+        return this.userRepository.save(user);
+    }
+
     public User update(UUID id, UserDTO userDTO) {
         final Optional<User> byId = this.userRepository.findById(id);
 
@@ -42,5 +46,16 @@ public class UserDAO {
         user.setId(id);
 
         return this.userRepository.saveAndFlush(user);
+    }
+
+    public void delete(UUID id) {
+        final Optional<User> byId = this.userRepository.findById(id);
+
+        if (byId.isEmpty()) {
+            return;
+        }
+
+        byId.get().getRoles().clear();
+        this.userRepository.delete(byId.get());
     }
 }

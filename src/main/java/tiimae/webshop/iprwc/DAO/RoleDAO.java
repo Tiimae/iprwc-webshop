@@ -5,6 +5,7 @@ import tiimae.webshop.iprwc.DAO.repo.RoleRepository;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,5 +20,9 @@ public class RoleDAO {
 
     public Optional<Role> getRole(UUID roleId) {
     return this.roleRepository.findById(roleId);
+}
+
+    public List<Role> getAllRoles() {
+    return this.roleRepository.findAll();
 }
 }
