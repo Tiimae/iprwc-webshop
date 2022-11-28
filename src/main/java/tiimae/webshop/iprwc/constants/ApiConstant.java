@@ -18,4 +18,8 @@ public class ApiConstant {
 
     // Role API calls
     public static final String getAllRoles = apiPrefix + "role";
+
+    //Category Api Calls
+    public static final String getOneCategories = apiPrefix + "category/{categoryId}";
+    public static final String getAllCategories = apiPrefix + "category";
 }
