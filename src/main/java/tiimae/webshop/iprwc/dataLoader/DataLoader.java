@@ -12,8 +12,6 @@ import tiimae.webshop.iprwc.models.User;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 @Component
 public class DataLoader implements ApplicationRunner {

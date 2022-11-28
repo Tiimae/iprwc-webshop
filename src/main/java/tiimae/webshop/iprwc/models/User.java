@@ -17,7 +17,7 @@ import java.util.UUID;
 @Table(name = "\"user\"")
 public class User {
     @Id
-    @GeneratedValue(generator = "uuid2")
+    @GeneratedValue(generator = "uuid2", strategy = GenerationType.TABLE)
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", columnDefinition = "VARCHAR(255)")
     @Type(type="org.hibernate.type.UUIDCharType")
@@ -45,7 +45,7 @@ public class User {
     @JsonManagedReference
     private Set<Order> orders = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.DETACH})
     @JoinTable(
             name = "userroles",
             joinColumns = @JoinColumn(name = "userid"),

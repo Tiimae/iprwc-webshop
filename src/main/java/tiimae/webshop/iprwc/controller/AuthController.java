@@ -121,7 +121,7 @@ public class AuthController {
 
         model.addAttribute("attribute", "forwardWithForwardPrefix");
         response.addCookie(this.createCookie());
-        return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "auth/login", model);
+        return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "", model);
     }
 
     @GetMapping(value = ApiConstant.secret, consumes = MediaType.ALL_VALUE)

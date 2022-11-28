@@ -41,4 +41,15 @@ public class UserMapper {
         return new User(firstname, middleName, lastName, email, password, addresses, orders, roles);
     }
 
+    public User mergeUser(User base, User update) {
+        base.setFirstName(update.getFirstName());
+        base.setMiddleName(update.getMiddleName());
+        base.setLastName(update.getLastName());
+        base.setEmail(update.getEmail());
+        base.setPassword(update.getPassword());
+        base.getRoles().clear();
+        base.setRoles(update.getRoles());
+
+        return base;
+    }
 }
