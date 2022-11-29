@@ -22,4 +22,9 @@ public class ApiConstant {
     //Category Api Calls
     public static final String getOneCategories = apiPrefix + "category/{categoryId}";
     public static final String getAllCategories = apiPrefix + "category";
+
+    //Brand Api Calls
+    public static final String getOneBrand = apiPrefix + "brand/{brandId}";
+    public static final String getAllBrands = apiPrefix + "brand";
+    public static final String uploadBrandImage = apiPrefix + "brand/{brandId}/image";
 }
