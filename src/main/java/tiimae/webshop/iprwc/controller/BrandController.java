@@ -27,11 +27,4 @@ public class BrandController {
     public ApiResponseService post(@RequestBody BrandDTO brandDTO) throws IOException {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.postBrand(brandDTO));
     }
-
-    @PostMapping(ApiConstant.uploadBrandImage)
-    @ResponseBody
-    public ApiResponseService postImage(@PathVariable UUID brandId, @RequestParam("logo") MultipartFile image) throws IOException {
-
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.postBrandImage(brandId, image));
-    }
 }

@@ -128,7 +128,7 @@ public class UserController {
     )
     @ResponseBody
     @CrossOrigin
-    public ApiResponseService update(@PathVariable UUID userId) {
+    public ApiResponseService delete(@PathVariable UUID userId) {
 
         this.userDAO.delete(userId);
 
