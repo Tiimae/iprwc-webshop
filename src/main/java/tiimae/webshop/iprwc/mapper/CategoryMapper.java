@@ -13,10 +13,15 @@ public class CategoryMapper {
     public Category toCategory(CategoryDTO categoryDTO) {
 
         String name = categoryDTO.getCategoryName();
-//        final HashSet<> objects = new HashSet<>();
 
         return new Category(name, new HashSet<>());
 
+    }
+
+    public Category mergeCategory(Category base, CategoryDTO update) {
+        base.setCategoryName(update.getCategoryName());
+
+        return base;
     }
 
 }

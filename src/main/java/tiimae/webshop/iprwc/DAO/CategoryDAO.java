@@ -41,9 +41,7 @@ public class CategoryDAO {
             return null;
         }
 
-        final Category category = this.categoryMapper.toCategory(categoryDTO);
-        category.setId(id);
-
+        final Category category = this.categoryMapper.mergeCategory(byId.get(), categoryDTO);
         return this.categoryRepository.saveAndFlush(category);
     }
 

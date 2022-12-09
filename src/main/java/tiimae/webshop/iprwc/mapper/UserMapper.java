@@ -11,6 +11,7 @@ import tiimae.webshop.iprwc.models.UserAddress;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -30,26 +31,32 @@ public class UserMapper {
         String password = userDTO.getPassword();
         Set<UserAddress> addresses = new HashSet<>();
         Set<Order> orders = new HashSet<>();
-        Set<Role> roles = new HashSet<>();
-
-        if (userDTO.getRoleIds() != null) {
-            roles = Arrays.stream(userDTO.getRoleIds())
-                    .map(id -> this.roleDAO.getRole(id).orElse(null))
-                    .collect(Collectors.toSet());
-        }
+        Set<Role> roles = this.getAllRoles(userDTO.getRoleIds());
 
         return new User(firstname, middleName, lastName, email, password, addresses, orders, roles);
     }
 
-    public User mergeUser(User base, User update) {
+    public User mergeUser(User base, UserDTO update) {
         base.setFirstName(update.getFirstName());
         base.setMiddleName(update.getMiddleName());
         base.setLastName(update.getLastName());
         base.setEmail(update.getEmail());
         base.setPassword(update.getPassword());
         base.getRoles().clear();
-        base.setRoles(update.getRoles());
+        base.setRoles(this.getAllRoles(update.getRoleIds()));
 
         return base;
     }
+
+    public Set<Role> getAllRoles(UUID[] roleIds) {
+        Set<Role> roles = new HashSet<>();
+        if (roleIds != null) {
+            roles = Arrays.stream(roleIds)
+                    .map(id -> this.roleDAO.getRole(id).orElse(null))
+                    .collect(Collectors.toSet());
+        }
+
+        return roles;
+    }
+
 }

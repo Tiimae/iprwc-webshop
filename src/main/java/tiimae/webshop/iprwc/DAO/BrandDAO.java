@@ -17,14 +17,18 @@ public class BrandDAO {
 
     private BrandRepository brandRepository;
     private BrandMapper brandMapper;
+    private ImageDAO imageDAO;
 
-    public BrandDAO(BrandRepository brandRepository, @Lazy BrandMapper brandMapper) {
+    public BrandDAO(BrandRepository brandRepository, @Lazy BrandMapper brandMapper, ImageDAO imageDAO) {
         this.brandRepository = brandRepository;
         this.brandMapper = brandMapper;
+        this.imageDAO = imageDAO;
     }
 
-    public Brand postBrand(BrandDTO brandDTO) throws IOException {
+    public Brand postBrand(BrandDTO brandDTO, MultipartFile file) throws IOException {
         final Brand brand = this.brandMapper.toBrand(brandDTO);
+
+        brand.setLogoUrl(this.imageDAO.saveBrandImage(file, brand.getBrandName()));
 
         return this.brandRepository.save(brand);
     }
