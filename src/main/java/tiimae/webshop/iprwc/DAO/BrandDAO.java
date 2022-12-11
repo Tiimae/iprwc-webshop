@@ -9,6 +9,7 @@ import tiimae.webshop.iprwc.mapper.BrandMapper;
 import tiimae.webshop.iprwc.models.Brand;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -23,6 +24,14 @@ public class BrandDAO {
         this.brandRepository = brandRepository;
         this.brandMapper = brandMapper;
         this.imageDAO = imageDAO;
+    }
+
+    public Brand getBrand(UUID brandId) {
+        return this.brandRepository.findById(brandId).get();
+    }
+
+    public List<Brand> getAll() {
+        return this.brandRepository.findAll();
     }
 
     public Brand postBrand(BrandDTO brandDTO, MultipartFile file) throws IOException {

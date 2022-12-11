@@ -1,14 +1,18 @@
 package tiimae.webshop.iprwc.DAO;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import tiimae.webshop.iprwc.IprwcApplication;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.UUID;
+
+import static java.nio.file.Paths.get;
 
 @Component
 public class ImageDAO {
@@ -24,6 +28,14 @@ public class ImageDAO {
         Files.write(path, bytes);
 
         return path.toString();
+    }
+
+    public String getImage(String path, String brandName, String fileName) throws IOException {
+        String folder = "src/main/resources/images/brand/" + brandName + "/";
+        Path filePath = get(folder).toAbsolutePath().normalize().resolve(fileName);
+        return filePath.toString();
+//        Resource resource = new UrlResource(filePath.toUri());
+//        return resource;
     }
 
 }
