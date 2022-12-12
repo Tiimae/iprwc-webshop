@@ -56,4 +56,11 @@ public class BrandController {
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.postBrand(brandDTO, file));
     }
+
+    @DeleteMapping(ApiConstant.getOneBrand)
+    @ResponseBody
+    public ApiResponseService delete(@PathVariable UUID brandId) throws IOException {
+        this.brandDAO.delete(brandId);
+        return new ApiResponseService(HttpStatus.ACCEPTED, "Brand has been deleted");
+    }
 }

@@ -1,13 +1,10 @@
 package tiimae.webshop.iprwc.DAO;
 
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-import tiimae.webshop.iprwc.IprwcApplication;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,8 +14,8 @@ import static java.nio.file.Paths.get;
 @Component
 public class ImageDAO {
 
-    public String saveBrandImage(MultipartFile image, String brandName) throws IOException {
-        String folder = "src/main/resources/static/images/brand/" + brandName + "/";
+    public String saveBrandImage(MultipartFile image, String brandName, String type) throws IOException {
+        String folder = "src/main/resources/static/images/" + type + "/" + brandName + "/";
         byte[] bytes = image.getBytes();
         if (!Files.isDirectory(Paths.get(folder))) {
             Files.createDirectories(Paths.get(folder));
@@ -27,13 +24,14 @@ public class ImageDAO {
         Path path = Paths.get(folder + image.getOriginalFilename());
         Files.write(path, bytes);
 
-        return "http://localhost:8080/images/brand/" + brandName + "/" + image.getOriginalFilename();
+        return "http://localhost:8080/images/" + type + "/" + brandName + "/" + image.getOriginalFilename();
     }
 
-    public String getImage(String path, String brandName, String fileName) throws IOException {
-        String folder = "src/main/resources/images/brand/" + brandName + "/";
+    public boolean deleteImage(String brandName, String fileName, String type) throws IOException {
+        String folder = "src/main/resources/static/images/" + type + "/" + brandName + "/";
         Path filePath = get(folder).toAbsolutePath().normalize().resolve(fileName);
-        return filePath.toString();
+        final File file = new File(String.valueOf(filePath));
+        return file.delete();
 //        Resource resource = new UrlResource(filePath.toUri());
 //        return resource;
     }
