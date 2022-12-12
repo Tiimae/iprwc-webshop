@@ -18,7 +18,7 @@ import static java.nio.file.Paths.get;
 public class ImageDAO {
 
     public String saveBrandImage(MultipartFile image, String brandName) throws IOException {
-        String folder = "src/main/resources/images/brand/" + brandName + "/";
+        String folder = "src/main/resources/static/images/brand/" + brandName + "/";
         byte[] bytes = image.getBytes();
         if (!Files.isDirectory(Paths.get(folder))) {
             Files.createDirectories(Paths.get(folder));
@@ -27,7 +27,7 @@ public class ImageDAO {
         Path path = Paths.get(folder + image.getOriginalFilename());
         Files.write(path, bytes);
 
-        return path.toString();
+        return "http://localhost:8080/images/brand/" + brandName + "/" + image.getOriginalFilename();
     }
 
     public String getImage(String path, String brandName, String fileName) throws IOException {

@@ -16,6 +16,7 @@ import tiimae.webshop.iprwc.service.ApiResponseService;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -33,17 +34,15 @@ public class BrandController {
     @ResponseBody
     public ApiResponseService get(@PathVariable UUID brandId) throws IOException {
         final Brand brand = this.brandDAO.getBrand(brandId);
-        final String[] split = brand.getLogoUrl().split("/");
-        final String image = this.imageDAO.getImage(brand.getLogoUrl(), brand.getBrandName(), split[split.length - 1]);
-        brand.setLogoUrl(image);
-
         return new ApiResponseService(HttpStatus.ACCEPTED, brand);
     }
 
     @GetMapping(ApiConstant.getAllBrands)
     @ResponseBody
     public ApiResponseService getAll() throws IOException {
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.getAll());
+        final List<Brand> all = this.brandDAO.getAll();
+
+        return new ApiResponseService(HttpStatus.ACCEPTED, all);
     }
 
     @PostMapping(ApiConstant.getAllBrands)
