@@ -26,5 +26,7 @@ public class ApiConstant {
     //Brand Api Calls
     public static final String getOneBrand = apiPrefix + "brand/{brandId}";
     public static final String getAllBrands = apiPrefix + "brand";
-    public static final String uploadBrandImage = apiPrefix + "brand/{brandId}/image";
+
+    public static final String getOneSupplier = apiPrefix + "supplier/{supplierId}";
+    public static final String getAllSupplier = apiPrefix + "supplier";
 }
