@@ -5,6 +5,7 @@ import lombok.val;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import tiimae.webshop.iprwc.DAO.BrandDAO;
@@ -56,6 +57,19 @@ public class BrandController {
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.postBrand(brandDTO, file));
     }
+
+    @PutMapping(value = ApiConstant.getOneBrand)
+    @ResponseBody
+    public ApiResponseService put(@PathVariable UUID brandId, @RequestParam(value = "brand") JSONObject brand, @RequestParam(value = "logo") @Nullable MultipartFile file) throws IOException {
+        final BrandDTO brandDTO = new BrandDTO();
+        brandDTO.setBrandName(brand.getString("brandName"));
+        brandDTO.setProductIds(new UUID[0]);
+        brandDTO.setLogo("");
+        brandDTO.setWebPage(brand.getString("webPage"));
+
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.updateBrand(brandId, brandDTO, file));
+    }
+
 
     @DeleteMapping(ApiConstant.getOneBrand)
     @ResponseBody

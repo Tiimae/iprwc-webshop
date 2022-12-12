@@ -13,4 +13,12 @@ public class BrandMapper {
         return new Brand(brandDTO.getBrandName(), brandDTO.getWebPage(), "", new HashSet<>());
     }
 
+    public Brand mergeBrand(Brand base, BrandDTO brandDTO) {
+        base.setBrandName(brandDTO.getBrandName());
+        base.setWebPage(brandDTO.getWebPage());
+        base.setLogoUrl(brandDTO.getLogo());
+
+        return base;
+    }
+
 }

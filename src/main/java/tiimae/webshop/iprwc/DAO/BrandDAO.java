@@ -42,6 +42,27 @@ public class BrandDAO {
         return this.brandRepository.save(brand);
     }
 
+    public Brand updateBrand(UUID brandId, BrandDTO brandDTO, MultipartFile file) throws IOException {
+        final Optional<Brand> byId = this.brandRepository.findById(brandId);
+
+        if (byId.isEmpty()) {
+            return null;
+        }
+
+        if (file != null) {
+            final String[] split = byId.get().getLogoUrl().split("/");
+            final String currentFile = split[split.length - 1];
+
+            this.imageDAO.deleteImage(byId.get().getBrandName(), currentFile, "brand");
+            brandDTO.setLogo(this.imageDAO.saveBrandImage(file, brandDTO.getBrandName(), "brand"));
+        } else {
+            brandDTO.setLogo(byId.get().getLogoUrl());
+        }
+
+        Brand newBrand = this.brandMapper.mergeBrand(byId.get(), brandDTO);
+        return this.brandRepository.saveAndFlush(newBrand);
+    }
+
     public void delete(UUID brandId) throws IOException {
         final Optional<Brand> byId = this.brandRepository.findById(brandId);
 
