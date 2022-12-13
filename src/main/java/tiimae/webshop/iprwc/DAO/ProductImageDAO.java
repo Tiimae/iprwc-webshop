@@ -8,6 +8,8 @@ import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.ProductImage;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 public class ProductImageDAO {
@@ -28,5 +30,16 @@ public class ProductImageDAO {
 
         this.productImageRepository.save(this.productImageMapper.toProductImage(path, product));
 
+    }
+
+    public void delete(UUID productId, Product product) throws IOException {
+        final List<ProductImage> allByProduct = this.productImageRepository.findAllByProductId(productId);
+
+        for (ProductImage productImage : allByProduct) {
+            final String name = productImage.getImagePath().split("/")[productImage.getImagePath().split("/").length - 1];
+
+            this.imageDAO.deleteImage(product.getProductName(), name, "product");
+            this.productImageRepository.delete(productImage);
+        }
     }
 }

@@ -39,7 +39,7 @@ public class Supplier {
     @Column(nullable = false)
     private String country;
 
-    @OneToMany(mappedBy = "supplier", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JsonManagedReference
     private Set<Product> products = new HashSet<>();
 

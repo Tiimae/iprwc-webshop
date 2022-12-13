@@ -11,6 +11,7 @@ import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.service.ApiResponseService;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @RestController
@@ -38,36 +39,41 @@ public class ProductController {
 
     @PostMapping(ApiConstant.getAllProducts)
     @ResponseBody
-    public ApiResponseService post(@RequestParam(value = "product") JSONObject product, @RequestParam(value = "logos") MultipartFile[] files) {
+    public ApiResponseService post(@RequestParam(value = "product") JSONObject product, @RequestParam(value = "images") MultipartFile[] files) throws IOException {
         final ProductDTO productDTO = new ProductDTO();
         productDTO.setName(product.getString("productName"));
         productDTO.setDescription(product.getString("description"));
         productDTO.setPrice(product.getFloat("price"));
         productDTO.setBrandId(UUID.fromString(product.getString("brandId")));
-        productDTO.setCategoryId(UUID.fromString(product.getString("CategoryId")));
+        productDTO.setCategoryId(UUID.fromString(product.getString("categoryId")));
         productDTO.setSupplierId(UUID.fromString(product.getString("supplierId")));
 
         final Product newProduct = this.productDAO.post(productDTO);
 
         for (MultipartFile file : files) {
-
-
-
+            this.productImageDAO.create(file, newProduct);
         }
-
 
         return new ApiResponseService(HttpStatus.FOUND, newProduct);
     }
 
     @PutMapping(ApiConstant.getOneProduct)
     @ResponseBody
-    public ApiResponseService put(@PathVariable UUID productId, @RequestParam(value = "product") JSONObject product, @RequestParam(value = "logos") MultipartFile[] files) {
+    public ApiResponseService put(
+            @PathVariable UUID productId,
+            @RequestParam(value = "product") JSONObject product,
+            @RequestParam(value = "newImages") MultipartFile[] files,
+            @RequestParam(value = "deletedImages") String[] deletedFiles
+    ) {
         return new ApiResponseService(HttpStatus.FOUND, null);
     }
 
     @DeleteMapping(ApiConstant.getOneProduct)
     @ResponseBody
-    public ApiResponseService delete(@PathVariable UUID productId) {
+    public ApiResponseService delete(@PathVariable UUID productId) throws IOException {
+        final Product product = this.productDAO.get(productId);
+        this.productImageDAO.delete(productId, product);
+
         this.productDAO.delete(productId);
         return new ApiResponseService(HttpStatus.FOUND, "Product has been deleted");
     }
