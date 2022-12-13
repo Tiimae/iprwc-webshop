@@ -29,4 +29,7 @@ public class ApiConstant {
 
     public static final String getOneSupplier = apiPrefix + "supplier/{supplierId}";
     public static final String getAllSupplier = apiPrefix + "supplier";
+
+    public static final String getOneProduct = apiPrefix + "product/{productId}";
+    public static final String getAllProducts = apiPrefix + "product";
 }

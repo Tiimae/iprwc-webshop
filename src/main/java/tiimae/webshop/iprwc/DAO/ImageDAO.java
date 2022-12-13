@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.apache.commons.*;
 
 import static java.nio.file.Paths.get;
 
@@ -32,8 +33,6 @@ public class ImageDAO {
         Path filePath = get(folder).toAbsolutePath().normalize().resolve(fileName);
         final File file = new File(String.valueOf(filePath));
         return file.delete();
-//        Resource resource = new UrlResource(filePath.toUri());
-//        return resource;
     }
 
 }

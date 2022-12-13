@@ -60,9 +60,10 @@ public class Product {
 
     public Product() { }
 
-    public Product(String productName, String description, Brand brand, Category category, Supplier supplier, Set<ProductImage> images, Set<Review> reviews, Set<OrderProduct> orderProducts) {
+    public Product(String productName, String description, Float price, Brand brand, Category category, Supplier supplier, Set<ProductImage> images, Set<Review> reviews, Set<OrderProduct> orderProducts) {
         this.productName = productName;
         this.description = description;
+        this.price = price;
         this.brand = brand;
         this.category = category;
         this.supplier = supplier;
