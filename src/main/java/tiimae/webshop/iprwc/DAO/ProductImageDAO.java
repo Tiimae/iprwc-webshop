@@ -9,6 +9,7 @@ import tiimae.webshop.iprwc.models.ProductImage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -32,13 +33,32 @@ public class ProductImageDAO {
 
     }
 
+    public void update(String[] deleteImage, MultipartFile[] newImage, Product product) throws IOException {
+        final List<ProductImage> allByProduct = this.productImageRepository.findAllByProductId(product.getId());
+
+        for (ProductImage image : allByProduct) {
+            for (String imageString : deleteImage) {
+                if (Objects.equals(image.getImagePath(), imageString)) {
+                    final String name = image.getImagePath().split("/")[image.getImagePath().split("/").length - 1];
+
+                    this.imageDAO.deleteImage(name, "product");
+                    this.productImageRepository.delete(image);
+                }
+            }
+        }
+
+        for (MultipartFile multipartFile : newImage) {
+            this.create(multipartFile, product);
+        }
+    }
+
     public void delete(UUID productId, Product product) throws IOException {
         final List<ProductImage> allByProduct = this.productImageRepository.findAllByProductId(productId);
 
         for (ProductImage productImage : allByProduct) {
             final String name = productImage.getImagePath().split("/")[productImage.getImagePath().split("/").length - 1];
 
-            this.imageDAO.deleteImage(product.getProductName(), name, "product");
+            this.imageDAO.deleteImage(name, "product");
             this.productImageRepository.delete(productImage);
         }
     }

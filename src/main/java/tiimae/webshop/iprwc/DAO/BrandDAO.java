@@ -53,7 +53,7 @@ public class BrandDAO {
             final String[] split = byId.get().getLogoUrl().split("/");
             final String currentFile = split[split.length - 1];
 
-            this.imageDAO.deleteImage(byId.get().getBrandName(), currentFile, "brand");
+            this.imageDAO.deleteImage(currentFile, "brand");
             brandDTO.setLogo(this.imageDAO.saveBrandImage(file, brandDTO.getBrandName(), "brand"));
         } else {
             brandDTO.setLogo(byId.get().getLogoUrl());
@@ -73,7 +73,7 @@ public class BrandDAO {
         final String[] split = byId.get().getLogoUrl().split("/");
         final String file = split[split.length - 1];
 
-        this.imageDAO.deleteImage(byId.get().getBrandName(), file, "brand");
+        this.imageDAO.deleteImage(file, "brand");
 
         this.brandRepository.delete(byId.get());
     }

@@ -1,5 +1,6 @@
 package tiimae.webshop.iprwc.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,7 +41,7 @@ public class Supplier {
     private String country;
 
     @OneToMany(mappedBy = "supplier", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JsonManagedReference
+    @JsonBackReference
     private Set<Product> products = new HashSet<>();
 
     public Supplier() { }

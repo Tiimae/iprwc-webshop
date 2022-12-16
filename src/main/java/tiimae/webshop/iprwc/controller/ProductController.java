@@ -64,8 +64,21 @@ public class ProductController {
             @RequestParam(value = "product") JSONObject product,
             @RequestParam(value = "newImages") MultipartFile[] files,
             @RequestParam(value = "deletedImages") String[] deletedFiles
-    ) {
-        return new ApiResponseService(HttpStatus.FOUND, null);
+    ) throws IOException {
+        final ProductDTO productDTO = new ProductDTO();
+        productDTO.setName(product.getString("productName"));
+        productDTO.setDescription(product.getString("description"));
+        productDTO.setPrice(product.getFloat("price"));
+        productDTO.setBrandId(UUID.fromString(product.getString("brandId")));
+        productDTO.setCategoryId(UUID.fromString(product.getString("categoryId")));
+        productDTO.setSupplierId(UUID.fromString(product.getString("supplierId")));
+
+
+
+        final Product update = this.productDAO.update(productId, productDTO);
+        this.productImageDAO.update(deletedFiles, files, update);
+
+        return new ApiResponseService(HttpStatus.FOUND, update);
     }
 
     @DeleteMapping(ApiConstant.getOneProduct)

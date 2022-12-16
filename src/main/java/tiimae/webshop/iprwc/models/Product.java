@@ -35,20 +35,20 @@ public class Product {
     private Float price;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JsonBackReference
+    @JsonManagedReference
     private Brand brand;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JsonBackReference
+    @JsonManagedReference
     private Category category;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JsonBackReference
+    @JsonManagedReference
     private Supplier supplier;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JsonManagedReference
-    private Set<ProductImage> images = new HashSet<>();
+    private Set<ProductImage> productImages = new HashSet<>();
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JsonManagedReference
@@ -67,7 +67,7 @@ public class Product {
         this.brand = brand;
         this.category = category;
         this.supplier = supplier;
-        this.images = images;
+        this.productImages = images;
         this.reviews = reviews;
         this.orderProducts = orderProducts;
     }
