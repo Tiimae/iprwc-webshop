@@ -62,7 +62,7 @@ public class AuthController {
         final Optional<User> foundUser = userRepo.findByEmail(userDTO.getEmail());
 
         if (foundUser.isPresent()) {
-            return new ApiResponseService(HttpStatus.FOUND, "This email address is already been found");
+            return new ApiResponseService(HttpStatus.BAD_REQUEST, "Something went Wrong!");
         }
 
         userDTO.setPassword(this.passwordEncoder.encode(userDTO.getPassword()));
