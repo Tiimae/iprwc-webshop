@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import tiimae.webshop.iprwc.DAO.repo.SupplierRepository;
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
 import tiimae.webshop.iprwc.mapper.SupplierMapper;
+import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.Supplier;
 
 import java.util.List;
@@ -51,6 +52,10 @@ public class SupplierDAO {
 
         if (byId.isEmpty()) {
             return;
+        }
+
+        for (Product product : byId.get().getProducts()) {
+            product.setSupplier(null);
         }
 
         byId.get().getProducts().clear();

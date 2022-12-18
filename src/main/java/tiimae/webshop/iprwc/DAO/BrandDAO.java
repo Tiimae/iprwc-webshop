@@ -7,6 +7,7 @@ import tiimae.webshop.iprwc.DAO.repo.BrandRepository;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.mapper.BrandMapper;
 import tiimae.webshop.iprwc.models.Brand;
+import tiimae.webshop.iprwc.models.Product;
 
 import java.io.IOException;
 import java.util.List;
@@ -74,8 +75,13 @@ public class BrandDAO {
         final String file = split[split.length - 1];
 
         this.imageDAO.deleteImage(file, "brand");
+        final Brand brand = byId.get();
 
-        this.brandRepository.delete(byId.get());
+        for (Product product : brand.getProducts()) {
+            product.setBrand(null);
+        }
+
+        this.brandRepository.deleteById(brandId);
     }
 
 }

@@ -5,6 +5,7 @@ import tiimae.webshop.iprwc.DAO.repo.CategoryRepository;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
 import tiimae.webshop.iprwc.mapper.CategoryMapper;
 import tiimae.webshop.iprwc.models.Category;
+import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.User;
 
 import java.util.List;
@@ -52,7 +53,10 @@ public class CategoryDAO {
             return;
         }
 
-        byId.get().getProducts().clear();
+        for (Product product : byId.get().getProducts()) {
+            product.setCategory(null);
+        }
+
 
         this.categoryRepository.delete(byId.get());
     }

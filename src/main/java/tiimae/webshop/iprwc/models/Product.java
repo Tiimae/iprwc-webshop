@@ -34,7 +34,7 @@ public class Product {
     @Column(nullable = false)
     private Float price;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Brand brand;
 

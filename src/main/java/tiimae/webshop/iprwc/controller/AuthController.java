@@ -91,14 +91,21 @@ public class AuthController {
     @ResponseBody
     @CrossOrigin
     public ApiResponseService login(@RequestBody LoginDTO loginDTO) throws AuthenticationException, IOException {
+        HashMap<String, String> userData = new HashMap<>();
         UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
 
-        this.authManager.authenticate(authInputToken);
+        try {
+            this.authManager.authenticate(authInputToken);
+        } catch (Throwable $throwable) {
+            userData.put("message", "You have entered an invalid email or password");
+            return new ApiResponseService<HashMap<String, String>>(HttpStatus.UNAUTHORIZED, userData);
+        }
 
         final Optional<User> loggedUser = this.userRepo.findByEmail(loginDTO.getEmail());
 
         if (loggedUser.isEmpty()) {
-            return new ApiResponseService<>(HttpStatus.UNAUTHORIZED, "The credentials doesnt match");
+            userData.put("message", "An error has occured, please try again in a moment");
+            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, userData);
         }
 
         final ArrayList<String> roles = new ArrayList<>();
@@ -108,7 +115,6 @@ public class AuthController {
 
         String token = this.jwtUtil.generateToken(loggedUser.get().getId(), loginDTO.getEmail(), roles);
 
-        HashMap<String, String> userData = new HashMap<>();
         userData.put("jwtToken", token);
         userData.put("userId", String.valueOf(loggedUser.get().getId()));
         userData.put("destination", "to-cookie");
