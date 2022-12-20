@@ -24,7 +24,7 @@ public class Role {
     @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, columnDefinition = "TEXT")
     private String name;
 
     @ManyToMany(mappedBy = "roles", cascade = {CascadeType.DETACH, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.REMOVE})

@@ -22,7 +22,7 @@ public class UserAddress {
     @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String street;
 
     @Column(nullable = false)
@@ -30,13 +30,13 @@ public class UserAddress {
 
     private String addition;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String zipcode;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String city;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String country;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

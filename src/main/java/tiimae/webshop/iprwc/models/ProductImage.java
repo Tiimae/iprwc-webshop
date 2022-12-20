@@ -22,7 +22,7 @@ public class ProductImage {
     @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String imagePath;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

@@ -25,7 +25,7 @@ public class Category {
     @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false, columnDefinition = "TEXT")
     private String categoryName;
 
     @OneToMany(mappedBy = "category", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)

@@ -25,7 +25,7 @@ public class Review {
     @Column(nullable = false)
     private Long stars;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)

@@ -24,7 +24,7 @@ public class Order {
     @Column(name = "id", columnDefinition = "VARCHAR(255)")
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String orderId;
 
     @Column(nullable = false)

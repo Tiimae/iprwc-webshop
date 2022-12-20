@@ -25,11 +25,13 @@ public class Brand {
     @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "TEXT")
     private String brandName;
 
+    @Column(columnDefinition = "TEXT")
     private String webPage;
 
+    @Column(columnDefinition = "TEXT")
     private String logoUrl;
 
     @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER, cascade = CascadeType.ALL)

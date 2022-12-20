@@ -25,19 +25,19 @@ public class Supplier {
     @Type(type="org.hibernate.type.UUIDCharType")
     private UUID id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false, unique = true, columnDefinition = "TEXT")
     private String name;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String address;
 
     @Column(nullable = false)
     private String zipcode;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String city;
 
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String country;
 
     @OneToMany(mappedBy = "supplier", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
