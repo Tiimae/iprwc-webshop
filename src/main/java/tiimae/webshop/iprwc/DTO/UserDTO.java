@@ -15,6 +15,9 @@ public class UserDTO {
     private String email;
     private String password;
 
+    private Boolean verified;
+    private Boolean resetRequired;
+
     private UUID[] orderIds;
     private UUID[] roleIds;
     private UUID[] userAddressIds;

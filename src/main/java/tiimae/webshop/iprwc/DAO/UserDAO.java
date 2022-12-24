@@ -57,4 +57,12 @@ public class UserDAO {
         byId.get().getRoles().clear();
         this.userRepository.delete(byId.get());
     }
+
+    public int verifyUser(UUID userId) {
+        return userRepository.verifyUser(userId);
+    }
+
+    public int resetUser(UUID userId) {
+        return userRepository.resetUser(userId);
+    }
 }

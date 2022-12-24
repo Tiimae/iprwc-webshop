@@ -1,6 +1,7 @@
 package tiimae.webshop.iprwc.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sun.istack.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -37,6 +38,12 @@ public class User {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String password;
+
+    @NotNull
+    private Boolean verified;
+
+    @NotNull
+    private Boolean reset_required;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
