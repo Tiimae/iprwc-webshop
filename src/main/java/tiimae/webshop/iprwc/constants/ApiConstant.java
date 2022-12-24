@@ -9,7 +9,7 @@ public class ApiConstant {
     public static final String login = apiPrefix + "auth/login";
     public static final String secret = apiPrefix + "auth/secret";
     public static final String profile = apiPrefix + "auth/profile";
-    public static final String toCookie = apiPrefix + "/to-cookie";
+    public static final String toCookie = apiPrefix + "to-cookie";
 
     public static final String verifyEmail = apiPrefix + "auth/verify-email";
     public static final String sendVerifyEmail = apiPrefix + "auth/send-verify-email";

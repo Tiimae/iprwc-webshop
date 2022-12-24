@@ -53,7 +53,7 @@ public class User {
     @JsonManagedReference
     private Set<Order> orders = new HashSet<>();
 
-    @ManyToMany(cascade = {CascadeType.DETACH})
+    @ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinTable(
             name = "userroles",
             joinColumns = @JoinColumn(name = "userid"),

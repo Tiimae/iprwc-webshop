@@ -77,14 +77,12 @@ public class AuthController {
     @PostMapping(value = ApiConstant.register)
     @ResponseBody
     public ApiResponseService register(@Valid @RequestBody UserDTO user, @RequestParam(required = false) boolean encrypted ) throws EntryNotFoundException {
+        user.setVerified(false);
+        user.setResetRequired(false);
 
         Optional<User> foundUser = userRepo.findByEmail(user.getEmail());
         if (foundUser.isPresent()) {
-
-            Map<String, Object> res = new HashMap<>();
-            res.put("message", "User with this email already exists, change your email to continue");
-
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
+            return new ApiResponseService(HttpStatus.BAD_REQUEST, "Something went Wrong!");
         }
 
         String encodedPass = passwordEncoder.encode(
@@ -103,14 +101,14 @@ public class AuthController {
             roles.add(role.getName());
         }
 
-        // Send email with new verify-token
-        this.sendVerifyEmail();
+        String jwtToken = this.jwtUtil.generateToken(newUser.getId(), newUser.getEmail(), roles);
 
-        // response
-        Map<String, Object> res = new HashMap<>();
-        res.put("message", "Successfully created your account");
+        final HashMap<String, String> newUserData = new HashMap<>();
+        newUserData.put("jwtToken", jwtToken);
+        newUserData.put("userId", String.valueOf(newUser.getId()));
+        newUserData.put("destination", "to-cookie");
 
-        return new ApiResponseService<>(HttpStatus.ACCEPTED, res);
+        return new ApiResponseService<>(HttpStatus.ACCEPTED, newUserData);
     }
 
     @PostMapping(value = ApiConstant.login)
@@ -152,10 +150,10 @@ public class AuthController {
 
         String token = jwtUtil.generateToken(foundUser.get().getId(), user.getEmail(), roles);
 
-        res.put("jwt-token", token);
+        res.put("jwtToken", token);
         res.put("user-id", String.valueOf(foundUser.get().getId()));
         res.put("verified", foundUser.get().getVerified().toString());
-        res.put("destination", "/to-cookie");
+        res.put("destination", "to-cookie");
 
         return new ApiResponseService<>(HttpStatus.ACCEPTED, res);
     }
@@ -165,7 +163,7 @@ public class AuthController {
 
         model.addAttribute("attribute", "forwardWithForwardPrefix");
         response.addCookie(this.createCookie());
-        return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "", model);
+        return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "auth/login", model);
     }
 
     @GetMapping(value = ApiConstant.secret, consumes = MediaType.ALL_VALUE)
@@ -212,7 +210,7 @@ public class AuthController {
         // Create and save Token in DB
 //        VerifyToken verifyToken = new VerifyToken(UUID.randomUUID(), "email", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
         UUID token = UUID.randomUUID();
-        VerifyToken verifyToken = new VerifyToken(token, "emai;", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
+        VerifyToken verifyToken = new VerifyToken(token, "email", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
         this.verifyTokenDAO.saveVerifyToken(verifyToken);
 
         // Send verification mail
