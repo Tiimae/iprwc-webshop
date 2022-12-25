@@ -3,6 +3,7 @@ package tiimae.webshop.iprwc.security.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -17,6 +18,7 @@ import tiimae.webshop.iprwc.security.filter.JWTFilter;
 import tiimae.webshop.iprwc.service.MyUserDetailService;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -39,7 +41,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/api/meetingroom/**").hasRole("User")
 //                .antMatchers("/api/role/**").hasRole("User")
 //                .antMatchers("/api/user/**").hasRole("User")
-                .antMatchers("/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1.0/product/**").permitAll()
+                .antMatchers(Arrays.toString(new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE}), "/api/v1.0/product/**").hasRole("Admin")
+                .antMatchers(HttpMethod.GET, "/api/v1.0/supplier/**").permitAll()
+                .antMatchers(Arrays.toString(new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE}), "/api/v1.0/supplier/**").hasRole("Admin")
+                .antMatchers(HttpMethod.GET, "/api/v1.0/category/**").permitAll()
+                .antMatchers(Arrays.toString(new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE}), "/api/v1.0/category/**").hasRole("Admin")
+                .antMatchers(HttpMethod.GET, "/api/v1.0/brand/**").permitAll()
+                .antMatchers(Arrays.toString(new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE}), "/api/v1.0/brand/**").hasRole("Admin")
+                .antMatchers(HttpMethod.GET, "/api/v1.0/user/roles").hasRole("Admin")
+                .antMatchers(HttpMethod.GET, "/api/v1.0/user/**").hasRole("User")
+                .antMatchers(Arrays.toString(new HttpMethod[]{HttpMethod.POST, HttpMethod.PUT, HttpMethod.DELETE}), "/api/v1.0/user/**").hasRole("Admin")
+                .antMatchers("/api/v1.0/auth/**").permitAll()
                 .and()
                 .userDetailsService(uds)
                 .exceptionHandling()

@@ -11,11 +11,12 @@ import javax.mail.internet.MimeMessage;
 @Component
 public class EmailService {
 
+    @Autowired
     private JavaMailSender emailSender;
 
-    public EmailService(JavaMailSender emailSender) {
-        this.emailSender = emailSender;
-    }
+//    public EmailService(JavaMailSender emailSender) {
+//        this.emailSender = emailSender;
+//    }
 
     public void sendMessage(String to, String subject, String body) throws MessagingException {
         MimeMessage mail = emailSender.createMimeMessage();
