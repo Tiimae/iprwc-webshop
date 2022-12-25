@@ -10,15 +10,20 @@ import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 @Component
 public class DataLoader implements ApplicationRunner {
     private RoleRepository roleRepository;
+    private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    public DataLoader(RoleRepository roleRepository) {
+    public DataLoader(RoleRepository roleRepository, UserRepository userRepository) {
         this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -26,9 +31,33 @@ public class DataLoader implements ApplicationRunner {
         final List<Role> all = this.roleRepository.findAll();
 
         if (all.isEmpty()) {
-            this.roleRepository.save(new Role("Owner", new HashSet<>()));
-            this.roleRepository.save(new Role("Admin", new HashSet<>()));
-            this.roleRepository.save(new Role("User", new HashSet<>()));
+            final Role admin = new Role("Admin", new HashSet<>());
+            final Role owner = new Role("Owner", new HashSet<>());
+            final Role user = new Role("User", new HashSet<>());
+
+            this.roleRepository.save(owner);
+            this.roleRepository.save(admin);
+            this.roleRepository.save(user);
+
+            final HashSet<Role> objects = new HashSet<>();
+            objects.add(admin);
+            objects.add(owner);
+            objects.add(user);
+            final String test123 = passwordEncoder.encode("Test123");
+
+
+            this.userRepository.save(new User(
+                    "Tim",
+                    "de",
+                    "Kok",
+                    "de.kok.ac@gmail.com",
+                    test123,
+                    true,
+                    false,
+                    new HashSet<>(),
+                    new HashSet<>(),
+                    objects
+            ));
         }
     }
 }

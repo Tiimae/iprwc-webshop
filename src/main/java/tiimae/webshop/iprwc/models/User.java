@@ -63,12 +63,14 @@ public class User {
 
     public User() { }
 
-    public User(String firstName, String middleName, String lastName, String email, String password, Set<UserAddress> addresses, Set<Order> orders, Set<Role> roles) {
+    public User(String firstName, String middleName, String lastName, String email, String password, boolean verified, boolean reset_required, Set<UserAddress> addresses, Set<Order> orders, Set<Role> roles) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.reset_required = reset_required;
+        this.verified = verified;
         this.addresses = addresses;
         this.orders = orders;
 

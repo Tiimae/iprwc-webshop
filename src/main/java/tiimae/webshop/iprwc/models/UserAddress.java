@@ -39,6 +39,9 @@ public class UserAddress {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String country;
 
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String type;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
     private User user;

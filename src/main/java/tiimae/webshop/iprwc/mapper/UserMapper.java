@@ -33,7 +33,7 @@ public class UserMapper {
         Set<Order> orders = new HashSet<>();
         Set<Role> roles = this.getAllRoles(userDTO.getRoleIds());
 
-        return new User(firstname, middleName, lastName, email, password, addresses, orders, roles);
+        return new User(firstname, middleName, lastName, email, password, userDTO.getVerified(), userDTO.getResetRequired(), addresses, orders, roles);
     }
 
     public User mergeUser(User base, UserDTO update) {
