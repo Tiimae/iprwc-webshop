@@ -206,14 +206,10 @@ public class AuthController {
         }
 
         User user = bearerUser.get();
-
-        // Create and save Token in DB
-//        VerifyToken verifyToken = new VerifyToken(UUID.randomUUID(), "email", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
         UUID token = UUID.randomUUID();
         VerifyToken verifyToken = new VerifyToken(token, "email", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
         this.verifyTokenDAO.saveVerifyToken(verifyToken);
-
-        // Send verification mail
+        
         try {
             this.emailService.sendMessage(
                     user.getEmail(),
@@ -230,7 +226,7 @@ public class AuthController {
 
     @PostMapping(value = ApiConstant.verifyEmail, consumes = MediaType.ALL_VALUE)
     @ResponseBody
-    public ApiResponseService<Map<String, Object>> verifyEmail(@RequestParam String token) {
+    public ApiResponseService<Map<String, Object>> verifyEmail(@RequestParam UUID token) {
         Map<String, Object> res = new HashMap<>();
 
         Optional<User> bearerUser = this.profile(SecurityContextHolder.getContext().getAuthentication()).getPayload();
@@ -292,7 +288,7 @@ public class AuthController {
         try {
             this.emailService.sendMessage(
                     user.getEmail(),
-                    "CGI account change password",
+                    "Change password",
                     "<p>Hi " + user.getFirstName() + ", you notified us that you want to change your password. Use this link to change your password: <a href="+url+">Set new password</a></p>"
             );
         } catch (Throwable e) {
@@ -305,7 +301,7 @@ public class AuthController {
 
     @PostMapping(value = ApiConstant.setNewPassword, consumes = {"application/json"})
     @ResponseBody
-    public ApiResponseService<Map<String, Object>> setNewPassword(@RequestBody UserDTO newUser, @RequestParam String token, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException {
+    public ApiResponseService<Map<String, Object>> setNewPassword(@RequestBody UserDTO newUser, @RequestParam UUID token, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException {
         Map<String, Object> res = new HashMap<>();
 
         Optional<VerifyToken> verifyToken = this.verifyTokenDAO.getToken(token);
@@ -332,7 +328,6 @@ public class AuthController {
         }
 
         User user = tokenUser.get();
-
         // Nieuw wachtwoord setten van user
         UserDTO userDTO = new UserDTO();
         userDTO.setFirstName(user.getFirstName());
@@ -347,6 +342,7 @@ public class AuthController {
                         : newUser.getPassword()
         );
         userDTO.setPassword(encodedPass);
+
         this.userDAO.update(user.getId(), userDTO);
 
         try {

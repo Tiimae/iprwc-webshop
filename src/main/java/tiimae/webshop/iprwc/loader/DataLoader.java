@@ -1,6 +1,7 @@
-package tiimae.webshop.iprwc.dataLoader;
+package tiimae.webshop.iprwc.loader;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -10,16 +11,17 @@ import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-
 @Component
 public class DataLoader implements ApplicationRunner {
     private RoleRepository roleRepository;
     private UserRepository userRepository;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${user_pw}")
+    private String userPW;
 
     public DataLoader(RoleRepository roleRepository, UserRepository userRepository) {
         this.roleRepository = roleRepository;
@@ -39,12 +41,12 @@ public class DataLoader implements ApplicationRunner {
             this.roleRepository.save(admin);
             this.roleRepository.save(user);
 
+
             final HashSet<Role> objects = new HashSet<>();
             objects.add(admin);
             objects.add(owner);
             objects.add(user);
-            final String test123 = passwordEncoder.encode("Test123");
-
+            final String test123 = passwordEncoder.encode(this.userPW);
 
             this.userRepository.save(new User(
                     "Tim",

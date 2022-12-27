@@ -41,7 +41,10 @@ public class UserDAO {
             return null;
         }
 
-        userDTO.setPassword(byId.get().getPassword());
+        if (userDTO.getPassword().isEmpty()) {
+            userDTO.setPassword(byId.get().getPassword());
+        }
+
         final User user = this.userMapper.mergeUser(byId.get(), userDTO);
 
         return this.userRepository.saveAndFlush(user);

@@ -12,12 +12,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface VerifyTokenRepository extends JpaRepository<VerifyToken, UUID> {
-    Optional<VerifyToken> findByToken(String token);
+    Optional<VerifyToken> findByToken(UUID token);
 
     @Transactional
     @Modifying
     @Query("UPDATE VerifyToken c SET c.confirmedAt = ?2 WHERE c.token = ?1")
-    int updateConfirmedAt(String token, LocalDateTime confirmedAt);
+    int updateConfirmedAt(UUID token, LocalDateTime confirmedAt);
 
     Optional<VerifyToken> getVerifyTokenByUser(User user);
 }

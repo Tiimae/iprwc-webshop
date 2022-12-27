@@ -7,6 +7,7 @@ import tiimae.webshop.iprwc.models.VerifyToken;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class VerifyTokenDAO {
@@ -22,16 +23,16 @@ public class VerifyTokenDAO {
         this.verifyTokenRepository.save(token);
     }
 
-    public Optional<VerifyToken> getToken(String token) {
+    public Optional<VerifyToken> getToken(UUID token) {
         return verifyTokenRepository.findByToken(token);
     }
 
-    public int setConfirmedAt(String token) {
+    public int setConfirmedAt(UUID token) {
         return verifyTokenRepository.updateConfirmedAt(token, LocalDateTime.now());
     }
 
     @Transactional
-    public void confirmToken(String token) {
+    public void confirmToken(UUID token) {
         VerifyToken verifyToken = this.getToken(token).orElseThrow(() -> new IllegalStateException("This token is invalid"));
 
         if (verifyToken.getConfirmedAt() != null) {

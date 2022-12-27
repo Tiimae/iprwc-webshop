@@ -32,7 +32,7 @@ public class VerifyToken {
 
     private LocalDateTime confirmedAt;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.DETACH)
     @JoinColumn(
             nullable = false,
             name = "user_id"
