@@ -40,4 +40,9 @@ public class ApiConstant {
 
     public static final String getOneProduct = apiPrefix + "product/{productId}";
     public static final String getAllProducts = apiPrefix + "product";
+
+    public static final String getOneUserAddress = apiPrefix + "user-address/{userAddressId}";
+    public static final String getAllUserAddresses = apiPrefix + "user-address";
+
+
 }
