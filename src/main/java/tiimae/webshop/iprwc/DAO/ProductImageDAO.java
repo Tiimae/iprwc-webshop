@@ -37,18 +37,22 @@ public class ProductImageDAO {
         final List<ProductImage> allByProduct = this.productImageRepository.findAllByProductId(product.getId());
 
         for (ProductImage image : allByProduct) {
-            for (String imageString : deleteImage) {
-                if (Objects.equals(image.getImagePath(), imageString)) {
-                    final String name = image.getImagePath().split("/")[image.getImagePath().split("/").length - 1];
+            if (deleteImage != null) {
+                for (String imageString : deleteImage) {
+                    if (Objects.equals(image.getImagePath(), imageString)) {
+                        final String name = image.getImagePath().split("/")[image.getImagePath().split("/").length - 1];
 
-                    this.imageDAO.deleteImage(name, "product");
-                    this.productImageRepository.delete(image);
+                        this.imageDAO.deleteImage(name, "product");
+                        this.productImageRepository.delete(image);
+                    }
                 }
             }
         }
 
-        for (MultipartFile multipartFile : newImage) {
-            this.create(multipartFile, product);
+        if (newImage != null) {
+            for (MultipartFile multipartFile : newImage) {
+                this.create(multipartFile, product);
+            }
         }
     }
 

@@ -48,13 +48,14 @@ public class UserAddress {
 
     public UserAddress() { }
 
-    public UserAddress(String street, long houseNumber, String addition, String zipcode, String city, String country, User user) {
+    public UserAddress(String street, long houseNumber, String addition, String zipcode, String city, String country, String type, User user) {
         this.street = street;
         this.houseNumber = houseNumber;
         this.addition = addition;
         this.zipcode = zipcode;
         this.city = city;
         this.country = country;
+        this.type = type;
         this.user = user;
     }
 }

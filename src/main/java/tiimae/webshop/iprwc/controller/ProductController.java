@@ -62,8 +62,8 @@ public class ProductController {
     public ApiResponseService put(
             @PathVariable UUID productId,
             @RequestParam(value = "product") JSONObject product,
-            @RequestParam(value = "newImages") MultipartFile[] files,
-            @RequestParam(value = "deletedImages") String[] deletedFiles
+            @RequestParam(value = "newImages", required=false) MultipartFile[] files,
+            @RequestParam(value = "deletedImages", required=false) String[] deletedFiles
     ) throws IOException {
         final ProductDTO productDTO = new ProductDTO();
         productDTO.setName(product.getString("productName"));

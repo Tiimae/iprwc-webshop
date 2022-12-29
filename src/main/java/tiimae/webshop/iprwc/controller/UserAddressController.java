@@ -1,11 +1,11 @@
 package tiimae.webshop.iprwc.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DAO.UserAddressDAO;
+import tiimae.webshop.iprwc.DTO.UserAddressDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.service.ApiResponseService;
 
 import java.util.UUID;
@@ -20,7 +20,7 @@ public class UserAddressController {
 
     @GetMapping(value = ApiConstant.getOneUserAddress)
     @ResponseBody
-    public ApiResponseService getOne(UUID userAddressId) {
+    public ApiResponseService get(UUID userAddressId) {
         return new ApiResponseService(HttpStatus.ACCEPTED, "");
     }
 
@@ -28,5 +28,11 @@ public class UserAddressController {
     @ResponseBody
     public ApiResponseService getAll() {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.userAddressDAO.getAll());
+    }
+
+    @PostMapping(value = ApiConstant.getAllUserAddresses)
+    @ResponseBody
+    public ApiResponseService create(@RequestBody UserAddressDTO userAddressDTO) throws EntryNotFoundException {
+        return new ApiResponseService(HttpStatus.CREATED, this.userAddressDAO.create(userAddressDTO));
     }
 }

@@ -82,7 +82,6 @@ public class UserController {
         final List<User> allUsers = this.userDAO.getAllUsers();
 
         for (User user : allUsers) {
-            user.getAddresses().clear();
             user.getOrders().clear();
             user.setPassword("");
         }
