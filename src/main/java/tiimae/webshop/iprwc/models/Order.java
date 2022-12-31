@@ -1,6 +1,7 @@
 package tiimae.webshop.iprwc.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,12 +39,22 @@ public class Order {
     @JsonManagedReference
     private Set<OrderProduct> OrderProducts = new HashSet<>();
 
+
+    @ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "orderaddresses",
+            joinColumns = @JoinColumn(name = "orderid"),
+            inverseJoinColumns = @JoinColumn(name = "useraddressid")
+    )
+    private Set<UserAddress> userAddresses = new HashSet<>();
+
     public Order() { }
 
-    public Order(String orderId, Date orderDate, User user, Set<OrderProduct> orderProducts) {
+    public Order(String orderId, Date orderDate, User user, Set<OrderProduct> orderProducts, Set<UserAddress> userAddresses) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.user = user;
         OrderProducts = orderProducts;
+        this.userAddresses = userAddresses;
     }
 }

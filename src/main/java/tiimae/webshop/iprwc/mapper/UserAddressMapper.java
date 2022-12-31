@@ -7,6 +7,7 @@ import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.UserAddress;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +29,8 @@ public class UserAddressMapper {
                 userAddressDTO.getCity(),
                 userAddressDTO.getCountry(),
                 userAddressDTO.getType(),
-                this.getUser(userAddressDTO.getUserId())
+                this.getUser(userAddressDTO.getUserId()),
+                new HashSet<>()
         );
     }
 
