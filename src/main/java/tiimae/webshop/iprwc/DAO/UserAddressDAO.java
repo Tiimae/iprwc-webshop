@@ -22,6 +22,10 @@ public class UserAddressDAO {
         this.userAddressMapper = userAddressMapper;
     }
 
+    public Optional<UserAddress> get(UUID id) {
+        return this.userAddressRepository.findById(id);
+    }
+
     public List<UserAddress> getAll() {
         return this.userAddressRepository.findAll();
     }

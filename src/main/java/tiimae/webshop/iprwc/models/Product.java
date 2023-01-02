@@ -1,9 +1,11 @@
 package tiimae.webshop.iprwc.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -55,7 +57,7 @@ public class Product {
     private Set<Review> reviews = new HashSet<>();
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
-    @JsonManagedReference
+    @JsonBackReference
     private Set<OrderProduct> orderProducts = new HashSet<>();
 
     public Product() { }

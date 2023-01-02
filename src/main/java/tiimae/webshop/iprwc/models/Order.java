@@ -1,11 +1,14 @@
 package tiimae.webshop.iprwc.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.sql.Date;
@@ -20,9 +23,10 @@ import java.util.UUID;
 public class Order {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
+    @GeneratedValue(generator = "uuid2", strategy = GenerationType.TABLE)
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id", columnDefinition = "VARCHAR(255)")
+    @Type(type = "org.hibernate.type.UUIDCharType")
     private UUID id;
 
     @Column(nullable = false, columnDefinition = "TEXT")
@@ -32,13 +36,13 @@ public class Order {
     private Date orderDate;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("orders")
     @JsonBackReference
     private User user;
 
     @OneToMany(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<OrderProduct> OrderProducts = new HashSet<>();
-
+    private Set<OrderProduct> orderProducts = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
     @JoinTable(
@@ -48,13 +52,14 @@ public class Order {
     )
     private Set<UserAddress> userAddresses = new HashSet<>();
 
-    public Order() { }
+    public Order() {
+    }
 
     public Order(String orderId, Date orderDate, User user, Set<OrderProduct> orderProducts, Set<UserAddress> userAddresses) {
         this.orderId = orderId;
         this.orderDate = orderDate;
         this.user = user;
-        OrderProducts = orderProducts;
+        this.orderProducts = orderProducts;
         this.userAddresses = userAddresses;
     }
 }
