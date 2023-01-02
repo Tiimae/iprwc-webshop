@@ -35,4 +35,17 @@ public class UserAddressController {
     public ApiResponseService create(@RequestBody UserAddressDTO userAddressDTO) throws EntryNotFoundException {
         return new ApiResponseService(HttpStatus.CREATED, this.userAddressDAO.create(userAddressDTO));
     }
+
+    @PutMapping(value = ApiConstant.getOneUserAddress)
+    @ResponseBody
+    public ApiResponseService update(@PathVariable UUID userAddressId, @RequestBody UserAddressDTO userAddressDTO) throws EntryNotFoundException {
+        return new ApiResponseService(HttpStatus.CREATED, this.userAddressDAO.update(userAddressId, userAddressDTO));
+    }
+
+    @DeleteMapping(value = ApiConstant.getOneUserAddress)
+    @ResponseBody
+    public ApiResponseService delete(@PathVariable UUID userAddressId) throws EntryNotFoundException {
+        this.userAddressDAO.remove(userAddressId);
+        return new ApiResponseService(HttpStatus.ACCEPTED, "Address has been removed!");
+    }
 }

@@ -8,6 +8,8 @@ import tiimae.webshop.iprwc.mapper.UserAddressMapper;
 import tiimae.webshop.iprwc.models.UserAddress;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class UserAddressDAO {
@@ -26,5 +28,27 @@ public class UserAddressDAO {
 
     public UserAddress create(UserAddressDTO userAddressDTO) throws EntryNotFoundException {
         return this.userAddressRepository.save(this.userAddressMapper.toUserAddress(userAddressDTO));
+    }
+
+    public UserAddress update(UUID id, UserAddressDTO userAddressDTO) {
+        final Optional<UserAddress> byId = this.userAddressRepository.findById(id);
+
+        return byId.map(userAddress -> this.userAddressRepository.saveAndFlush(this.userAddressMapper.mergeUserAddress(userAddress, userAddressDTO))).orElse(null);
+    }
+
+    public void remove(UUID id) {
+        final Optional<UserAddress> byId = this.userAddressRepository.findById(id);
+
+        if (byId.isEmpty()) {
+            return;
+        }
+
+        final UserAddress userAddress = byId.get();
+
+        userAddress.setUser(null);
+
+        userAddress.getOrders().clear();
+
+        this.userAddressRepository.delete(userAddress.getId());
     }
 }

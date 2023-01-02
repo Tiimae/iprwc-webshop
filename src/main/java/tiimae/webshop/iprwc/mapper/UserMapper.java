@@ -42,8 +42,13 @@ public class UserMapper {
         base.setLastName(update.getLastName());
         base.setEmail(update.getEmail());
         base.setPassword(update.getPassword());
+
         if (update.getRoleIds() != null) {
-            base.setRoles(this.getAllRoles(update.getRoleIds()));
+            for (Role role : this.getAllRoles(update.getRoleIds())) {
+                if (!base.getRoles().contains(role)) {
+                    base.getRoles().add(role);
+                }
+            }
         }
 
         return base;

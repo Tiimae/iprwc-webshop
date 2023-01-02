@@ -1,6 +1,7 @@
 package tiimae.webshop.iprwc.mapper;
 
 import org.springframework.stereotype.Component;
+import tiimae.webshop.iprwc.DAO.UserAddressDAO;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.UserAddressDTO;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
@@ -32,6 +33,17 @@ public class UserAddressMapper {
                 this.getUser(userAddressDTO.getUserId()),
                 new HashSet<>()
         );
+    }
+
+    public UserAddress mergeUserAddress(UserAddress base, UserAddressDTO update) {
+        base.setStreet(update.getStreet());
+        base.setHouseNumber(update.getHouseNumber());
+        base.setAddition(update.getAddition());
+        base.setZipcode(update.getZipcode());
+        base.setCity(update.getCity());
+        base.setCountry(update.getCountry());
+
+        return base;
     }
 
     private User getUser(UUID userId) throws EntryNotFoundException {
