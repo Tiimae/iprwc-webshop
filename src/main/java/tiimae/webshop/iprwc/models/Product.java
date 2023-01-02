@@ -56,7 +56,7 @@ public class Product {
     @JsonManagedReference
     private Set<Review> reviews = new HashSet<>();
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<OrderProduct> orderProducts = new HashSet<>();
 
