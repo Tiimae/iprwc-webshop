@@ -36,7 +36,7 @@ public class Order {
     private Date orderDate;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonIgnoreProperties("orders")
+//    @JsonIgnoreProperties("orders")
     @JsonBackReference
     private User user;
 

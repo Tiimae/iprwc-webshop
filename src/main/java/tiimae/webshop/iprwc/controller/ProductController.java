@@ -84,10 +84,12 @@ public class ProductController {
     @DeleteMapping(ApiConstant.getOneProduct)
     @ResponseBody
     public ApiResponseService delete(@PathVariable UUID productId) throws IOException {
-        final Product product = this.productDAO.get(productId);
-        this.productImageDAO.delete(productId, product);
+        return new ApiResponseService(HttpStatus.FOUND, this.productDAO.delete(productId));
+    }
 
-        this.productDAO.delete(productId);
-        return new ApiResponseService(HttpStatus.FOUND, "Product has been deleted");
+    @DeleteMapping(ApiConstant.restoreOneProduct)
+    @ResponseBody
+    public ApiResponseService restore(@PathVariable UUID productId) throws IOException {
+        return new ApiResponseService(HttpStatus.FOUND, this.productDAO.restore(productId));
     }
 }

@@ -48,21 +48,35 @@ public class ProductDAO {
         return this.productRepository.saveAndFlush(product);
     }
 
-    public void delete(UUID productId) {
+    public Product delete(UUID productId) {
 
         final Optional<Product> byId = this.productRepository.findById(productId);
 
         if (byId.isEmpty()) {
-            return;
+            return null;
         }
 
         final Product product = byId.get();
 
-        product.setCategory(null);
-        product.setBrand(null);
-        product.setSupplier(null);
+        product.setDeleted(true);
 
-        this.productRepository.delete(product);
+        return this.productRepository.saveAndFlush(product);
+
+    }
+
+    public Product restore(UUID productId) {
+
+        final Optional<Product> byId = this.productRepository.findById(productId);
+
+        if (byId.isEmpty()) {
+            return null;
+        }
+
+        final Product product = byId.get();
+
+        product.setDeleted(false);
+
+        return this.productRepository.saveAndFlush(product);
 
     }
 }
