@@ -1,5 +1,6 @@
 package tiimae.webshop.iprwc.DAO;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,6 +15,9 @@ import static java.nio.file.Paths.get;
 @Component
 public class ImageDAO {
 
+    @Value("${base}")
+    private String url;
+
     public String saveBrandImage(MultipartFile image, String brandName, String type) throws IOException {
         String folder = "src/main/resources/static/images/" + type  + "/";
         byte[] bytes = image.getBytes();
@@ -24,7 +28,7 @@ public class ImageDAO {
         Path path = Paths.get(folder + image.getOriginalFilename());
         Files.write(path, bytes);
 
-        return "http://localhost:8080/images/" + type + "/" + image.getOriginalFilename();
+        return this.url + "/images/" + type + "/" + image.getOriginalFilename();
     }
 
     public boolean deleteImage(String fileName, String type) throws IOException {
