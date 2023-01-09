@@ -62,6 +62,9 @@ public class AuthController {
 
     @Value("${jwt_secret}")
     private String jwtSecret;
+
+    @Value("${domain}")
+    private String base;
     @Value("${shared_secret}")
     private String sharedSecret;
 
@@ -163,7 +166,7 @@ public class AuthController {
 
         model.addAttribute("attribute", "forwardWithForwardPrefix");
         response.addCookie(this.createCookie());
-        return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "auth/login", model);
+        return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "", model);
     }
 
     @GetMapping(value = ApiConstant.secret, consumes = MediaType.ALL_VALUE)
@@ -384,7 +387,7 @@ public class AuthController {
         //expires in 7 days
         cookie.setMaxAge(7 * 24 * 60 * 60);
 //        cookie.set
-        cookie.setDomain("localhost");
+        cookie.setDomain(this.base);
         return cookie;
     }
 }
