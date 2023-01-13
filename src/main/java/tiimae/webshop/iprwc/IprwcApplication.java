@@ -11,9 +11,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @SpringBootApplication
 public class IprwcApplication {
 
-    @Value("${base}")
-    private String url;
-
     public static void main(String[] args) {
         SpringApplication.run(IprwcApplication.class, args);
     }
