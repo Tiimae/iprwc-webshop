@@ -46,4 +46,5 @@ public class ApiConstant {
     public static final String getAllUserAddresses = apiPrefix + "user-address";
 
     public static final String getAllOrders = apiPrefix + "order";
+    public static final String getAllReview = apiPrefix + "review";
 }
