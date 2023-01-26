@@ -1,25 +1,23 @@
 package tiimae.webshop.iprwc.validators;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
+
 import tiimae.webshop.iprwc.DAO.CategoryDAO;
 import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
 import tiimae.webshop.iprwc.models.Category;
-import tiimae.webshop.iprwc.models.Product;
-
-import java.util.Optional;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 @Component
 public class CategoryValidator extends Validator {
 
     private CategoryDAO categoryDAO;
-    private ProductDAO productDAO;
 
-    public CategoryValidator(CategoryDAO categoryDAO, ProductDAO productDAO) {
+    public CategoryValidator(ProductDAO productDAO, CategoryDAO categoryDAO) {
+        super(productDAO);
         this.categoryDAO = categoryDAO;
-        this.productDAO = productDAO;
     }
 
     public String validateDTO(CategoryDTO categoryDTO) {
@@ -30,14 +28,16 @@ public class CategoryValidator extends Validator {
         }
 
         for (String productId : categoryDTO.getProductIds()) {
-            if (!this.UUID_REGEX_PATTERN.matcher(productId).matches()) {
-                return productId + " is not a valid UUID";
+            String checkIfStringIsUUID = this.checkIfStringIsUUID(productId);
+
+            if (checkIfStringIsUUID != null) { 
+                return checkIfStringIsUUID;
             }
 
-            final Product product = this.productDAO.get(UUID.fromString(productId));
+            String checkIfProductExists = this.CheckIfProductExists(UUID.fromString(productId));
 
-            if (product == null) {
-                return "Product " + productId + " has not been found!";
+            if (checkIfProductExists != null) {
+                return checkIfProductExists;
             }
         }
 
@@ -46,9 +46,11 @@ public class CategoryValidator extends Validator {
 
     public String validateId(String id) {
 
-        if (!this.UUID_REGEX_PATTERN.matcher(id).matches()) {
-            return id + " is not a valid UUID";
-        }
+        String checkIfStringIsUUID = this.checkIfStringIsUUID(id);
+
+            if (checkIfStringIsUUID != null) { 
+                return checkIfStringIsUUID;
+            }
 
         final Category byName = this.categoryDAO.get(UUID.fromString(id));
 

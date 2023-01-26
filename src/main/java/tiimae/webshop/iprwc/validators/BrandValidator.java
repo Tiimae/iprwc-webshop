@@ -9,15 +9,14 @@ import tiimae.webshop.iprwc.DAO.BrandDAO;
 import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.models.Brand;
-import tiimae.webshop.iprwc.models.Product;
 
 @Component
 public class BrandValidator extends Validator {
-    private ProductDAO productDAO;
+
     private BrandDAO brandDAO;
 
     public BrandValidator(ProductDAO productDAO, BrandDAO brandDAO) {
-        this.productDAO = productDAO;
+        super(productDAO);
         this.brandDAO = brandDAO;
     }
 
@@ -34,14 +33,16 @@ public class BrandValidator extends Validator {
         }
 
         for (String productId : brandDTO.getProductIds()) {
-            if (!this.UUID_REGEX_PATTERN.matcher(productId).matches()) {
-                return productId + " is not a valid UUID";
+            String checkIfStringIsUUID = this.checkIfStringIsUUID(productId);
+
+            if (checkIfStringIsUUID != null) { 
+                return checkIfStringIsUUID;
             }
 
-            final Product product = this.productDAO.get(UUID.fromString(productId));
+            String checkIfProductExists = this.CheckIfProductExists(UUID.fromString(productId));
 
-            if (product == null) {
-                return "Product " + productId + " has not been found!";
+            if (checkIfProductExists != null) {
+                return checkIfProductExists;
             }
         }
 
@@ -50,8 +51,10 @@ public class BrandValidator extends Validator {
 
     public String validateId(String id) {
 
-        if (!this.UUID_REGEX_PATTERN.matcher(id).matches()) {
-            return id + " is not a valid UUID";
+        String checkIfStringIsUUID = this.checkIfStringIsUUID(id);
+
+        if (checkIfStringIsUUID != null) { 
+            return checkIfStringIsUUID;
         }
 
         final Brand byName = this.brandDAO.getBrand(UUID.fromString(id));
