@@ -387,7 +387,7 @@ public class AuthController {
         //expires in 7 days
         cookie.setMaxAge(7 * 24 * 60 * 60);
 //        cookie.set
-        cookie.setDomain(this.base);
+        cookie.setDomain("localhost");
         return cookie;
     }
 }
