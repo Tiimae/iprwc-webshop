@@ -1,18 +1,19 @@
 package tiimae.webshop.iprwc.DAO;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+
 import tiimae.webshop.iprwc.DAO.repo.BrandRepository;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.mapper.BrandMapper;
 import tiimae.webshop.iprwc.models.Brand;
 import tiimae.webshop.iprwc.models.Product;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public class BrandDAO {
@@ -29,6 +30,10 @@ public class BrandDAO {
 
     public Brand getBrand(UUID brandId) {
         return this.brandRepository.findById(brandId).get();
+    }
+
+    public Optional<Brand> getBrandByName(String brandName) {
+        return this.brandRepository.findBrandByBrandName(brandName);
     }
 
     public List<Brand> getAll() {

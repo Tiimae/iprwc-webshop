@@ -93,6 +93,7 @@ public class AuthController {
                         ? EncryptionService.decryptAes(user.getPassword(), sharedSecret)
                         : user.getPassword()
         );
+        
         user.setPassword(encodedPass);
         User newUser = userMapper.toUser(user);
         newUser.addRole(this.roleRepository.findByName("User").get());

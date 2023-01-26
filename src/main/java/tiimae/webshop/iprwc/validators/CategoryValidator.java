@@ -12,14 +12,10 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Component
-public class CategoryValidator {
+public class CategoryValidator extends Validator {
 
     private CategoryDAO categoryDAO;
     private ProductDAO productDAO;
-    private final Pattern UUID_REGEX_PATTERN =
-            Pattern.compile("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
-
-
 
     public CategoryValidator(CategoryDAO categoryDAO, ProductDAO productDAO) {
         this.categoryDAO = categoryDAO;
@@ -48,9 +44,13 @@ public class CategoryValidator {
         return null;
     }
 
-    public String validateId(UUID id) {
+    public String validateId(String id) {
 
-        final Category byName = this.categoryDAO.get(id);
+        if (!this.UUID_REGEX_PATTERN.matcher(id).matches()) {
+            return id + " is not a valid UUID";
+        }
+
+        final Category byName = this.categoryDAO.get(UUID.fromString(id));
 
         if (byName == null) {
             return "The category with id: " + id + " doesn't exist";
