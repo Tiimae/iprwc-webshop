@@ -1,8 +1,10 @@
-package tiimae.webshop.iprwc.service;
+package tiimae.webshop.iprwc.service.auth;
 
-import java.nio.charset.Charset;
 import java.util.Random;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class PasswordGeneratorService {
 
     public String generateNewPassword() {

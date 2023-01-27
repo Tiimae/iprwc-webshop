@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,8 +21,9 @@ import kong.unirest.json.JSONObject;
 import tiimae.webshop.iprwc.DAO.BrandDAO;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
+import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.models.Brand;
-import tiimae.webshop.iprwc.service.ApiResponseService;
+import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.BrandValidator;
 
 @RestController
@@ -37,6 +39,7 @@ public class BrandController {
 
     @GetMapping(ApiConstant.getOneBrand)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService get(@PathVariable String brandId) throws IOException {
         String idValidateString = this.brandValidator.validateId(brandId);
 
@@ -49,6 +52,7 @@ public class BrandController {
 
     @GetMapping(ApiConstant.getAllBrands)
     @ResponseBody
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     public ApiResponseService getAll() throws IOException {
         final List<Brand> all = this.brandDAO.getAll();
 
@@ -57,6 +61,7 @@ public class BrandController {
 
     @PostMapping(ApiConstant.getAllBrands)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService post(@RequestParam(value = "brand") JSONObject brand, @RequestParam(value = "logo") MultipartFile file) throws IOException {
         final BrandDTO brandDTO = new BrandDTO();
         brandDTO.setBrandName(brand.getString("brandName"));
@@ -76,6 +81,7 @@ public class BrandController {
 
     @PutMapping(value = ApiConstant.getOneBrand)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService put(@PathVariable String brandId, @RequestParam(value = "brand") JSONObject brand, @RequestParam(value = "logo") @Nullable MultipartFile file) throws IOException {
         String idValidateString = this.brandValidator.validateId(brandId);
 
@@ -95,6 +101,7 @@ public class BrandController {
 
     @DeleteMapping(ApiConstant.getOneBrand)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService delete(@PathVariable String brandId) throws IOException {
         String idValidateString = this.brandValidator.validateId(brandId);
 

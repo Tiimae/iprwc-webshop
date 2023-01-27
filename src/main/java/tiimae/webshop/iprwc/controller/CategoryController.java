@@ -3,6 +3,7 @@ package tiimae.webshop.iprwc.controller;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,9 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import tiimae.webshop.iprwc.DAO.CategoryDAO;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
+import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.mapper.CategoryMapper;
 import tiimae.webshop.iprwc.models.Category;
-import tiimae.webshop.iprwc.service.ApiResponseService;
+import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.CategoryValidator;
 
 @RestController
@@ -54,6 +56,7 @@ public class CategoryController {
 
     @PostMapping(ApiConstant.getAllCategories)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService post(@RequestBody CategoryDTO categoryDTO) {
         final String validate = this.categoryValidator.validateDTO(categoryDTO);
 
@@ -68,7 +71,7 @@ public class CategoryController {
 
     @PutMapping(ApiConstant.getOneCategories)
     @ResponseBody
-    @CrossOrigin
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService put(@PathVariable String categoryId, @RequestBody CategoryDTO categoryDTO) {
         final String validate = this.categoryValidator.validateDTO(categoryDTO);
 
@@ -87,7 +90,7 @@ public class CategoryController {
 
     @DeleteMapping(ApiConstant.getOneCategories)
     @ResponseBody
-    @CrossOrigin
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService delete(@PathVariable String categoryId) {
         final String validateId = this.categoryValidator.validateId(categoryId);
 

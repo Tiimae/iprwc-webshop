@@ -1,11 +1,13 @@
 package tiimae.webshop.iprwc.controller;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DAO.SupplierDAO;
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
-import tiimae.webshop.iprwc.service.ApiResponseService;
+import tiimae.webshop.iprwc.constants.RoleEnum;
+import tiimae.webshop.iprwc.service.response.ApiResponseService;
 
 import java.util.UUID;
 
@@ -32,18 +34,21 @@ public class SupplierController {
 
     @PostMapping(ApiConstant.getAllSupplier)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService post(@RequestBody SupplierDTO supplierDTO) {
         return new ApiResponseService(HttpStatus.CREATED, this.supplierDAO.create(supplierDTO));
     }
 
     @PutMapping(ApiConstant.getOneSupplier)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService put(@PathVariable UUID supplierId, @RequestBody SupplierDTO supplierDTO) {
         return new ApiResponseService(HttpStatus.CREATED, this.supplierDAO.put(supplierId, supplierDTO));
     }
 
     @DeleteMapping(ApiConstant.getOneSupplier)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService delete(@PathVariable UUID supplierId) {
         this.supplierDAO.delete(supplierId);
         return new ApiResponseService(HttpStatus.ACCEPTED, "Supplier has been deleted!");

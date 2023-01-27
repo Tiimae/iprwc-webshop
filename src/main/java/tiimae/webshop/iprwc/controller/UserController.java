@@ -4,17 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
+import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.mapper.UserMapper;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
-import tiimae.webshop.iprwc.service.ApiResponseService;
-import tiimae.webshop.iprwc.service.PasswordGeneratorService;
+import tiimae.webshop.iprwc.service.response.ApiResponseService;
+import tiimae.webshop.iprwc.service.auth.PasswordGeneratorService;
 
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +41,7 @@ public class UserController {
 
     @GetMapping(ApiConstant.getOneUser)
     @ResponseBody
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     public ApiResponseService get(@PathVariable UUID userId) {
         final Optional<User> user = this.userDAO.getUser(userId);
 
@@ -59,6 +60,7 @@ public class UserController {
 
     @GetMapping(ApiConstant.getOneUserWithRole)
     @ResponseBody
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     public ApiResponseService getWithRoles(@PathVariable UUID userId) {
         final Optional<User> user = this.userDAO.getUser(userId);
 
@@ -80,6 +82,7 @@ public class UserController {
 
     @GetMapping(ApiConstant.getUsersWithRoles)
     @ResponseBody
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     public ApiResponseService getUsersWithRoles() {
         final List<User> allUsers = this.userDAO.getAllUsers();
 
@@ -98,7 +101,7 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    @CrossOrigin
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService create(@RequestBody UserDTO userDTO) {
 
         final String password = passwordGeneratorService.generateNewPassword();
@@ -119,7 +122,7 @@ public class UserController {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     @ResponseBody
-    @CrossOrigin
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     public ApiResponseService update(@PathVariable UUID userId, @RequestBody UserDTO userDTO) {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(userId, userDTO));
     }
@@ -128,7 +131,7 @@ public class UserController {
             value = ApiConstant.getOneUser
     )
     @ResponseBody
-    @CrossOrigin
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService delete(@PathVariable UUID userId) {
 
         this.userDAO.delete(userId);

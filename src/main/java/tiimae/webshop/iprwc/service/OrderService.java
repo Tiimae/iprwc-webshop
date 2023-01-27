@@ -1,12 +1,12 @@
 package tiimae.webshop.iprwc.service;
 
-import org.springframework.stereotype.Component;
+import java.sql.Date;
+
+import org.springframework.stereotype.Service;
+
 import tiimae.webshop.iprwc.DTO.OrderDTO;
 
-import java.sql.Date;
-import java.util.UUID;
-
-@Component
+@Service
 public class OrderService {
 
     public OrderDTO toDTO(String invoiceId, String deliveryId, String userId, String[] productIds) {

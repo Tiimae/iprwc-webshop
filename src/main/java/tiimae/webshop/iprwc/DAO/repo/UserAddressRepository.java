@@ -1,13 +1,16 @@
 package tiimae.webshop.iprwc.DAO.repo;
 
+import java.util.UUID;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
 import tiimae.webshop.iprwc.models.UserAddress;
 
-import java.util.UUID;
-
+@Repository
 public interface UserAddressRepository extends JpaRepository<UserAddress, UUID> {
     @Transactional
     @Modifying

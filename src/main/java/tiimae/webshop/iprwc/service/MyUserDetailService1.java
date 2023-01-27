@@ -14,7 +14,7 @@ import tiimae.webshop.iprwc.models.User;
 import java.util.*;
 
 @Component
-public class MyUserDetailService implements UserDetailsService {
+public class MyUserDetailService1 implements UserDetailsService {
     @Autowired
     private UserRepository userRepo;
 

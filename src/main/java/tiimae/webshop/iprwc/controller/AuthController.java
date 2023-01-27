@@ -1,5 +1,24 @@
 package tiimae.webshop.iprwc.controller;
 
+import java.io.IOException;
+import java.security.Principal;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Random;
+import java.util.UUID;
+
+import javax.naming.AuthenticationException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -10,8 +29,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
+
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DAO.VerifyTokenDAO;
 import tiimae.webshop.iprwc.DAO.repo.RoleRepository;
@@ -21,24 +47,14 @@ import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.UserMapper;
-import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.VerifyToken;
-import tiimae.webshop.iprwc.security.util.JWTUtil;
-import tiimae.webshop.iprwc.service.ApiResponseService;
+import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.service.EmailService;
 import tiimae.webshop.iprwc.service.EncryptionService;
-
-import javax.naming.AuthenticationException;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.security.Principal;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.*;
+import tiimae.webshop.iprwc.service.auth.LoginService;
+import tiimae.webshop.iprwc.util.JWTUtil;
+import tiimae.webshop.iprwc.validators.AuthValidator;
 
 @RestController
 @RequestMapping(
@@ -48,17 +64,28 @@ import java.util.*;
 )
 public class AuthController {
 
+    @Autowired
     private UserRepository userRepo;
-    @Autowired private JWTUtil jwtUtil;
-    @Autowired private AuthenticationManager authManager;
-    @Autowired private PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
+    @Autowired
+    private JWTUtil jwtUtil;
+    @Autowired
+    private AuthenticationManager authManager;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private UserMapper userMapper;
+    @Autowired
     private RoleRepository roleRepository;
-
+    @Autowired
     private EmailService emailService;
+    @Autowired
     private VerifyTokenDAO verifyTokenDAO;
-
+    @Autowired
     private UserDAO userDAO;
+    @Autowired
+    private AuthValidator authValidator;
+    @Autowired
+    private LoginService loginService;
 
     @Value("${jwt_secret}")
     private String jwtSecret;
@@ -68,51 +95,28 @@ public class AuthController {
     @Value("${shared_secret}")
     private String sharedSecret;
 
-    public AuthController(UserMapper userMapper, UserRepository userRepo, RoleRepository roleRepository, EmailService emailService, VerifyTokenDAO verifyTokenDAO, UserDAO userDAO){
-        this.userMapper = userMapper;
-        this.userRepo = userRepo;
-        this.roleRepository = roleRepository;
-        this.emailService = emailService;
-        this.verifyTokenDAO = verifyTokenDAO;
-        this.userDAO = userDAO;
-    }
-
     @PostMapping(value = ApiConstant.register)
     @ResponseBody
-    public ApiResponseService register(@Valid @RequestBody UserDTO user, @RequestParam(required = false) boolean encrypted ) throws EntryNotFoundException {
+    public ApiResponseService register(@Valid @RequestBody UserDTO user, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException {
         user.setVerified(false);
         user.setResetRequired(false);
+        String password = encrypted ? EncryptionService.decryptAes(user.getPassword(), sharedSecret) : user.getPassword();
 
-        Optional<User> foundUser = userRepo.findByEmail(user.getEmail());
-        if (foundUser.isPresent()) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, "Something went Wrong!");
+        String validation = this.authValidator.registerValidation(user.getEmail(), password);
+
+        if (validation != null) {
+            return new ApiResponseService(HttpStatus.BAD_REQUEST, validation);
         }
 
-        String encodedPass = passwordEncoder.encode(
-                encrypted
-                        ? EncryptionService.decryptAes(user.getPassword(), sharedSecret)
-                        : user.getPassword()
-        );
-        
+        String encodedPass = passwordEncoder.encode(password);
+
         user.setPassword(encodedPass);
         User newUser = userMapper.toUser(user);
         newUser.addRole(this.roleRepository.findByName("User").get());
 
         newUser = userRepo.save(newUser);
 
-        final ArrayList<String> roles = new ArrayList<>();
-        for (Role role : newUser.getRoles()) {
-            roles.add(role.getName());
-        }
-
-        String jwtToken = this.jwtUtil.generateToken(newUser.getId(), newUser.getEmail(), roles);
-
-        final HashMap<String, String> newUserData = new HashMap<>();
-        newUserData.put("jwtToken", jwtToken);
-        newUserData.put("userId", String.valueOf(newUser.getId()));
-        newUserData.put("destination", "to-cookie");
-
-        return new ApiResponseService<>(HttpStatus.ACCEPTED, newUserData);
+        return new ApiResponseService<>(HttpStatus.ACCEPTED, "User has been registered");
     }
 
     @PostMapping(value = ApiConstant.login)
@@ -120,12 +124,11 @@ public class AuthController {
     public ApiResponseService login(@RequestBody LoginDTO user, @RequestParam(required = false) boolean encrypted) throws AuthenticationException, IOException {
         final HashMap<String, String> res = new HashMap<>();
 
-        if(encrypted){
+        if (encrypted) {
             user.setPassword(EncryptionService.decryptAes(user.getPassword(), sharedSecret));
         }
 
-        UsernamePasswordAuthenticationToken authInputToken =
-                new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        UsernamePasswordAuthenticationToken authInputToken = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
 
         try {
             authManager.authenticate(authInputToken);
@@ -141,25 +144,14 @@ public class AuthController {
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
 
-        if(foundUser.get().getReset_required() == null || foundUser.get().getReset_required()){
-            this.forgotPassword(foundUser.get().getEmail());
-            res.put("message", "Because of security, you are required to change your password. We've sent a link to your email to change your password.");
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
-        }
+        this.loginService.generateTokens(foundUser.get());
 
-        final ArrayList<String> roles = new ArrayList<>();
-        for (Role role : foundUser.get().getRoles()) {
-            roles.add(role.getName());
-        }
-
-        String token = jwtUtil.generateToken(foundUser.get().getId(), user.getEmail(), roles);
-
-        res.put("jwtToken", token);
-        res.put("user-id", String.valueOf(foundUser.get().getId()));
+        res.put("jwtToken", foundUser.get().getAccessToken().getValue());
+        res.put("refreshToken", foundUser.get().getRefreshToken().getValue());
         res.put("verified", foundUser.get().getVerified().toString());
         res.put("destination", "to-cookie");
 
-        return new ApiResponseService<>(HttpStatus.ACCEPTED, res);
+        return new ApiResponseService<>(HttpStatus.OK, res);
     }
 
     @GetMapping(value = ApiConstant.toCookie, consumes = MediaType.ALL_VALUE)
@@ -167,23 +159,24 @@ public class AuthController {
 
         model.addAttribute("attribute", "forwardWithForwardPrefix");
         response.addCookie(this.createCookie());
+        System.out.println("Hier");
         return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "", model);
     }
 
     @GetMapping(value = ApiConstant.secret, consumes = MediaType.ALL_VALUE)
     @ResponseBody()
-    public ApiResponseService secret(HttpServletRequest request){
+    public ApiResponseService secret(HttpServletRequest request) {
         String secret = null;
 
-        if(request.getCookies() != null){
-            secret =  Arrays.stream(request.getCookies())
+        if (request.getCookies() != null) {
+            secret = Arrays.stream(request.getCookies())
                     .filter(c -> c.getName().equals("secret"))
                     .findFirst()
                     .map(Cookie::getValue)
                     .orElse(null);
         }
 
-        if(secret == null || secret.isBlank() || secret.isEmpty()){
+        if (secret == null || secret.isBlank() || secret.isEmpty()) {
             return new ApiResponseService(HttpStatus.FORBIDDEN, "You are not authenticated");
         }
 
@@ -199,12 +192,12 @@ public class AuthController {
 
         Optional<User> bearerUser = this.profile(SecurityContextHolder.getContext().getAuthentication()).getPayload();
 
-        if(!bearerUser.isPresent()){
+        if (!bearerUser.isPresent()) {
             res.put("message", "The user you are trying to verify was not found");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
 
-        if(bearerUser.get().getVerified()){
+        if (bearerUser.get().getVerified()) {
             res.put("message", "This user is already verified, cant send a verify token");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
@@ -213,12 +206,12 @@ public class AuthController {
         UUID token = UUID.randomUUID();
         VerifyToken verifyToken = new VerifyToken(token, "email", LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
         this.verifyTokenDAO.saveVerifyToken(verifyToken);
-        
+
         try {
             this.emailService.sendMessage(
                     user.getEmail(),
                     "CGI account verify email",
-                    "<p>Hi " + user.getFirstName() + ", here is your code to verify your email:"+token+"</p>"
+                    "<p>Hi " + user.getFirstName() + ", here is your code to verify your email:" + token + "</p>"
             );
         } catch (Throwable e) {
             System.out.println(e.getMessage());
@@ -237,12 +230,12 @@ public class AuthController {
         Optional<VerifyToken> verifyToken = this.verifyTokenDAO.getToken(token);
 
 
-        if(!bearerUser.isPresent()){
+        if (!bearerUser.isPresent()) {
             res.put("message", "Something went wrong, please try again in a moment");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
 
-        if(!verifyToken.isPresent() || !verifyToken.get().getType().equals("email")){
+        if (!verifyToken.isPresent() || !verifyToken.get().getType().equals("email")) {
             res.put("message", "This token is invalid");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
@@ -250,7 +243,7 @@ public class AuthController {
         UUID bearerUserId = bearerUser.get().getId();
         UUID tokenUserId = verifyToken.get().getUser().getId();
 
-        if(bearerUserId.equals(tokenUserId)){
+        if (bearerUserId.equals(tokenUserId)) {
             try {
                 this.verifyTokenDAO.confirmToken(token);
                 res.put("message", "Successfully confirmed your email. Redirecting you...");
@@ -259,9 +252,7 @@ public class AuthController {
                 res.put("message", e.getMessage());
                 return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
             }
-        }
-
-        else {
+        } else {
             res.put("message", "This token is invalid");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
@@ -274,7 +265,7 @@ public class AuthController {
 
         Optional<User> foundUser = this.userRepo.findByEmail(email);
 
-        if(!foundUser.isPresent()){
+        if (!foundUser.isPresent()) {
             res.put("message", "The user you are trying to reset the password for was not found");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
@@ -293,7 +284,7 @@ public class AuthController {
             this.emailService.sendMessage(
                     user.getEmail(),
                     "Change password",
-                    "<p>Hi " + user.getFirstName() + ", you notified us that you want to change your password. Use this link to change your password: <a href="+url+">Set new password</a></p>"
+                    "<p>Hi " + user.getFirstName() + ", you notified us that you want to change your password. Use this link to change your password: <a href=" + url + ">Set new password</a></p>"
             );
         } catch (Throwable e) {
             System.out.println(e.getMessage());
@@ -311,14 +302,14 @@ public class AuthController {
         Optional<VerifyToken> verifyToken = this.verifyTokenDAO.getToken(token);
         Optional<User> foundUser = this.userRepo.findByEmail(newUser.getEmail());
 
-        if(!verifyToken.isPresent() || !verifyToken.get().getType().equals("password")){
+        if (!verifyToken.isPresent() || !verifyToken.get().getType().equals("password")) {
             res.put("message", "This token is invalid");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
 
         Optional<User> tokenUser = this.userRepo.findById(verifyToken.get().getUser().getId());
 
-        if(!foundUser.isPresent() || !tokenUser.isPresent()){
+        if (!foundUser.isPresent() || !tokenUser.isPresent()) {
             res.put("message", "The user you are trying to reset the password for was not found");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
@@ -326,7 +317,7 @@ public class AuthController {
         UUID foundUserId = foundUser.get().getId();
         UUID tokenUserId = verifyToken.get().getUser().getId();
 
-        if(!foundUserId.equals(tokenUserId)){
+        if (!foundUserId.equals(tokenUserId)) {
             res.put("message", "This token is invalid");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
@@ -361,7 +352,7 @@ public class AuthController {
     }
 
 
-    public String createSecret(){
+    public String createSecret() {
         String randomSecret = Date.from(Instant.now()).toString() + String.valueOf((new Random()).nextInt());
         return EncryptionService.getMd5(randomSecret);
     }
@@ -370,7 +361,7 @@ public class AuthController {
     @ResponseBody
     public ApiResponseService<Optional<User>> profile(Principal securityPrincipal) {
 
-        Optional<User> foundUser =  this.userRepo.findByEmail(securityPrincipal.getName());
+        Optional<User> foundUser = this.userRepo.findByEmail(securityPrincipal.getName());
 
         return new ApiResponseService<>(
                 HttpStatus.ACCEPTED,
@@ -378,7 +369,7 @@ public class AuthController {
         );
     }
 
-    private Cookie createCookie(){
+    private Cookie createCookie() {
         String secret = this.createSecret();
         secret = new EncryptionService().encrypt(secret, jwtSecret);
         Cookie cookie = new Cookie("secret", secret);

@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.ReviewDAO;
 import tiimae.webshop.iprwc.DTO.ReviewDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
-import tiimae.webshop.iprwc.service.ApiResponseService;
+import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.ReviewValidator;
 
 @RestController
