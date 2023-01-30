@@ -1,5 +1,6 @@
 package tiimae.webshop.iprwc.DAO.repo;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +17,6 @@ public interface UserAddressRepository extends JpaRepository<UserAddress, UUID> 
     @Modifying
     @Query("delete from UserAddress t where t.id = ?1")
     void delete(UUID id);
+
+    List<UserAddress> findAllByUserId(UUID userId);
 }

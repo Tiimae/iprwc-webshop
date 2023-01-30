@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.BrandRepository;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.mapper.BrandMapper;
@@ -16,17 +17,12 @@ import tiimae.webshop.iprwc.models.Brand;
 import tiimae.webshop.iprwc.models.Product;
 
 @Component
+@AllArgsConstructor
 public class BrandDAO {
 
     private BrandRepository brandRepository;
     private BrandMapper brandMapper;
     private ImageDAO imageDAO;
-
-    public BrandDAO(BrandRepository brandRepository, @Lazy BrandMapper brandMapper, ImageDAO imageDAO) {
-        this.brandRepository = brandRepository;
-        this.brandMapper = brandMapper;
-        this.imageDAO = imageDAO;
-    }
 
     public Brand getBrand(UUID brandId) {
         return this.brandRepository.findById(brandId).get();

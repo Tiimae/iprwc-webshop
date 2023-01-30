@@ -4,24 +4,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.mapper.UserMapper;
 import tiimae.webshop.iprwc.models.User;
 
 @Component
+@AllArgsConstructor
 public class UserDAO {
 
-    @Autowired private UserRepository userRepository;
-    @Autowired private UserMapper userMapper;
-
-    // public UserDAO(UserRepository userRepository, @Lazy UserMapper userMapper) {
-    //     this.userRepository = userRepository;
-    //     this.userMapper = userMapper;
-    // }
+    private UserRepository userRepository;
+    private UserMapper userMapper;
 
     public Optional<User> getUser(UUID userId) {
         return this.userRepository.findById(userId);

@@ -1,25 +1,23 @@
 package tiimae.webshop.iprwc.DAO;
 
-import kong.unirest.json.JSONObject;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
+
+import kong.unirest.json.JSONObject;
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.OrderProductRepository;
 import tiimae.webshop.iprwc.mapper.OrderProductMapper;
 import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.models.OrderProduct;
 
-import java.util.Optional;
-import java.util.UUID;
-
 @Component
+@AllArgsConstructor
 public class OrderProductDAO {
 
     private OrderProductRepository orderProductRepository;
     private OrderProductMapper orderProductMapper;
-
-    public OrderProductDAO(OrderProductRepository orderProductRepository, OrderProductMapper orderProductMapper) {
-        this.orderProductRepository = orderProductRepository;
-        this.orderProductMapper = orderProductMapper;
-    }
 
     public Optional<OrderProduct> get(UUID id) {
         return this.orderProductRepository.findById(id);

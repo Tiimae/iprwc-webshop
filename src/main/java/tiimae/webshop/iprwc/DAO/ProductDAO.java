@@ -1,28 +1,24 @@
 package tiimae.webshop.iprwc.DAO;
 
-import lombok.val;
-import org.springframework.stereotype.Component;
-import tiimae.webshop.iprwc.DAO.repo.ProductRepository;
-import tiimae.webshop.iprwc.DTO.ProductDTO;
-import tiimae.webshop.iprwc.DTO.UserDTO;
-import tiimae.webshop.iprwc.mapper.ProductMapper;
-import tiimae.webshop.iprwc.models.Product;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+
+import lombok.AllArgsConstructor;
+import tiimae.webshop.iprwc.DAO.repo.ProductRepository;
+import tiimae.webshop.iprwc.DTO.ProductDTO;
+import tiimae.webshop.iprwc.mapper.ProductMapper;
+import tiimae.webshop.iprwc.models.Product;
+
 @Component
+@AllArgsConstructor
 public class ProductDAO {
 
     private ProductRepository productRepository;
 
     private ProductMapper productMapper;
-
-    public ProductDAO(ProductRepository productRepository, ProductMapper productMapper) {
-        this.productRepository = productRepository;
-        this.productMapper = productMapper;
-    }
 
     public Product get(UUID productId) {
         return this.productRepository.findById(productId).get();

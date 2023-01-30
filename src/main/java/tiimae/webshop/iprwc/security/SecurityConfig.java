@@ -63,12 +63,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeHttpRequests()
                 // Public endpoints
                 .antMatchers(HttpMethod.GET, "/api/v1.0/product/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1.0/supplier/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1.0/supplier").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1.0/category/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1.0/brand/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1.0/brand").permitAll()
                 .antMatchers("/api/v1.0/auth/**").permitAll()
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/api/v1.0/to-cookie").permitAll()
+//                .antMatchers("/error").permitAll()
 
                 // Private endpoints
                 .anyRequest().authenticated();

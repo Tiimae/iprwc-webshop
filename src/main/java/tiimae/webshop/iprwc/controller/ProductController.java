@@ -1,10 +1,22 @@
 package tiimae.webshop.iprwc.controller;
 
-import kong.unirest.json.JSONObject;
+import java.io.IOException;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import kong.unirest.json.JSONObject;
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DAO.ProductImageDAO;
 import tiimae.webshop.iprwc.DTO.ProductDTO;
@@ -13,19 +25,12 @@ import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 
-import java.io.IOException;
-import java.util.UUID;
-
 @RestController
+@AllArgsConstructor
 public class ProductController {
 
     private ProductDAO productDAO;
     private ProductImageDAO productImageDAO;
-
-    public ProductController(ProductDAO productDAO, ProductImageDAO productImageDAO) {
-        this.productDAO = productDAO;
-        this.productImageDAO = productImageDAO;
-    }
 
     @GetMapping(ApiConstant.getOneProduct)
     @ResponseBody

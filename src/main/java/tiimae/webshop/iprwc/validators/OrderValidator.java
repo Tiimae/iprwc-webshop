@@ -47,8 +47,8 @@ public class OrderValidator extends Validator {
 
          UUID userId = userAddress.getUser().getId();
 
-         if (userId.equals(UUID.fromString(orderDTO.getUserId()))) {
-            return "The user does not match with this user.";
+         if (!userId.equals(UUID.fromString(orderDTO.getUserId()))) {
+            return "The user does not match with this address.";
          }
       }
 

@@ -1,7 +1,12 @@
 package tiimae.webshop.iprwc.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -16,8 +21,8 @@ import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.Order;
-import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.service.OrderService;
+import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.OrderValidator;
 
 @RestController
@@ -29,9 +34,24 @@ public class OrderController {
     private OrderService orderService;
     private OrderValidator orderValidator;
 
+    @GetMapping(value = ApiConstant.getOrderByUserId)
+    @ResponseBody
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
+    @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
+    public ApiResponseService get(@PathVariable String userId) {
+        final String s = this.orderValidator.checkIfStringIsUUID(userId);
+
+        if (s != null) {
+            return new ApiResponseService(HttpStatus.BAD_REQUEST, s);
+        }
+
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.orderDAO.getByUserId(UUID.fromString(userId)));
+    }
+
     @PostMapping(value = ApiConstant.getAllOrders)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
+    @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService create(
             @RequestParam(value = "invoice") String invoiceId,
             @RequestParam(value = "delivery") String deliveryId,

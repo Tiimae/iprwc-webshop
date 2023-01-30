@@ -1,8 +1,20 @@
 package tiimae.webshop.iprwc.controller;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.UserAddressDAO;
 import tiimae.webshop.iprwc.DTO.UserAddressDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
@@ -10,28 +22,24 @@ import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 
-import java.util.UUID;
-
 @RestController
+@AllArgsConstructor
 public class UserAddressController {
     private UserAddressDAO userAddressDAO;
-
-    public UserAddressController(UserAddressDAO userAddressDAO) {
-        this.userAddressDAO = userAddressDAO;
-    }
 
     @GetMapping(value = ApiConstant.getOneUserAddress)
     @ResponseBody
     @Secured(RoleEnum.User.CODENAME)
-    public ApiResponseService get(UUID userAddressId) {
-        return new ApiResponseService(HttpStatus.ACCEPTED, "");
+    public ApiResponseService get(@PathVariable UUID userAddressId) {
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.userAddressDAO.get(userAddressId).get());
     }
 
-    @GetMapping(value = ApiConstant.getAllUserAddresses)
+    @GetMapping(value = ApiConstant.getAllUserAddressesByUser)
     @ResponseBody
     @Secured(RoleEnum.User.CODENAME)
-    public ApiResponseService getAll() {
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.userAddressDAO.getAll());
+    @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
+    public ApiResponseService getByUserId(@PathVariable UUID userId) {
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.userAddressDAO.getByUserId(userId));
     }
 
     @PostMapping(value = ApiConstant.getAllUserAddresses)

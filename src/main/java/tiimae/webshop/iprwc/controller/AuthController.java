@@ -159,7 +159,6 @@ public class AuthController {
 
         model.addAttribute("attribute", "forwardWithForwardPrefix");
         response.addCookie(this.createCookie());
-        System.out.println("Hier");
         return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "", model);
     }
 

@@ -1,13 +1,11 @@
 package tiimae.webshop.iprwc.DTO;
 
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.UUID;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -26,7 +24,7 @@ public class UserDTO {
     private Boolean resetRequired;
 
     private UUID[] orderIds;
-    private UUID[] roleIds;
+    private String[] roleIds;
     private UUID[] userAddressIds;
 
 }

@@ -1,29 +1,31 @@
 package tiimae.webshop.iprwc.DAO;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
+
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.UserAddressRepository;
 import tiimae.webshop.iprwc.DTO.UserAddressDTO;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.UserAddressMapper;
 import tiimae.webshop.iprwc.models.UserAddress;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 @Component
+@AllArgsConstructor
 public class UserAddressDAO {
 
     private UserAddressRepository userAddressRepository;
     private UserAddressMapper userAddressMapper;
 
-    public UserAddressDAO(UserAddressRepository userAddressRepository, UserAddressMapper userAddressMapper) {
-        this.userAddressRepository = userAddressRepository;
-        this.userAddressMapper = userAddressMapper;
-    }
-
     public Optional<UserAddress> get(UUID id) {
         return this.userAddressRepository.findById(id);
+    }
+
+    public List<UserAddress> getByUserId(UUID userId) {
+        return this.userAddressRepository.findAllByUserId(userId);
     }
 
     public List<UserAddress> getAll() {

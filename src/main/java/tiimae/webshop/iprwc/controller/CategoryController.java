@@ -4,7 +4,6 @@ import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.CategoryDAO;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
@@ -24,17 +24,12 @@ import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.CategoryValidator;
 
 @RestController
+@AllArgsConstructor
 public class CategoryController {
 
     private CategoryDAO categoryDAO;
     private CategoryMapper categoryMapper;
     private CategoryValidator categoryValidator;
-
-    public CategoryController(CategoryDAO categoryDAO, CategoryMapper categoryMapper, CategoryValidator categoryValidator) {
-        this.categoryDAO = categoryDAO;
-        this.categoryMapper = categoryMapper;
-        this.categoryValidator = categoryValidator;
-    }
 
     @GetMapping(ApiConstant.getOneCategories)
     @ResponseBody

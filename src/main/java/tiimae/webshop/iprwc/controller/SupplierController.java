@@ -3,6 +3,8 @@ package tiimae.webshop.iprwc.controller;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.SupplierDAO;
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
@@ -12,13 +14,10 @@ import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import java.util.UUID;
 
 @RestController
+@AllArgsConstructor
 public class SupplierController {
 
     private SupplierDAO supplierDAO;
-
-    public SupplierController(SupplierDAO supplierDAO) {
-        this.supplierDAO = supplierDAO;
-    }
 
     @GetMapping(ApiConstant.getOneSupplier)
     @ResponseBody

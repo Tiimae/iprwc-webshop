@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import kong.unirest.json.JSONObject;
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.BrandDAO;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
@@ -27,15 +28,11 @@ import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.BrandValidator;
 
 @RestController
+@AllArgsConstructor
 public class BrandController {
 
     private BrandDAO brandDAO;
     private BrandValidator brandValidator;
-
-    public BrandController(BrandDAO brandDAO, BrandValidator brandValidator) {
-        this.brandDAO = brandDAO;
-        this.brandValidator = brandValidator;
-    }
 
     @GetMapping(ApiConstant.getOneBrand)
     @ResponseBody
@@ -52,11 +49,8 @@ public class BrandController {
 
     @GetMapping(ApiConstant.getAllBrands)
     @ResponseBody
-    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     public ApiResponseService getAll() throws IOException {
-        final List<Brand> all = this.brandDAO.getAll();
-
-        return new ApiResponseService(HttpStatus.ACCEPTED, all);
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.getAll());
     }
 
     @PostMapping(ApiConstant.getAllBrands)
@@ -82,7 +76,11 @@ public class BrandController {
     @PutMapping(value = ApiConstant.getOneBrand)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService put(@PathVariable String brandId, @RequestParam(value = "brand") JSONObject brand, @RequestParam(value = "logo") @Nullable MultipartFile file) throws IOException {
+    public ApiResponseService put(
+        @PathVariable String brandId, 
+        @RequestParam(value = "brand") JSONObject brand,
+        @RequestParam(value = "logo") @Nullable MultipartFile file
+    ) throws IOException {
         String idValidateString = this.brandValidator.validateId(brandId);
 
         if (idValidateString == null) {
