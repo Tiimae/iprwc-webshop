@@ -3,13 +3,14 @@ package tiimae.webshop.iprwc.DTO;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class CategoryDTO {
 
+    @NotNull(message = "Category name can't be empty")
     String categoryName;
-    UUID[] productIds;
 
+    String[] productIds;
 }

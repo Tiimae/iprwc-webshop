@@ -4,16 +4,17 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.sql.Date;
-import java.util.UUID;
+
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class OrderDTO {
-
+    
     private String orderId;
     private Date orderDate;
-    private UUID userId;
-    private UUID[] productIds;
-    private UUID[] addressIds;
+    private String userId;
+    private String[] productIds;
+    private String[] addressIds;
 
 }

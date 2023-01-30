@@ -1,19 +1,21 @@
 package tiimae.webshop.iprwc.DTO;
 
+import javax.validation.constraints.NotNull;
+
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.UUID;
 
 @Getter
 @Setter
 public class BrandDTO {
 
+    @NotNull(message = "Brand name can't be empty!")
     private String brandName;
+
+    @NotNull(message = "Website url can't be empty!")
     private String webPage;
     private String logo;
 
-    private UUID[] productIds;
+    private String[] productIds;
 
 }

@@ -1,15 +1,15 @@
 package tiimae.webshop.iprwc.service;
 
-import org.springframework.stereotype.Component;
+import java.sql.Date;
+
+import org.springframework.stereotype.Service;
+
 import tiimae.webshop.iprwc.DTO.OrderDTO;
 
-import java.sql.Date;
-import java.util.UUID;
-
-@Component
+@Service
 public class OrderService {
 
-    public OrderDTO toDTO(UUID invoiceId, UUID deliveryId, UUID userId, UUID[] productIds) {
+    public OrderDTO toDTO(String invoiceId, String deliveryId, String userId, String[] productIds) {
 
         long millis = System.currentTimeMillis();
 
@@ -20,7 +20,7 @@ public class OrderService {
         orderDTO.setOrderId(String.valueOf(millis));
         orderDTO.setUserId(userId);
         orderDTO.setProductIds(productIds);
-        orderDTO.setAddressIds(new UUID[]{invoiceId, deliveryId});
+        orderDTO.setAddressIds(new String[]{invoiceId, deliveryId});
 
         return orderDTO;
 

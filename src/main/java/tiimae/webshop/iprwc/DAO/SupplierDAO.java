@@ -1,27 +1,25 @@
 package tiimae.webshop.iprwc.DAO;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
+
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.SupplierRepository;
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
 import tiimae.webshop.iprwc.mapper.SupplierMapper;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.Supplier;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 @Component
+@AllArgsConstructor
 public class SupplierDAO {
 
     private SupplierRepository supplierRepository;
 
     private SupplierMapper supplierMapper;
-
-    public SupplierDAO(SupplierRepository supplierRepository, SupplierMapper supplierMapper) {
-        this.supplierRepository = supplierRepository;
-        this.supplierMapper = supplierMapper;
-    }
 
     public Supplier get(UUID supplierId) {
         return this.supplierRepository.findById(supplierId).get();

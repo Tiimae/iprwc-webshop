@@ -1,21 +1,26 @@
 package tiimae.webshop.iprwc.models;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.sun.istack.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import javax.persistence.*;
+
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.sun.istack.NotNull;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Setter
 @Getter
 @Entity
 @Table(name = "\"user\"")
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(generator = "uuid2", strategy = GenerationType.TABLE)
@@ -61,7 +66,21 @@ public class User {
     )
     private Set<Role> roles = new HashSet<>();
 
-    public User() { }
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "verification_token", referencedColumnName = "id")
+    private Token verificationToken;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "access_token", referencedColumnName = "id")
+    private Token accessToken;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "refresh_token", referencedColumnName = "id")
+    private Token refreshToken;
+
+    public User (UUID id) {
+        this.id = id;
+    }
 
     public User(String firstName, String middleName, String lastName, String email, String password, boolean verified, boolean reset_required, Set<UserAddress> addresses, Set<Order> orders, Set<Role> roles) {
         this.firstName = firstName;

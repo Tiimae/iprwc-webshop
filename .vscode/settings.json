@@ -1,0 +1,19 @@
+{
+	"java.compile.nullAnalysis.mode": "automatic",
+	"editor.fontSize": 16,
+	"window.zoomLevel": 0,
+	"[css]": {
+		"editor.suggest.insertMode": "replace"
+	},
+	"editor.tabSize": 3,
+	"editor.codeActionsOnSave": {
+		"source.fixAll": true,
+		"source.organizeImports": true
+	},
+	"prettier.useTabs": true,
+	"editor.mouseWheelZoom": true,
+	"editor.minimap.enabled": true,
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"java.configuration.updateBuildConfiguration": "interactive"
+}

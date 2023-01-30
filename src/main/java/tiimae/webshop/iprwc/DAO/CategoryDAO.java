@@ -27,6 +27,10 @@ public class CategoryDAO {
         return this.categoryRepository.findById(id).get();
     }
 
+    public Optional<Category> getByName(String categoryName) {
+        return this.categoryRepository.findByCategoryName(categoryName);
+    }
+
     public List<Category> allCategories() {
         return this.categoryRepository.findAll();
     }

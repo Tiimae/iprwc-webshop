@@ -1,13 +1,13 @@
 package tiimae.webshop.iprwc.mapper;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
+
 import tiimae.webshop.iprwc.DAO.ProductDAO;
-import tiimae.webshop.iprwc.DAO.repo.ProductRepository;
 import tiimae.webshop.iprwc.DTO.ReviewDTO;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.Review;
-
-import java.util.UUID;
 
 @Component
 public class ReviewMapper {
@@ -19,7 +19,7 @@ public class ReviewMapper {
     }
 
     public Review toReview(ReviewDTO reviewDTO) {
-        return new Review((long) reviewDTO.getStars(), reviewDTO.getDescription(), this.getProduct(reviewDTO.getProductId()));
+        return new Review((long) reviewDTO.getStars(), reviewDTO.getDescription(), this.getProduct(UUID.fromString(reviewDTO.getProductId())));
     }
 
     public Product getProduct(UUID id) {

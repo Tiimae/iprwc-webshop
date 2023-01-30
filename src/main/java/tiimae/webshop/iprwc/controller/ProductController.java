@@ -1,29 +1,36 @@
 package tiimae.webshop.iprwc.controller;
 
-import kong.unirest.json.JSONObject;
+import java.io.IOException;
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import kong.unirest.json.JSONObject;
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DAO.ProductImageDAO;
 import tiimae.webshop.iprwc.DTO.ProductDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
+import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.models.Product;
-import tiimae.webshop.iprwc.service.ApiResponseService;
-
-import java.io.IOException;
-import java.util.UUID;
+import tiimae.webshop.iprwc.service.response.ApiResponseService;
 
 @RestController
+@AllArgsConstructor
 public class ProductController {
 
     private ProductDAO productDAO;
     private ProductImageDAO productImageDAO;
-
-    public ProductController(ProductDAO productDAO, ProductImageDAO productImageDAO) {
-        this.productDAO = productDAO;
-        this.productImageDAO = productImageDAO;
-    }
 
     @GetMapping(ApiConstant.getOneProduct)
     @ResponseBody
@@ -39,6 +46,7 @@ public class ProductController {
 
     @PostMapping(ApiConstant.getAllProducts)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService post(@RequestParam(value = "product") JSONObject product, @RequestParam(value = "images") MultipartFile[] files) throws IOException {
         final ProductDTO productDTO = new ProductDTO();
         productDTO.setName(product.getString("productName"));
@@ -59,6 +67,7 @@ public class ProductController {
 
     @PutMapping(ApiConstant.getOneProduct)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService put(
             @PathVariable UUID productId,
             @RequestParam(value = "product") JSONObject product,
@@ -73,8 +82,6 @@ public class ProductController {
         productDTO.setCategoryId(UUID.fromString(product.getString("categoryId")));
         productDTO.setSupplierId(UUID.fromString(product.getString("supplierId")));
 
-
-
         final Product update = this.productDAO.update(productId, productDTO);
         this.productImageDAO.update(deletedFiles, files, update);
 
@@ -83,12 +90,14 @@ public class ProductController {
 
     @DeleteMapping(ApiConstant.getOneProduct)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService delete(@PathVariable UUID productId) throws IOException {
         return new ApiResponseService(HttpStatus.FOUND, this.productDAO.delete(productId));
     }
 
     @DeleteMapping(ApiConstant.restoreOneProduct)
     @ResponseBody
+    @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService restore(@PathVariable UUID productId) throws IOException {
         return new ApiResponseService(HttpStatus.FOUND, this.productDAO.restore(productId));
     }

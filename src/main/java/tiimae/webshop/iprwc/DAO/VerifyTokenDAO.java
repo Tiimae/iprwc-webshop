@@ -1,23 +1,21 @@
 package tiimae.webshop.iprwc.DAO;
 
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-import tiimae.webshop.iprwc.DAO.repo.VerifyTokenRepository;
-import tiimae.webshop.iprwc.models.VerifyToken;
-
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
+import lombok.AllArgsConstructor;
+import tiimae.webshop.iprwc.DAO.repo.VerifyTokenRepository;
+import tiimae.webshop.iprwc.models.VerifyToken;
+
 @Component
+@AllArgsConstructor
 public class VerifyTokenDAO {
     private final VerifyTokenRepository verifyTokenRepository;
     private UserDAO userDAO;
-
-    public VerifyTokenDAO(VerifyTokenRepository verifyTokenRepository, UserDAO userDAO) {
-        this.verifyTokenRepository = verifyTokenRepository;
-        this.userDAO = userDAO;
-    }
 
     public void saveVerifyToken(VerifyToken token){
         this.verifyTokenRepository.save(token);

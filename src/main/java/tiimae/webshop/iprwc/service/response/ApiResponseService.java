@@ -1,7 +1,8 @@
-package tiimae.webshop.iprwc.service;
+package tiimae.webshop.iprwc.service.response;
+
+import org.springframework.http.HttpStatus;
 
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @Getter
 public class ApiResponseService<Type> {
