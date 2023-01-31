@@ -378,7 +378,8 @@ public class AuthController {
         //expires in 7 days
         cookie.setMaxAge(7 * 24 * 60 * 60);
 //        cookie.set
-        cookie.setDomain("localhost");
+//        cookie.setDomain("localhost");
+        cookie.setDomain("timdekok.nl");
         return cookie;
     }
 }
