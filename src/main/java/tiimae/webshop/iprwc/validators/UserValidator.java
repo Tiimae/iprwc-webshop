@@ -23,12 +23,18 @@ public class UserValidator extends Validator {
       this.roleDAO = roleDAO;
    }
 
-   public String validateDTO(UserDTO userDTO) {
+   public String validateDTO(UUID id, UserDTO userDTO) {
 
       Optional<User> byEmail = this.userDAO.getByEmail(userDTO.getEmail());
       
       if (!byEmail.isEmpty()) {
-         return "Something went wrong while updating the user";
+         if (id != null) {
+            if (!id.equals(byEmail.get().getId())) {
+               return "Something went wrong while updating the user";
+            }
+         } else {
+            return "Something went wrong while updating the user";
+         }
       }
 
       if (userDTO.getRoleIds().length > 0) {

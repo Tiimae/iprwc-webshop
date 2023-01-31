@@ -45,9 +45,12 @@ public class UserMapper {
         base.setPassword(update.getPassword());
 
         if (update.getRoleIds() != null) {
-            for (Role role : this.getAllRoles(update.getRoleIds())) {
-                if (!base.getRoles().contains(role)) {
-                    base.getRoles().add(role);
+            if (update.getRoleIds().length != 0) {
+                base.getRoles().clear();
+                for (Role role : this.getAllRoles(update.getRoleIds())) {
+                    if (!base.getRoles().contains(role)) {
+                        base.getRoles().add(role);
+                    }
                 }
             }
         }

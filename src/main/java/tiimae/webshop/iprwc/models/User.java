@@ -6,6 +6,7 @@ import java.util.UUID;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -42,20 +43,25 @@ public class User {
     private String email;
 
     @Column(nullable = false, columnDefinition = "TEXT")
+    @JsonIgnore
     private String password;
 
     @NotNull
+    @JsonIgnore
     private Boolean verified;
 
     @NotNull
+    @JsonIgnore
     private Boolean reset_required;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private Set<UserAddress> addresses = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
+    @JsonIgnore
     private Set<Order> orders = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)
@@ -68,14 +74,17 @@ public class User {
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "verification_token", referencedColumnName = "id")
+    @JsonIgnore
     private Token verificationToken;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "access_token", referencedColumnName = "id")
+    @JsonIgnore
     private Token accessToken;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "refresh_token", referencedColumnName = "id")
+    @JsonIgnore
     private Token refreshToken;
 
     public User (UUID id) {

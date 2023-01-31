@@ -23,7 +23,6 @@ public class EndpointValidator {
     private UserDAO userDAO;
 
     public Boolean ensureUserAccessWithOpenEndpoint(String userid, String email) throws AccessDeniedException, EntryNotFoundException {
-
         UUID id = UUID.fromString(userid);
 
         Optional<tiimae.webshop.iprwc.models.User> user = this.userDAO.getByEmail(email);

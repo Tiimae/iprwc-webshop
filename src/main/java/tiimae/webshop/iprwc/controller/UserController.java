@@ -53,11 +53,6 @@ public class UserController {
 
         final User user1 = user.get();
         user1.getRoles().clear();
-        user1.getOrders().clear();
-        user1.getAddresses().clear();
-        user1.setAccessToken(null);
-        user1.setRefreshToken(null);
-        user1.setPassword("");
 
         return new ApiResponseService<>(HttpStatus.FOUND, user1);
     }
@@ -74,11 +69,6 @@ public class UserController {
         }
 
         final User user1 = user.get();
-        user1.getOrders().clear();
-        user1.getAddresses().clear();
-        user1.setPassword("");
-        user1.setAccessToken(null);
-        user1.setRefreshToken(null);
 
         for (Role role: user1.getRoles()) {
             role.getUsers().clear();
@@ -90,14 +80,8 @@ public class UserController {
     @GetMapping(ApiConstant.getUsersWithRoles)
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
-    @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService getUsersWithRoles() {
         final List<User> allUsers = this.userDAO.getAllUsers();
-
-        for (User user : allUsers) {
-//            user.getOrders().clear();
-            user.setPassword("");
-        }
 
         return new ApiResponseService<>(HttpStatus.OK, allUsers);
     }
@@ -113,10 +97,10 @@ public class UserController {
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService create(@RequestBody UserDTO userDTO) {
 
-        String validateDTO = this.userValidator.validateDTO(userDTO);
-        
+        String validateDTO = this.userValidator.validateDTO(null, userDTO);
+
         if (validateDTO != null) {
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
+            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
         }
 
         final String password = passwordGeneratorService.generateNewPassword();
@@ -142,18 +126,18 @@ public class UserController {
     public ApiResponseService update(@PathVariable String userId, @RequestBody UserDTO userDTO) {
         userDTO.setRoleIds(new String[0]);
 
-        String validateDTO = this.userValidator.validateDTO(userDTO);
-        
-        if (validateDTO != null) {
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
-        }
-
         String validateId = this.userValidator.validateId(userId);
 
         if (validateId != null) {
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateId);
         }
-        
+
+        String validateDTO = this.userValidator.validateDTO(UUID.fromString(userId), userDTO);
+
+        if (validateDTO != null) {
+            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
+        }
+
         return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(UUID.fromString(userId), userDTO));
     }
 
@@ -167,16 +151,16 @@ public class UserController {
     @Secured({RoleEnum.Admin.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService updateAdmin(@PathVariable String userId, @RequestBody UserDTO userDTO) {
-        String validateDTO = this.userValidator.validateDTO(userDTO);
-        
-        if (validateDTO != null) {
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
-        }
-
         String validateId = this.userValidator.validateId(userId);
 
         if (validateId != null) {
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateId);
+        }
+
+        String validateDTO = this.userValidator.validateDTO(UUID.fromString(userId), userDTO);
+        
+        if (validateDTO != null) {
+            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
         }
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(UUID.fromString(userId), userDTO));
