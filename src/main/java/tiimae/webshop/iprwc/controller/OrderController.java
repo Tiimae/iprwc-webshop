@@ -50,7 +50,7 @@ public class OrderController {
 
     @PostMapping(value = ApiConstant.getAllOrders)
     @ResponseBody
-    @Secured(RoleEnum.Admin.CODENAME)
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService create(
             @RequestParam(value = "invoice") String invoiceId,
@@ -58,6 +58,7 @@ public class OrderController {
             @RequestParam(value = "userId") String userId,
             @RequestParam(value = "products") JSONArray productIds
     ) throws EntryNotFoundException {
+        System.out.println("Hier");
         final OrderDTO orderDTO = this.orderService.toDTO(invoiceId, deliveryId, userId, new String[0]);
 
         String validateDTO = this.orderValidator.validateDTO(orderDTO);

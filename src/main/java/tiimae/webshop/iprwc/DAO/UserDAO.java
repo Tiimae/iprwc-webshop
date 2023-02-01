@@ -2,22 +2,34 @@ package tiimae.webshop.iprwc.DAO;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.mapper.UserMapper;
+import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.models.User;
+import tiimae.webshop.iprwc.models.UserAddress;
 
 @Component
-@AllArgsConstructor
 public class UserDAO {
 
     private UserRepository userRepository;
     private UserMapper userMapper;
+    private UserAddressDAO userAddressDAO;
+    private OrderDAO orderDAO;
+
+    public UserDAO(UserRepository userRepository, UserMapper userMapper, @Lazy UserAddressDAO userAddressDAO, @Lazy OrderDAO orderDAO) {
+        this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.userAddressDAO = userAddressDAO;
+        this.orderDAO = orderDAO;
+    }
 
     public Optional<User> getUser(UUID userId) {
         return this.userRepository.findById(userId);
@@ -62,14 +74,14 @@ public class UserDAO {
     }
 
     public void delete(UUID id) {
-        final Optional<User> byId = this.userRepository.findById(id);
+        final Optional<User> user = this.getUser(id);
 
-        if (byId.isEmpty()) {
+        if (user.isEmpty()) {
             return;
         }
 
-        byId.get().getRoles().clear();
-        this.userRepository.delete(byId.get());
+        user.get().setDeleted(true);
+        this.updateByObject(id, user.get());
     }
 
     public int verifyUser(UUID userId) {

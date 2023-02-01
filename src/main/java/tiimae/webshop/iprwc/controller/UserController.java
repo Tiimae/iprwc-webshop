@@ -1,5 +1,6 @@
 package tiimae.webshop.iprwc.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -19,10 +20,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
+import tiimae.webshop.iprwc.DAO.TokenDAO;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
+import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
 import tiimae.webshop.iprwc.mapper.UserMapper;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
@@ -39,6 +42,7 @@ public class UserController {
     private UserMapper userMapper;
     private PasswordGeneratorService passwordGeneratorService;
     private UserValidator userValidator;
+    private TokenDAO tokenDAO;
 
     @GetMapping(ApiConstant.getOneUser)
     @ResponseBody
@@ -48,6 +52,10 @@ public class UserController {
         final Optional<User> user = this.userDAO.getUser(userId);
 
         if (user.isEmpty()) {
+            return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
+        }
+
+        if (user.get().getDeleted()) {
             return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
         }
 
@@ -68,6 +76,10 @@ public class UserController {
             return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
         }
 
+        if (user.get().getDeleted()) {
+            return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
+        }
+
         final User user1 = user.get();
 
         for (Role role: user1.getRoles()) {
@@ -82,8 +94,15 @@ public class UserController {
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     public ApiResponseService getUsersWithRoles() {
         final List<User> allUsers = this.userDAO.getAllUsers();
+        final ArrayList<User> returnUsers = new ArrayList<>();
 
-        return new ApiResponseService<>(HttpStatus.OK, allUsers);
+        for (User user : allUsers) {
+            if (!user.getDeleted()) {
+                returnUsers.add(user);
+            }
+        }
+
+        return new ApiResponseService<>(HttpStatus.OK, returnUsers);
     }
 
     @PostMapping(
@@ -172,7 +191,7 @@ public class UserController {
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService delete(@PathVariable String userId) {
+    public ApiResponseService delete(@PathVariable String userId) throws TokenNotFoundException {
 
         String validateId = this.userValidator.validateId(userId);
 
@@ -180,6 +199,7 @@ public class UserController {
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateId);
         }
 
+        this.tokenDAO.deleteTokensByUserId(UUID.fromString(userId));
         this.userDAO.delete(UUID.fromString(userId));
 
         return new ApiResponseService(HttpStatus.ACCEPTED, "User has been deleted");

@@ -1,5 +1,6 @@
 package tiimae.webshop.iprwc.DAO;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -54,11 +55,22 @@ public class TokenDAO {
     }
 
     @Transactional
-    public void deleteTokensByUserId(UUID id) throws TokenNotFoundException {
+    public void deleteTokensByUserId(UUID id) {
         if (!this.tokenRepository.existsByUserId(id)) {
-            throw new TokenNotFoundException();
+            return;
         }
 
-        this.tokenRepository.deleteByUserId(id);
+        final List<Token> allByUserId = this.tokenRepository.findAllByUserId(id);
+
+        if (allByUserId.size() != 0) {
+            for (Token token : allByUserId) {
+                token.getUser().setRefreshToken(null);
+                token.getUser().setAccessToken(null);
+                token.setUser(null);
+                this.tokenRepository.deleteById(token.getId());
+            }
+        }
+
+        return;
     }
 }

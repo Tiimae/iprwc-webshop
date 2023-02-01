@@ -9,8 +9,10 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.springframework.lang.Nullable;
 
 import javax.persistence.*;
+import javax.validation.constraints.Null;
 import java.sql.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -37,6 +39,7 @@ public class Order {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 //    @JsonIgnoreProperties("orders")
+    @Nullable
     @JsonBackReference
     private User user;
 

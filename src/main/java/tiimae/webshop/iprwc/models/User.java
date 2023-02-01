@@ -54,6 +54,10 @@ public class User {
     @JsonIgnore
     private Boolean reset_required;
 
+    @NotNull
+//    @JsonIgnore
+    private Boolean deleted = false;
+
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     @JsonIgnore

@@ -49,6 +49,7 @@ import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.UserMapper;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.VerifyToken;
+import tiimae.webshop.iprwc.service.SecretService;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.service.EmailService;
 import tiimae.webshop.iprwc.service.EncryptionService;
@@ -86,6 +87,9 @@ public class AuthController {
     private AuthValidator authValidator;
     @Autowired
     private LoginService loginService;
+
+    @Autowired
+    private SecretService secretService;
 
     @Value("${jwt_secret}")
     private String jwtSecret;
@@ -158,22 +162,14 @@ public class AuthController {
     public ModelAndView redirectWithUsingForwardPrefix(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
 
         model.addAttribute("attribute", "forwardWithForwardPrefix");
-        response.addCookie(this.createCookie());
+        response.addCookie(this.secretService.createCookie());
         return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "", model);
     }
 
     @GetMapping(value = ApiConstant.secret, consumes = MediaType.ALL_VALUE)
     @ResponseBody()
     public ApiResponseService secret(HttpServletRequest request) {
-        String secret = null;
-
-        if (request.getCookies() != null) {
-            secret = Arrays.stream(request.getCookies())
-                    .filter(c -> c.getName().equals("secret"))
-                    .findFirst()
-                    .map(Cookie::getValue)
-                    .orElse(null);
-        }
+        String secret = this.secretService.getSecret(request);
 
         if (secret == null || secret.isBlank() || secret.isEmpty()) {
             return new ApiResponseService(HttpStatus.FORBIDDEN, "You are not authenticated");
@@ -350,12 +346,6 @@ public class AuthController {
 
     }
 
-
-    public String createSecret() {
-        String randomSecret = Date.from(Instant.now()).toString() + String.valueOf((new Random()).nextInt());
-        return EncryptionService.getMd5(randomSecret);
-    }
-
     @GetMapping(value = ApiConstant.profile, consumes = MediaType.ALL_VALUE)
     @ResponseBody
     public ApiResponseService<Optional<User>> profile(Principal securityPrincipal) {
@@ -366,20 +356,5 @@ public class AuthController {
                 HttpStatus.ACCEPTED,
                 foundUser
         );
-    }
-
-    private Cookie createCookie() {
-        String secret = this.createSecret();
-        secret = new EncryptionService().encrypt(secret, jwtSecret);
-        Cookie cookie = new Cookie("secret", secret);
-
-        cookie.setHttpOnly(true);
-        cookie.setPath(ApiConstant.secret);
-        //expires in 7 days
-        cookie.setMaxAge(7 * 24 * 60 * 60);
-//        cookie.set
-//        cookie.setDomain("localhost");
-        cookie.setDomain("timdekok.nl");
-        return cookie;
     }
 }
