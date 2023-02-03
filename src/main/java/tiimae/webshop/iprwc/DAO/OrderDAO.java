@@ -1,18 +1,17 @@
 package tiimae.webshop.iprwc.DAO;
 
-import lombok.AllArgsConstructor;
+import java.util.List;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
+
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.OrderProductRepository;
 import tiimae.webshop.iprwc.DAO.repo.OrderRepository;
 import tiimae.webshop.iprwc.DTO.OrderDTO;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.OrderMapper;
 import tiimae.webshop.iprwc.models.Order;
-import tiimae.webshop.iprwc.models.OrderProduct;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @AllArgsConstructor

@@ -1,10 +1,9 @@
 package tiimae.webshop.iprwc.service.auth;
 
-import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.UserDAO;
-import tiimae.webshop.iprwc.mapper.UserMapper;
 import tiimae.webshop.iprwc.models.Token;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.util.JWTUtil;

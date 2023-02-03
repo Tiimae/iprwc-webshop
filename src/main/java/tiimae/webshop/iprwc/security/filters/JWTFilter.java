@@ -27,15 +27,14 @@ public class JWTFilter extends OncePerRequestFilter {
     @SneakyThrows
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = jwtUtil.resolveAccessToken(request);
-
+        String token = this.jwtUtil.resolveAccessToken(request);
         if (token != null && !token.isBlank()) {
             // Validate token
             try {
-                if (jwtUtil.validateAccessToken(token)) {
+                if (this.jwtUtil.validateAccessToken(token)) {
                     if (SecurityContextHolder.getContext().getAuthentication() == null) {
                         try {
-                            Authentication authentication = jwtUtil.getAuthentication(token);
+                            Authentication authentication = this.jwtUtil.getAuthentication(token);
                             SecurityContextHolder.getContext().setAuthentication(authentication);
                         } catch (InvalidTokenException e) {
                             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());

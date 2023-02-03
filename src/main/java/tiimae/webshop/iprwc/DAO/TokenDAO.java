@@ -46,12 +46,18 @@ public class TokenDAO {
         return token.get();
     }
 
-
+    @Transactional
     public void deleteToken(UUID id) throws TokenNotFoundException {
         if (!this.tokenRepository.existsById(id)) {
             throw new TokenNotFoundException();
         }
-        this.tokenRepository.deleteById(id);
+
+        final Token token = this.getToken(id);
+
+        token.getUser().setAccessToken(null);
+        token.getUser().setRefreshToken(null);
+
+        this.tokenRepository.delete(token);
     }
 
     @Transactional

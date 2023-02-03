@@ -1,16 +1,16 @@
 package tiimae.webshop.iprwc.mapper;
 
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
-import tiimae.webshop.iprwc.DAO.UserAddressDAO;
+
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.UserAddressDTO;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.UserAddress;
-
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.UUID;
 
 @Component
 public class UserAddressMapper {

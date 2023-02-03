@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -45,7 +44,6 @@ public class Token {
     private Instant expiresAt;
 
     @OneToOne
-    @JsonIgnore
     private User user;
 
     public Token(UUID id) {

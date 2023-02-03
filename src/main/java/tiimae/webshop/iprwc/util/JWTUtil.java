@@ -7,10 +7,6 @@ import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import tiimae.webshop.iprwc.exception.token.InvalidTokenException;
-import tiimae.webshop.iprwc.exception.token.TokenExpiredException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -22,12 +18,16 @@ import org.springframework.stereotype.Component;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
 import tiimae.webshop.iprwc.DAO.TokenDAO;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.constants.TokenType;
+import tiimae.webshop.iprwc.exception.token.InvalidTokenException;
 import tiimae.webshop.iprwc.exception.token.TokenAlreadyExistsException;
+import tiimae.webshop.iprwc.exception.token.TokenExpiredException;
 import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.Token;
@@ -58,6 +58,10 @@ public class JWTUtil {
 
     public Token generateAccessToken(User user) {
         try {
+             if (!user.getAccessToken().hasExpired()) {
+                 return user.getAccessToken();
+             }
+
             Instant issuedAt = Instant.now();
             Instant expiresAt = issuedAt.plusSeconds(this.accessTokenLifetime);
 
@@ -106,6 +110,10 @@ public class JWTUtil {
     }
 
     public Token generateRefreshToken(User user) {
+         if (!user.getRefreshToken().hasExpired()) {
+             return user.getRefreshToken();
+         }
+
         String value = UUID.randomUUID().toString();
         TokenType type = TokenType.REFRESH_TOKEN;
 
@@ -128,7 +136,6 @@ public class JWTUtil {
 
     public boolean validateExpiration(Token token) throws TokenExpiredException {
         if (token.hasExpired()) {
-            // Delete token from database
             try {
                 this.tokenDAO.deleteToken(token.getId());
             } catch (TokenNotFoundException e) {

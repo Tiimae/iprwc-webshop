@@ -1,15 +1,17 @@
 package tiimae.webshop.iprwc.service;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import tiimae.webshop.iprwc.constants.ApiConstant;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+
+import tiimae.webshop.iprwc.constants.ApiConstant;
 
 @Service
 public class SecretService {

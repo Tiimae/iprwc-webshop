@@ -2,19 +2,15 @@ package tiimae.webshop.iprwc.DAO;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.mapper.UserMapper;
-import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.models.User;
-import tiimae.webshop.iprwc.models.UserAddress;
 
 @Component
 public class UserDAO {

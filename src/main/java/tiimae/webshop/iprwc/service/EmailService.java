@@ -9,27 +9,66 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 @Service
-public class EmailService {
+public class EmailService extends Thread {
 
-    @Autowired
-    private JavaMailSender emailSender;
+    @Autowired private JavaMailSender emailSender;
 
-//    public EmailService(JavaMailSender emailSender) {
-//        this.emailSender = emailSender;
-//    }
+    private String subject;
+    private String to;
+    private String body;
 
-    public void sendMessage(String to, String subject, String body) throws MessagingException {
-        MimeMessage mail = emailSender.createMimeMessage();
+    public void sendMessage() throws MessagingException {
+        MimeMessage mail = this.emailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mail, true);
 
         // rewrite this with a template
-        String text = "<html><head></head><body style=\"display: flex; flex-direction: column; padding: 30px;\"><div style=\"display: flex; flex-direction: column; width: 100%; font-family: sans-serif; text-align: center; \"><h1 style=\"margin: 50px 0 20px 0;\">"+subject+"</h1><hr style=\"border: 1px block solid\"><div style=\"margin: 0;\">"+body +"</div></div></body></html>";
+        String text = "<html>" +
+                "<head>" +
+                "</head>" +
+                "<body style=\"display: flex; flex-direction: column; padding: 30px;\">" +
+                "<div style=\"display: flex; flex-direction: column; width: 100%; font-family: sans-serif; text-align: center; \">" +
+                "<h1 style=\"margin: 50px 0 20px 0;\">" +
+                "" + this.subject + "</h1>" +
+                "<hr style=\"border: 1px block solid\">" +
+                "<div style=\"margin: 0;\">" +
+                "" + this.body + "" +
+                "</div>" +
+                "</div>" +
+                "</body>" +
+                "</html>";
 
         helper.setFrom("de.kok.ac@gmail.com");
-        helper.setTo(to);
-        helper.setSubject(subject);
+        helper.setTo(this.to);
+        helper.setSubject(this.subject);
         helper.setText(text, true);
 
-        emailSender.send(mail);
+        this.emailSender.send(mail);
+    }
+
+    public void run() {
+        try {
+            this.sendMessage();
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void setData(String subject, String to, String body) {
+        this.setBody(body);
+        this.setSubject(subject);
+        this.setTo(to);
+    }
+
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setTo(String to) {
+        this.to = to;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
     }
 }

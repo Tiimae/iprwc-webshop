@@ -1,7 +1,6 @@
 package tiimae.webshop.iprwc.controller;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,6 @@ import tiimae.webshop.iprwc.DAO.BrandDAO;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
-import tiimae.webshop.iprwc.models.Brand;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.BrandValidator;
 

@@ -21,6 +21,7 @@ import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.Order;
+import tiimae.webshop.iprwc.service.EmailService;
 import tiimae.webshop.iprwc.service.OrderService;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.OrderValidator;
@@ -33,6 +34,7 @@ public class OrderController {
     private OrderProductDAO orderProductDAO;
     private OrderService orderService;
     private OrderValidator orderValidator;
+    private EmailService emailService;
 
     @GetMapping(value = ApiConstant.getOrderByUserId)
     @ResponseBody
@@ -58,7 +60,6 @@ public class OrderController {
             @RequestParam(value = "userId") String userId,
             @RequestParam(value = "products") JSONArray productIds
     ) throws EntryNotFoundException {
-        System.out.println("Hier");
         final OrderDTO orderDTO = this.orderService.toDTO(invoiceId, deliveryId, userId, new String[0]);
 
         String validateDTO = this.orderValidator.validateDTO(orderDTO);
@@ -78,6 +79,13 @@ public class OrderController {
         for (int i = 0; i < productIds.length(); i++) {
             this.orderProductDAO.create(productIds.getJSONObject(i), order);
         }
+
+        this.emailService.setData(
+                "Your order by timdekok.nl",
+                order.getUser().getEmail(),
+                this.orderService.generateHtmlForMail(order)
+        );
+        this.emailService.start();
 
         return new ApiResponseService(HttpStatus.CREATED, order);
     }

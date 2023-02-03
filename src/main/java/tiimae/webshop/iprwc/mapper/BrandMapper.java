@@ -1,10 +1,11 @@
 package tiimae.webshop.iprwc.mapper;
 
+import java.util.HashSet;
+
 import org.springframework.stereotype.Component;
+
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.models.Brand;
-
-import java.util.HashSet;
 
 @Component
 public class BrandMapper {

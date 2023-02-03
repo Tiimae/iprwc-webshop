@@ -1,13 +1,14 @@
 package tiimae.webshop.iprwc.mapper;
 
-import kong.unirest.json.JSONObject;
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
+
+import kong.unirest.json.JSONObject;
 import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.models.OrderProduct;
 import tiimae.webshop.iprwc.models.Product;
-
-import java.util.UUID;
 
 @Component
 public class OrderProductMapper {

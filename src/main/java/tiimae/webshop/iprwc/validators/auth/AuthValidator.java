@@ -1,4 +1,4 @@
-package tiimae.webshop.iprwc.validators;
+package tiimae.webshop.iprwc.validators.auth;
 
 import java.util.Optional;
 
@@ -8,6 +8,7 @@ import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.LoginDTO;
 import tiimae.webshop.iprwc.models.User;
+import tiimae.webshop.iprwc.validators.Validator;
 
 @Component
 public class AuthValidator extends Validator {
@@ -43,6 +44,30 @@ public class AuthValidator extends Validator {
    }
 
    public String loginValidation(LoginDTO loginDTO) {
+
+      if (loginDTO.getEmail() == null) {
+         return "The email cannot be null";
+      }
+
+
+      if (loginDTO.getPassword() == null) {
+         return "The password cannot be null";
+      }
+
+      if (!this.VALID_EMAIL_ADDRESS_REGEX.matcher(loginDTO.getEmail()).matches()) {
+         return "The email " + loginDTO.getEmail() + "Is not a valid email address";
+      }
+
+      Optional<User> byEmail = this.userDAO.getByEmail(loginDTO.getEmail());
+
+      if (byEmail.isEmpty()) {
+         return "Something went wrong!";
+      }
+
+      if (byEmail.get().getDeleted()) {
+         return "An error has occured, please try again in a moment";
+      }
+
       return null;
    }
    

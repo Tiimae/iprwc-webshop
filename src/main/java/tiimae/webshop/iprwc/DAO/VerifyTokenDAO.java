@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.VerifyTokenRepository;
+import tiimae.webshop.iprwc.constants.VerifyTokenEnum;
 import tiimae.webshop.iprwc.models.VerifyToken;
 
 @Component
@@ -45,9 +46,9 @@ public class VerifyTokenDAO {
 
         this.setConfirmedAt(token);
 
-        if(verifyToken.getType().equals("email")){
+        if(verifyToken.getType().equals(VerifyTokenEnum.VERIFY.toString())){
             this.userDAO.verifyUser(verifyToken.getUser().getId());
-        } else if(verifyToken.getType().equals("password")) {
+        } else if(verifyToken.getType().equals(VerifyTokenEnum.PASSWORD.toString())) {
             this.userDAO.resetUser(verifyToken.getUser().getId());
         }
 

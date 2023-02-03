@@ -4,12 +4,24 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sun.istack.NotNull;
 
@@ -47,7 +59,6 @@ public class User {
     private String password;
 
     @NotNull
-    @JsonIgnore
     private Boolean verified;
 
     @NotNull
@@ -55,7 +66,6 @@ public class User {
     private Boolean reset_required;
 
     @NotNull
-//    @JsonIgnore
     private Boolean deleted = false;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -75,11 +85,6 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "roleid")
     )
     private Set<Role> roles = new HashSet<>();
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "verification_token", referencedColumnName = "id")
-    @JsonIgnore
-    private Token verificationToken;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "access_token", referencedColumnName = "id")
