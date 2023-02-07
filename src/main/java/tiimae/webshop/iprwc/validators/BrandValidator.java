@@ -20,12 +20,18 @@ public class BrandValidator extends Validator {
         this.brandDAO = brandDAO;
     }
 
-    public String validateDTO(BrandDTO brandDTO) {
+    public String validateDTO(BrandDTO brandDTO, UUID id) {
 
         Optional<Brand> brandByName = this.brandDAO.getBrandByName(brandDTO.getBrandName());
 
-        if (!brandByName.isEmpty()) {
-            return "Brand with name: " + brandDTO.getBrandName() + " already exists!";
+        if (brandByName.isPresent()) {
+            if (id != null) {
+                if (brandByName.get().getId() != id) {
+                    return "Brand with name: " + brandDTO.getBrandName() + " already exists!";
+                }
+            } else {
+                return "Brand with name: " + brandDTO.getBrandName() + " already exists!";
+            }
         }
 
         if (!this.URL_REGEX_PATTERN.matcher(brandDTO.getWebPage()).matches()) {

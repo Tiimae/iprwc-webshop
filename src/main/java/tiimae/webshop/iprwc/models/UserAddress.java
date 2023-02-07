@@ -14,6 +14,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -25,16 +27,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "useraddress")
-public class UserAddress {
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    @Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+public class UserAddress extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String street;
@@ -64,17 +61,4 @@ public class UserAddress {
     @JsonIgnoreProperties("userAddresses")
     private Set<Order> orders = new HashSet<>();
 
-    public UserAddress() { }
-
-    public UserAddress(String street, long houseNumber, String addition, String zipcode, String city, String country, String type, User user, Set<Order> orders) {
-        this.street = street;
-        this.houseNumber = houseNumber;
-        this.addition = addition;
-        this.zipcode = zipcode;
-        this.city = city;
-        this.country = country;
-        this.type = type;
-        this.user = user;
-        this.orders = orders;
-    }
 }

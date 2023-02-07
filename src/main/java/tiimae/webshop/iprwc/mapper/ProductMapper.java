@@ -32,7 +32,7 @@ public class ProductMapper {
         final Category category = this.getCategory(productDTO.getCategoryId());
         final Supplier supplier = this.getSupplier(productDTO.getSupplierId());
 
-        return new Product(productDTO.getName(), productDTO.getDescription(), productDTO.getPrice(), brand, category, supplier, new HashSet<>(), new HashSet<>(), new HashSet<>());
+        return new Product(productDTO.getName(), productDTO.getDescription(), productDTO.getPrice(), brand, category, supplier, new HashSet<>(), new HashSet<>(), new HashSet<>(), false);
     }
 
     public Product mergeProduct(Product base, ProductDTO update) {

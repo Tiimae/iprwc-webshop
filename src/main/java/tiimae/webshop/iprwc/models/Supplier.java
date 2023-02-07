@@ -13,6 +13,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -23,16 +25,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "\"supplier\"")
-public class Supplier {
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    @Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+public class Supplier extends BaseEntity {
 
     @Column(nullable = false, unique = true, columnDefinition = "TEXT")
     private String name;
@@ -53,14 +50,4 @@ public class Supplier {
     @JsonBackReference
     private Set<Product> products = new HashSet<>();
 
-    public Supplier() { }
-
-    public Supplier(String name, String address, String zipcode, String city, String country, Set<Product> products) {
-        this.name = name;
-        this.address = address;
-        this.zipcode = zipcode;
-        this.city = city;
-        this.country = country;
-        this.products = products;
-    }
 }

@@ -27,8 +27,6 @@ public class OrderValidator extends Validator {
       this.userDAO = userDAO;
    }
 
-   
-
    public String validateDTO(OrderDTO orderDTO) {
       for (String addressId : orderDTO.getAddressIds()) {
          String checkIfStringIsUUID = this.checkIfStringIsUUID(addressId);
@@ -40,7 +38,7 @@ public class OrderValidator extends Validator {
          Optional<UserAddress> optional = this.userAddressDAO.get(UUID.fromString(addressId));
       
          if (optional.isEmpty()) {
-            return "The Address with the Id " + addressId + " doesn't exist!";
+            return "The Address with the Id: " + addressId + " doesn't exist!";
          }
 
          UserAddress userAddress = optional.get();
@@ -61,7 +59,7 @@ public class OrderValidator extends Validator {
       Optional<User> user = this.userDAO.getUser(UUID.fromString(orderDTO.getUserId()));
 
       if (user.isEmpty()) {
-         return "The user with the id " + orderDTO.getUserId() + " doesn't exsist";
+         return "The user with the id: " + orderDTO.getUserId() + " doesn't exist";
       }
       
       return null;

@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -31,16 +32,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "\"user\"")
-@NoArgsConstructor
-public class User {
-    @Id
-    @GeneratedValue(generator = "uuid2", strategy = GenerationType.TABLE)
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    @Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+public class User extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String firstName;
@@ -97,32 +93,6 @@ public class User {
     private Token refreshToken;
 
     public User (UUID id) {
-        this.id = id;
-    }
-
-    public User(String firstName, String middleName, String lastName, String email, String password, boolean verified, boolean reset_required, Set<UserAddress> addresses, Set<Order> orders, Set<Role> roles) {
-        this.firstName = firstName;
-        this.middleName = middleName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.reset_required = reset_required;
-        this.verified = verified;
-        this.addresses = addresses;
-        this.orders = orders;
-
-        for (Role role : roles) {
-            this.addRole(role);
-        }
-    }
-
-    public void addRole(Role role) {
-        this.getRoles().add(role);
-        role.getUsers().add(this);
-    }
-
-    public void removeRole(Role role) {
-        this.getRoles().remove(role);
-        role.getUsers().remove(this);
+        this.setId(id);
     }
 }

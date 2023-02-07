@@ -29,7 +29,7 @@ public class ReviewController {
             return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
         }
 
-        return new ApiResponseService(HttpStatus.CREATED, this.reviewDAO.create(reviewDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.reviewDAO.create(reviewDTO));
     }
 
 }

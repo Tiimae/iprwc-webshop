@@ -22,7 +22,7 @@ public class VerifyEmailService {
 
     public String generateVerifyUrl(User user) {
         UUID token = UUID.randomUUID();
-        VerifyToken verifyToken = new VerifyToken(token, VerifyTokenEnum.VERIFY.toString(), LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
+        VerifyToken verifyToken = new VerifyToken(token, VerifyTokenEnum.VERIFY.toString(), LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), null, user);
         this.verifyTokenDAO.saveVerifyToken(verifyToken);
 
         return this.url + "/auth/verify?token=" + token;

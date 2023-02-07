@@ -53,7 +53,7 @@ public class CategoryController {
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService post(@RequestBody CategoryDTO categoryDTO) {
-        final String validate = this.categoryValidator.validateDTO(categoryDTO);
+        final String validate = this.categoryValidator.validateDTO(categoryDTO, null);
 
         if (validate != null) {
             return new ApiResponseService(HttpStatus.BAD_REQUEST, validate);
@@ -61,23 +61,23 @@ public class CategoryController {
 
         final Category category = this.categoryMapper.toCategory(categoryDTO);
 
-        return new ApiResponseService(HttpStatus.CREATED, this.categoryDAO.create(category));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.categoryDAO.create(category));
     }
 
     @PutMapping(ApiConstant.getOneCategories)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService put(@PathVariable String categoryId, @RequestBody CategoryDTO categoryDTO) {
-        final String validate = this.categoryValidator.validateDTO(categoryDTO);
-
-        if (validate != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validate);
-        }
-
         final String validateId = this.categoryValidator.validateId(categoryId);
 
         if (validateId != null) {
             return new ApiResponseService(HttpStatus.BAD_REQUEST, validateId);
+        }
+
+        final String validate = this.categoryValidator.validateDTO(categoryDTO, UUID.fromString(categoryId));
+
+        if (validate != null) {
+            return new ApiResponseService(HttpStatus.BAD_REQUEST, validate);
         }
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.categoryDAO.update(UUID.fromString(categoryId), categoryDTO));

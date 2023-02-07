@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import lombok.Getter;
@@ -18,13 +20,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-public class VerifyToken {
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    private UUID id;
+public class VerifyToken extends BaseEntity {
 
     @Column(nullable = false)
     private UUID token;
@@ -47,13 +46,4 @@ public class VerifyToken {
     )
     private User user;
 
-    public VerifyToken() { }
-
-    public VerifyToken(UUID token, String type, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
-        this.token = token;
-        this.type = type;
-        this.createdAt = createdAt;
-        this.expiresAt = expiresAt;
-        this.user = user;
-    }
 }

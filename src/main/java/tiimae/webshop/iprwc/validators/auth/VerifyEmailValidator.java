@@ -17,9 +17,8 @@ public class VerifyEmailValidator extends Validator {
     }
 
     public String validateIfUserAleadyHasBeenVerified(Optional<User> user) {
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             return "The user you are trying to verify was not found";
-
         }
 
         if (user.get().getVerified()) {
@@ -30,11 +29,11 @@ public class VerifyEmailValidator extends Validator {
     }
 
     public String validateVerifyToken(Optional<User> user, Optional<VerifyToken> verifyToken) {
-        if (!user.isPresent()) {
+        if (user.isEmpty()) {
             return "Something went wrong, please try again in a moment";
         }
 
-        if (!verifyToken.isPresent() || !verifyToken.get().getType().equals(VerifyTokenEnum.VERIFY.toString())) {
+        if (verifyToken.isEmpty() || !verifyToken.get().getType().equals(VerifyTokenEnum.VERIFY.toString())) {
             return "This token is invalid";
         }
 

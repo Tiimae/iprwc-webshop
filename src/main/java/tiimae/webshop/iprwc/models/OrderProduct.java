@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -25,15 +27,10 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "\"orderproduct\"")
-public class OrderProduct {
-
-    @Id
-    @GeneratedValue(generator = "uuid2", strategy = GenerationType.TABLE)
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    @Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+public class OrderProduct extends BaseEntity {
 
     @Column(nullable = false)
     private Long amount;
@@ -50,13 +47,4 @@ public class OrderProduct {
     @JsonIgnoreProperties("orderProducts")
     @JsonManagedReference
     private Product product;
-
-    public OrderProduct() { }
-
-    public OrderProduct(Long amount, String status, Order order, Product product) {
-        this.amount = amount;
-        this.status = status;
-        this.order = order;
-        this.product = product;
-    }
 }

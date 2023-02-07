@@ -15,6 +15,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -27,15 +29,10 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "\"product\"")
-public class Product {
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    @Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+public class Product extends BaseEntity {
 
     @Column(nullable = false, unique = true)
     private String productName;
@@ -72,18 +69,4 @@ public class Product {
 
     @NotNull
     private boolean deleted = false;
-
-    public Product() { }
-
-    public Product(String productName, String description, Float price, Brand brand, Category category, Supplier supplier, Set<ProductImage> images, Set<Review> reviews, Set<OrderProduct> orderProducts) {
-        this.productName = productName;
-        this.description = description;
-        this.price = price;
-        this.brand = brand;
-        this.category = category;
-        this.supplier = supplier;
-        this.productImages = images;
-        this.reviews = reviews;
-        this.orderProducts = orderProducts;
-    }
 }

@@ -27,7 +27,7 @@ public class UserValidator extends Validator {
 
       Optional<User> byEmail = this.userDAO.getByEmail(userDTO.getEmail());
       
-      if (!byEmail.isEmpty()) {
+      if (byEmail.isPresent()) {
          if (id != null) {
             if (!id.equals(byEmail.get().getId())) {
                return "Something went wrong while updating the user";
@@ -37,19 +37,17 @@ public class UserValidator extends Validator {
          }
       }
 
-      if (userDTO.getRoleIds().length > 0) {
-         for (String roleId : userDTO.getRoleIds()) {
-            String checkIfStringIsUUID = this.checkIfStringIsUUID(roleId);
-            
-            if (checkIfStringIsUUID != null) {
-               return checkIfStringIsUUID;
-            }
+      for (String roleId : userDTO.getRoleIds()) {
+         String checkIfStringIsUUID = this.checkIfStringIsUUID(roleId);
 
-            Optional<Role> role = this.roleDAO.getRole(UUID.fromString(roleId));
-         
-            if (role.isEmpty()) {
-               return "De rol met de id: " + roleId + " bestaat niet!";
-            }
+         if (checkIfStringIsUUID != null) {
+            return checkIfStringIsUUID;
+         }
+
+         Optional<Role> role = this.roleDAO.getRole(UUID.fromString(roleId));
+
+         if (role.isEmpty()) {
+            return "De rol met de id: " + roleId + " bestaat niet!";
          }
       }
 

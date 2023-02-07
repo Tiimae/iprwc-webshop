@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -21,16 +23,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "\"productimage\"")
-public class ProductImage {
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    @Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+public class ProductImage extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String imagePath;
@@ -39,10 +36,4 @@ public class ProductImage {
     @JsonBackReference
     private Product product;
 
-    public ProductImage() { }
-
-    public ProductImage(String imagePath, Product product) {
-        this.imagePath = imagePath;
-        this.product = product;
-    }
 }

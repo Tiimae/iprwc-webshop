@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
@@ -23,16 +25,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 @Table(name = "\"role\"")
-public class Role {
-
-    @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    @Type(type="org.hibernate.type.UUIDCharType")
-    private UUID id;
+public class Role extends BaseEntity {
 
     @Column(unique = true, nullable = false, columnDefinition = "TEXT")
     private String name;
@@ -42,23 +39,4 @@ public class Role {
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
-    public Role() { }
-
-    public Role(String name, Set<User> users) {
-        this.name = name;
-
-        for (User user : users) {
-            this.addUser(user);
-        }
-    }
-
-    public void addUser(User user) {
-        this.getUsers().add(user);
-        user.getRoles().add(this);
-    }
-
-    public void removeUser(User user) {
-        this.getUsers().remove(user);
-        user.getRoles().remove(this);
-    }
 }

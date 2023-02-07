@@ -22,6 +22,7 @@ import tiimae.webshop.iprwc.DAO.BrandDAO;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
+import tiimae.webshop.iprwc.models.Brand;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.BrandValidator;
 
@@ -38,7 +39,7 @@ public class BrandController {
     public ApiResponseService get(@PathVariable String brandId) throws IOException {
         String idValidateString = this.brandValidator.validateId(brandId);
 
-        if (idValidateString == null) {
+        if (idValidateString != null) {
             return new ApiResponseService(HttpStatus.BAD_REQUEST, idValidateString);
         }
 
@@ -47,7 +48,7 @@ public class BrandController {
 
     @GetMapping(ApiConstant.getAllBrands)
     @ResponseBody
-    public ApiResponseService getAll() throws IOException {
+    public ApiResponseService getAll() {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.getAll());
     }
 
@@ -61,9 +62,9 @@ public class BrandController {
         brandDTO.setLogo("");
         brandDTO.setWebPage(brand.getString("webPage"));
 
-        String validationString = this.brandValidator.validateDTO(brandDTO);
+        String validationString = this.brandValidator.validateDTO(brandDTO, null);
 
-        if (validationString == null) {
+        if (validationString != null) {
             return new ApiResponseService(HttpStatus.BAD_REQUEST, validationString);
         }
 
@@ -81,7 +82,7 @@ public class BrandController {
     ) throws IOException {
         String idValidateString = this.brandValidator.validateId(brandId);
 
-        if (idValidateString == null) {
+        if (idValidateString != null) {
             return new ApiResponseService(HttpStatus.BAD_REQUEST, idValidateString);
         }
         
@@ -90,6 +91,12 @@ public class BrandController {
         brandDTO.setProductIds(new String[0]);
         brandDTO.setLogo("");
         brandDTO.setWebPage(brand.getString("webPage"));
+
+        final String dtoValidateString = this.brandValidator.validateDTO(brandDTO, UUID.fromString(brandId));
+
+        if (idValidateString != null) {
+            return new ApiResponseService(HttpStatus.BAD_REQUEST, dtoValidateString);
+        }
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.brandDAO.updateBrand(UUID.fromString(brandId), brandDTO, file));
     }
@@ -101,7 +108,7 @@ public class BrandController {
     public ApiResponseService delete(@PathVariable String brandId) throws IOException {
         String idValidateString = this.brandValidator.validateId(brandId);
 
-        if (idValidateString == null) {
+        if (idValidateString != null) {
             return new ApiResponseService(HttpStatus.BAD_REQUEST, idValidateString);
         }
 

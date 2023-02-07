@@ -35,13 +35,13 @@ public class ProductController {
     @GetMapping(ApiConstant.getOneProduct)
     @ResponseBody
     public ApiResponseService get(@PathVariable UUID productId) {
-        return new ApiResponseService(HttpStatus.FOUND, this.productDAO.get(productId));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.productDAO.get(productId));
     }
 
     @GetMapping(ApiConstant.getAllProducts)
     @ResponseBody
     public ApiResponseService getAll() {
-        return new ApiResponseService(HttpStatus.FOUND, this.productDAO.getAll());
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.productDAO.getAll());
     }
 
     @PostMapping(ApiConstant.getAllProducts)
@@ -62,7 +62,7 @@ public class ProductController {
             this.productImageDAO.create(file, newProduct);
         }
 
-        return new ApiResponseService(HttpStatus.FOUND, newProduct);
+        return new ApiResponseService(HttpStatus.ACCEPTED, newProduct);
     }
 
     @PutMapping(ApiConstant.getOneProduct)
@@ -85,20 +85,20 @@ public class ProductController {
         final Product update = this.productDAO.update(productId, productDTO);
         this.productImageDAO.update(deletedFiles, files, update);
 
-        return new ApiResponseService(HttpStatus.FOUND, update);
+        return new ApiResponseService(HttpStatus.ACCEPTED, update);
     }
 
     @DeleteMapping(ApiConstant.getOneProduct)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService delete(@PathVariable UUID productId) throws IOException {
-        return new ApiResponseService(HttpStatus.FOUND, this.productDAO.delete(productId));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.productDAO.delete(productId));
     }
 
     @DeleteMapping(ApiConstant.restoreOneProduct)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService restore(@PathVariable UUID productId) throws IOException {
-        return new ApiResponseService(HttpStatus.FOUND, this.productDAO.restore(productId));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.productDAO.restore(productId));
     }
 }

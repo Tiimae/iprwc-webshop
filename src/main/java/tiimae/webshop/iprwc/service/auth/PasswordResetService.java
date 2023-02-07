@@ -47,7 +47,7 @@ public class PasswordResetService {
 
     public String generatePasswordResetUrl(User user) {
         UUID token = UUID.randomUUID();
-        VerifyToken verifyToken = new VerifyToken(token, VerifyTokenEnum.PASSWORD.toString(), LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), user);
+        VerifyToken verifyToken = new VerifyToken(token, VerifyTokenEnum.PASSWORD.toString(), LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), null, user);
         this.verifyTokenDAO.saveVerifyToken(verifyToken);
 
         return this.url + "/auth/set-new-password?token=" + token;

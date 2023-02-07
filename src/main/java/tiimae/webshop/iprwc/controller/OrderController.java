@@ -87,7 +87,7 @@ public class OrderController {
         );
         this.emailService.start();
 
-        return new ApiResponseService(HttpStatus.CREATED, order);
+        return new ApiResponseService(HttpStatus.ACCEPTED, order);
     }
 
 }

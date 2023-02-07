@@ -39,7 +39,7 @@ public class LoginController extends AuthController {
 
         user.setPassword(encodedPass);
         User newUser = userMapper.toUser(user);
-        newUser.addRole(this.roleRepository.findByName("User").get());
+        newUser.getRoles().add(this.roleRepository.findByName("User").get());
 
         this.userDAO.create(newUser);
 

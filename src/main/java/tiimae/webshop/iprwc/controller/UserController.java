@@ -62,7 +62,7 @@ public class UserController {
         final User user1 = user.get();
         user1.getRoles().clear();
 
-        return new ApiResponseService<>(HttpStatus.FOUND, user1);
+        return new ApiResponseService<>(HttpStatus.ACCEPTED, user1);
     }
 
     @GetMapping(ApiConstant.getOneUserWithRole)
@@ -86,7 +86,7 @@ public class UserController {
             role.getUsers().clear();
         }
 
-        return new ApiResponseService<>(HttpStatus.FOUND, user1);
+        return new ApiResponseService<>(HttpStatus.ACCEPTED, user1);
     }
 
     @GetMapping(ApiConstant.getUsersWithRoles)
@@ -102,7 +102,7 @@ public class UserController {
             }
         }
 
-        return new ApiResponseService<>(HttpStatus.OK, returnUsers);
+        return new ApiResponseService<>(HttpStatus.ACCEPTED, returnUsers);
     }
 
     @PostMapping(

@@ -28,7 +28,7 @@ public class AuthValidator extends Validator {
 
       Optional<User> byEmail = this.userDAO.getByEmail(email);
 
-      if (!byEmail.isEmpty()) {
+      if (byEmail.isPresent()) {
          return "Something went wrong!";
       }
 

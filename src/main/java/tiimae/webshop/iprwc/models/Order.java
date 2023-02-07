@@ -19,6 +19,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.springframework.lang.Nullable;
@@ -32,15 +34,10 @@ import lombok.Setter;
 @Setter
 @Getter
 @Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "\"order\"")
-public class Order {
-
-    @Id
-    @GeneratedValue(generator = "uuid2", strategy = GenerationType.TABLE)
-    @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(255)")
-    @Type(type = "org.hibernate.type.UUIDCharType")
-    private UUID id;
+public class Order extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String orderId;
@@ -49,7 +46,6 @@ public class Order {
     private Date orderDate;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    @JsonIgnoreProperties("orders")
     @Nullable
     @JsonBackReference
     private User user;
@@ -65,15 +61,4 @@ public class Order {
             inverseJoinColumns = @JoinColumn(name = "useraddressid")
     )
     private Set<UserAddress> userAddresses = new HashSet<>();
-
-    public Order() {
-    }
-
-    public Order(String orderId, Date orderDate, User user, Set<OrderProduct> orderProducts, Set<UserAddress> userAddresses) {
-        this.orderId = orderId;
-        this.orderDate = orderDate;
-        this.user = user;
-        this.orderProducts = orderProducts;
-        this.userAddresses = userAddresses;
-    }
 }

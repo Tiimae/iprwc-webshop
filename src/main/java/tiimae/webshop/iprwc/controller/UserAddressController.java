@@ -46,14 +46,14 @@ public class UserAddressController {
     @ResponseBody
     @Secured(RoleEnum.User.CODENAME)
     public ApiResponseService create(@RequestBody UserAddressDTO userAddressDTO) throws EntryNotFoundException {
-        return new ApiResponseService(HttpStatus.CREATED, this.userAddressDAO.create(userAddressDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.userAddressDAO.create(userAddressDTO));
     }
 
     @PutMapping(value = ApiConstant.getOneUserAddress)
     @ResponseBody
     @Secured(RoleEnum.User.CODENAME)
     public ApiResponseService update(@PathVariable UUID userAddressId, @RequestBody UserAddressDTO userAddressDTO) throws EntryNotFoundException {
-        return new ApiResponseService(HttpStatus.CREATED, this.userAddressDAO.update(userAddressId, userAddressDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.userAddressDAO.update(userAddressId, userAddressDTO));
     }
 
     @DeleteMapping(value = ApiConstant.getOneUserAddress)

@@ -29,7 +29,7 @@ public class SupplierController {
     @GetMapping(ApiConstant.getOneSupplier)
     @ResponseBody
     public ApiResponseService get(@PathVariable UUID supplierId) {
-        return new ApiResponseService(HttpStatus.FOUND, this.supplierDAO.get(supplierId));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.supplierDAO.get(supplierId));
     }
 
     @GetMapping(ApiConstant.getAllSupplier)
@@ -42,14 +42,14 @@ public class SupplierController {
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService post(@RequestBody SupplierDTO supplierDTO) {
-        return new ApiResponseService(HttpStatus.CREATED, this.supplierDAO.create(supplierDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.supplierDAO.create(supplierDTO));
     }
 
     @PutMapping(ApiConstant.getOneSupplier)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     public ApiResponseService put(@PathVariable UUID supplierId, @RequestBody SupplierDTO supplierDTO) {
-        return new ApiResponseService(HttpStatus.CREATED, this.supplierDAO.put(supplierId, supplierDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.supplierDAO.put(supplierId, supplierDTO));
     }
 
     @DeleteMapping(ApiConstant.getOneSupplier)

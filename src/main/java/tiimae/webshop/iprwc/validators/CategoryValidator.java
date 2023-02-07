@@ -20,11 +20,17 @@ public class CategoryValidator extends Validator {
         this.categoryDAO = categoryDAO;
     }
 
-    public String validateDTO(CategoryDTO categoryDTO) {
+    public String validateDTO(CategoryDTO categoryDTO, UUID id) {
         final Optional<Category> byName = this.categoryDAO.getByName(categoryDTO.getCategoryName());
 
-        if (!byName.isEmpty()) {
-            return "Category name already exists";
+        if (byName.isPresent()) {
+            if (id != null) {
+                if (byName.get().getId() != id) {
+                    return "Category with the name: " + categoryDTO.getCategoryName() + " already exists";
+                }
+            } else {
+                return "Category with the name: " + categoryDTO.getCategoryName() + " already exists";
+            }
         }
 
         for (String productId : categoryDTO.getProductIds()) {
