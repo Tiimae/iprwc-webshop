@@ -20,6 +20,7 @@ import tiimae.webshop.iprwc.DTO.OrderDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
+import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;
 import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.service.EmailService;
 import tiimae.webshop.iprwc.service.OrderService;
@@ -40,12 +41,8 @@ public class OrderController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService get(@PathVariable String userId) {
-        final String s = this.orderValidator.checkIfStringIsUUID(userId);
-
-        if (s != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, s);
-        }
+    public ApiResponseService get(@PathVariable String userId) throws NotAValidUUIDException {
+        this.orderValidator.checkIfStringIsUUID(userId);
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.orderDAO.getByUserId(UUID.fromString(userId)));
     }
@@ -62,17 +59,17 @@ public class OrderController {
     ) throws EntryNotFoundException {
         final OrderDTO orderDTO = this.orderService.toDTO(invoiceId, deliveryId, userId, new String[0]);
 
-        String validateDTO = this.orderValidator.validateDTO(orderDTO);
+//        String validateDTO = this.orderValidator.validateDTO(orderDTO);
+//
+//        if (validateDTO != null) {
+//            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
+//        }
 
-        if (validateDTO != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
-        }
-
-        String validateOrderProducts = this.orderValidator.validateOrderProducts(productIds);
-
-        if (validateOrderProducts != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateOrderProducts);
-        }
+//        String validateOrderProducts = this.orderValidator.validateOrderProducts(productIds);
+//
+//        if (validateOrderProducts != null) {
+//            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateOrderProducts);
+//        }
 
         final Order order = this.orderDAO.create(orderDTO);
 

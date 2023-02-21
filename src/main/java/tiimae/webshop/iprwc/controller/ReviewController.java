@@ -10,6 +10,9 @@ import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.ReviewDAO;
 import tiimae.webshop.iprwc.DTO.ReviewDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
+import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.ReviewValidator;
 
@@ -22,12 +25,8 @@ public class ReviewController {
 
     @PostMapping(value = ApiConstant.getAllReview)
     @ResponseBody
-    public ApiResponseService post(@RequestBody ReviewDTO reviewDTO) {
-        String validateDTO = this.reviewValidator.validateDTO(reviewDTO);
-
-        if (validateDTO != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
-        }
+    public ApiResponseService post(@RequestBody ReviewDTO reviewDTO) throws NotAValidUUIDException, InvalidDtoException, EntryNotFoundException {
+        this.reviewValidator.validateDTO(reviewDTO);
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.reviewDAO.create(reviewDTO));
     }

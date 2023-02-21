@@ -18,6 +18,10 @@ import tiimae.webshop.iprwc.DAO.CategoryDAO;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
+import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;
 import tiimae.webshop.iprwc.mapper.CategoryMapper;
 import tiimae.webshop.iprwc.models.Category;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
@@ -33,14 +37,10 @@ public class CategoryController {
 
     @GetMapping(ApiConstant.getOneCategories)
     @ResponseBody
-    public ApiResponseService get(@PathVariable String categoryId) {
-        final String validateId = this.categoryValidator.validateId(categoryId);
+    public ApiResponseService get(@PathVariable String categoryId) throws NotAValidUUIDException, EntryNotFoundException {
+        final UUID id = this.categoryValidator.checkIfStringIsUUID(categoryId);
 
-        if (validateId != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateId);
-        }
-
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.categoryDAO.get(UUID.fromString(categoryId)));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.categoryDAO.get(id));
     }
 
     @GetMapping(ApiConstant.getAllCategories)
@@ -52,13 +52,8 @@ public class CategoryController {
     @PostMapping(ApiConstant.getAllCategories)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService post(@RequestBody CategoryDTO categoryDTO) {
-        final String validate = this.categoryValidator.validateDTO(categoryDTO, null);
-
-        if (validate != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validate);
-        }
-
+    public ApiResponseService post(@RequestBody CategoryDTO categoryDTO) throws InvalidDtoException, EntryAlreadyExistsException {
+        this.categoryValidator.validateDTO(categoryDTO);
         final Category category = this.categoryMapper.toCategory(categoryDTO);
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.categoryDAO.create(category));
@@ -67,33 +62,20 @@ public class CategoryController {
     @PutMapping(ApiConstant.getOneCategories)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService put(@PathVariable String categoryId, @RequestBody CategoryDTO categoryDTO) {
-        final String validateId = this.categoryValidator.validateId(categoryId);
+    public ApiResponseService put(@PathVariable String categoryId, @RequestBody CategoryDTO categoryDTO) throws NotAValidUUIDException, InvalidDtoException, EntryNotFoundException, EntryAlreadyExistsException {
+        final UUID id = this.categoryValidator.checkIfStringIsUUID(categoryId);
+        this.categoryValidator.validateDTO(categoryDTO);
 
-        if (validateId != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateId);
-        }
-
-        final String validate = this.categoryValidator.validateDTO(categoryDTO, UUID.fromString(categoryId));
-
-        if (validate != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validate);
-        }
-
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.categoryDAO.update(UUID.fromString(categoryId), categoryDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.categoryDAO.update(id, categoryDTO));
     }
 
     @DeleteMapping(ApiConstant.getOneCategories)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService delete(@PathVariable String categoryId) {
-        final String validateId = this.categoryValidator.validateId(categoryId);
+    public ApiResponseService delete(@PathVariable String categoryId) throws NotAValidUUIDException, EntryNotFoundException {
+        final UUID id = this.categoryValidator.checkIfStringIsUUID(categoryId);
 
-        if (validateId != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateId);
-        }
-
-        this.categoryDAO.delete(UUID.fromString(categoryId));
+        this.categoryDAO.delete(id);
 
         return new ApiResponseService(HttpStatus.ACCEPTED, "Category has been removed");
     }

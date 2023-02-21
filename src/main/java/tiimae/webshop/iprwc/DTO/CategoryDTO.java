@@ -8,9 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CategoryDTO {
+    private String categoryName;
 
-    @NotNull(message = "Category name can't be empty")
-    String categoryName;
-
-    String[] productIds;
+    private String[] productIds;
 }

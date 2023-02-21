@@ -83,23 +83,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 //        return http.build();
     }
-
-    /**
-     * Initialize a password encoder to use for encoding a user's password.
-     * By using an instance of <code>BCryptPasswordEncoder</code> provided by Spring Security, passwords are
-     * automatically hashed and a salt is added to the password.
-     *
-     * @return an instance of the BCryptPasswordEncoder class which implements the BCrypt strong hashing function.
-     * @see BCryptPasswordEncoder
-     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Initialize an authentication manager which will be used for authenticating users.
-     */
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

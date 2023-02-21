@@ -6,25 +6,27 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.CategoryRepository;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.CategoryMapper;
 import tiimae.webshop.iprwc.models.Category;
 import tiimae.webshop.iprwc.models.Product;
 
 @Component
+@AllArgsConstructor
 public class CategoryDAO {
 
     private CategoryRepository categoryRepository;
     private CategoryMapper categoryMapper;
 
-    public CategoryDAO(CategoryRepository categoryRepository, CategoryMapper categoryMapper) {
-        this.categoryRepository = categoryRepository;
-        this.categoryMapper = categoryMapper;
-    }
+    public Category get(UUID id) throws EntryNotFoundException {
+        final Optional<Category> byId = this.categoryRepository.findById(id);
+        this.checkIfExists(byId);
 
-    public Category get(UUID id) {
-        return this.categoryRepository.findById(id).get();
+        return byId.get();
     }
 
     public Optional<Category> getByName(String categoryName) {
@@ -35,27 +37,24 @@ public class CategoryDAO {
         return this.categoryRepository.findAll();
     }
 
-    public Category create(Category category) {
+    public Category create(Category category) throws EntryAlreadyExistsException {
+        this.checkIfBrandNameExists(category.getCategoryName(), null);
+
         return this.categoryRepository.save(category);
     }
 
-    public Category update(UUID id, CategoryDTO categoryDTO) {
+    public Category update(UUID id, CategoryDTO categoryDTO) throws EntryAlreadyExistsException, EntryNotFoundException {
         final Optional<Category> byId = this.categoryRepository.findById(id);
-
-        if (byId.isEmpty()) {
-            return null;
-        }
+        this.checkIfExists(byId);
+        this.checkIfBrandNameExists(categoryDTO.getCategoryName(), null);
 
         final Category category = this.categoryMapper.mergeCategory(byId.get(), categoryDTO);
         return this.categoryRepository.saveAndFlush(category);
     }
 
-    public void delete(UUID id) {
+    public void delete(UUID id) throws EntryNotFoundException {
         final Optional<Category> byId = this.categoryRepository.findById(id);
-
-        if (byId.isEmpty()) {
-            return;
-        }
+        this.checkIfExists(byId);
 
         for (Product product : byId.get().getProducts()) {
             product.setCategory(null);
@@ -63,5 +62,26 @@ public class CategoryDAO {
 
 
         this.categoryRepository.delete(byId.get());
+    }
+
+    public void checkIfExists(Optional<Category> category) throws EntryNotFoundException {
+        if (category.isEmpty()) {
+            throw new EntryNotFoundException("This category has not been found!");
+        }
+    }
+
+    public void checkIfBrandNameExists(String categoryName, UUID id) throws EntryAlreadyExistsException {
+        Optional<Category> categoryByName = this.categoryRepository.findByCategoryName(categoryName);
+
+        if (categoryByName.isPresent()) {
+            if (id != null) {
+                if (categoryByName.get().getId() != id) {
+                    throw new EntryAlreadyExistsException("Category name already exists");
+                }
+            } else {
+
+                throw new EntryAlreadyExistsException("Category name already exists");
+            }
+        }
     }
 }

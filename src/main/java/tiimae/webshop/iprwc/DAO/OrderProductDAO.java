@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import kong.unirest.json.JSONObject;
 import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.OrderProductRepository;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.OrderProductMapper;
 import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.models.OrderProduct;
@@ -23,7 +24,7 @@ public class OrderProductDAO {
         return this.orderProductRepository.findById(id);
     }
 
-    public OrderProduct create(JSONObject product, Order order) {
+    public OrderProduct create(JSONObject product, Order order) throws EntryNotFoundException {
         return this.orderProductRepository.save(this.orderProductMapper.toOrderProduct(product, order));
     }
 }

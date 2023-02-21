@@ -42,11 +42,17 @@ public class OrderMapper {
         );
     }
 
-    public Set<UserAddress> getUserAddresses(String[] addressId) {
+    public Set<UserAddress> getUserAddresses(String[] addressId) throws EntryNotFoundException {
         Set<UserAddress> userAddresses = new HashSet<>();
         if (addressId != null) {
             userAddresses = Arrays.stream(addressId)
-                    .map(id -> this.userAddressDAO.get(UUID.fromString(id)).orElse(null))
+                    .map(id -> {
+                        try {
+                            return this.userAddressDAO.get(UUID.fromString(id));
+                        } catch (EntryNotFoundException e) {
+                            throw new RuntimeException(e);
+                        }
+                    })
                     .collect(Collectors.toSet());
         }
 
@@ -68,13 +74,7 @@ public class OrderMapper {
         User user = null;
 
         if (id != null) {
-            final Optional<User> user1 = this.userDAO.getUser(id);
-
-            if (user1.isEmpty()) {
-                throw new EntryNotFoundException("User has not been found!");
-            }
-
-            user = user1.get();
+            user = this.userDAO.getUser(id);
         }
 
         return user;

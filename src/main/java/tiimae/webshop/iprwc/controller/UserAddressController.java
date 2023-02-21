@@ -30,8 +30,8 @@ public class UserAddressController {
     @GetMapping(value = ApiConstant.getOneUserAddress)
     @ResponseBody
     @Secured(RoleEnum.User.CODENAME)
-    public ApiResponseService get(@PathVariable UUID userAddressId) {
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.userAddressDAO.get(userAddressId).get());
+    public ApiResponseService get(@PathVariable UUID userAddressId) throws EntryNotFoundException {
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.userAddressDAO.get(userAddressId));
     }
 
     @GetMapping(value = ApiConstant.getAllUserAddressesByUser)

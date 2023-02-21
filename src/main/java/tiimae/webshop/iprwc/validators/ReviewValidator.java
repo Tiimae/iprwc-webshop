@@ -6,33 +6,26 @@ import org.springframework.stereotype.Component;
 
 import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DTO.ReviewDTO;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
+import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;
 
 @Component
 public class ReviewValidator extends Validator {
 
-   public ReviewValidator(ProductDAO productDAO) {
-      super(productDAO);
-   }
-
-   public String validateDTO(ReviewDTO reviewDTO) {
-
-      if (reviewDTO.getStars() < 0 && reviewDTO.getStars() > 5) {
-         return "Stars can't be lower than 0 or higher than 5";
+   public void validateDTO(ReviewDTO reviewDTO) throws InvalidDtoException, NotAValidUUIDException {
+      if (reviewDTO.getStars() == null) {
+         throw new InvalidDtoException("The stars cannot be null");
       }
 
-      String checkIfStringIsUUID = this.checkIfStringIsUUID(reviewDTO.getProductId());
-
-      if (checkIfStringIsUUID != null) {
-         return checkIfStringIsUUID;
+      if (reviewDTO.getDescription() == null) {
+         throw new InvalidDtoException("The description cannot be null");
       }
 
-      String checkIfProductExists = this.CheckIfProductExists(UUID.fromString(reviewDTO.getProductId()));
-
-      if (checkIfProductExists != null) {
-         return checkIfProductExists;
+      if (reviewDTO.getProductId() == null) {
+         throw new InvalidDtoException("The product id cannot be null");
       }
 
-      return null;
+      this.checkIfStringIsUUID(reviewDTO.getProductId());
    }
    
 }

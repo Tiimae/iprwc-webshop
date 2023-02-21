@@ -29,12 +29,6 @@ public class LoginController extends AuthController {
         user.setResetRequired(false);
         String password = encrypted ? EncryptionService.decryptAes(user.getPassword(), this.sharedSecret) : user.getPassword();
 
-        String validation = this.authValidator.registerValidation(user.getEmail(), password);
-
-        if (validation != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validation);
-        }
-
         String encodedPass = this.passwordEncoder.encode(password);
 
         user.setPassword(encodedPass);
@@ -48,14 +42,10 @@ public class LoginController extends AuthController {
 
     @PostMapping(value = ApiConstant.login)
     @ResponseBody
-    public ApiResponseService login(@RequestBody LoginDTO user, @RequestParam(required = false) boolean encrypted) throws AuthenticationException, IOException {
+    public ApiResponseService login(@RequestBody LoginDTO user, @RequestParam(required = false) boolean encrypted) throws AuthenticationException, IOException, EntryNotFoundException {
         final HashMap<String, String> res = new HashMap<>();
 
-        String validation = this.authValidator.loginValidation(user);
-
-        if (validation != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validation);
-        }
+//        String validation = this.authValidator.loginValidation(user);
 
         if (encrypted) {
             user.setPassword(EncryptionService.decryptAes(user.getPassword(), sharedSecret));
@@ -70,13 +60,13 @@ public class LoginController extends AuthController {
             return new ApiResponseService<HashMap<String, String>>(HttpStatus.UNAUTHORIZED, res);
         }
 
-        Optional<User> foundUser = this.userDAO.getByEmail(user.getEmail());
+        User foundUser = this.userDAO.getByEmail(user.getEmail());
 
-        this.loginService.generateTokens(foundUser.get());
+        this.loginService.generateTokens(foundUser);
 
-        res.put("jwtToken", foundUser.get().getAccessToken().getValue());
-        res.put("refreshToken", foundUser.get().getRefreshToken().getValue());
-        res.put("verified", foundUser.get().getVerified().toString());
+        res.put("jwtToken", foundUser.getAccessToken().getValue());
+        res.put("refreshToken", foundUser.getRefreshToken().getValue());
+        res.put("verified", foundUser.getVerified().toString());
         res.put("destination", "to-cookie");
 
         return new ApiResponseService<>(HttpStatus.OK, res);

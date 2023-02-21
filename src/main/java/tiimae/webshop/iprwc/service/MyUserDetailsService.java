@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
 
@@ -24,8 +25,8 @@ public class MyUserDetailsService implements UserDetailsService {
    @Autowired private UserDAO userDAO;
    @Autowired private UserRepository userRepository;
 
-   public UserDetails loadUserById(UUID id) {
-      User user = this.userDAO.getUser(id).get();
+   public UserDetails loadUserById(UUID id) throws EntryNotFoundException {
+      User user = this.userDAO.getUser(id);
       
       return loadUserByUsername(user.getEmail());
    }

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -25,7 +26,9 @@ import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
+import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;
 import tiimae.webshop.iprwc.mapper.UserMapper;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
@@ -48,39 +51,32 @@ public class UserController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService get(@PathVariable UUID userId) {
-        final Optional<User> user = this.userDAO.getUser(userId);
+    public ApiResponseService get(@PathVariable UUID userId) throws EntryNotFoundException {
+        final User user = this.userDAO.getUser(userId);
 
-        if (user.isEmpty()) {
-            return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
+        if (user.getDeleted()) {
+            throw new EntryNotFoundException("User has not been found!");
         }
 
-        if (user.get().getDeleted()) {
-            return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
-        }
-
-        final User user1 = user.get();
+        final User user1 = user;
         user1.getRoles().clear();
 
         return new ApiResponseService<>(HttpStatus.ACCEPTED, user1);
     }
 
+    @SneakyThrows
     @GetMapping(ApiConstant.getOneUserWithRole)
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService getWithRoles(@PathVariable UUID userId) {
-        final Optional<User> user = this.userDAO.getUser(userId);
+        final User user = this.userDAO.getUser(userId);
 
-        if (user.isEmpty()) {
-            return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
+        if (user.getDeleted()) {
+            throw new EntryNotFoundException("User has not been found!");
         }
 
-        if (user.get().getDeleted()) {
-            return new ApiResponseService<>(HttpStatus.NOT_FOUND, "User has not been found!");
-        }
-
-        final User user1 = user.get();
+        final User user1 = user;
 
         for (Role role: user1.getRoles()) {
             role.getUsers().clear();
@@ -116,11 +112,11 @@ public class UserController {
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService create(@RequestBody UserDTO userDTO) {
 
-        String validateDTO = this.userValidator.validateDTO(null, userDTO);
-
-        if (validateDTO != null) {
-            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
-        }
+//        String validateDTO = this.userValidator.validateDTO(null, userDTO);
+//
+//        if (validateDTO != null) {
+//            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
+//        }
 
         final String password = passwordGeneratorService.generateNewPassword();
 
@@ -142,22 +138,14 @@ public class UserController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService update(@PathVariable String userId, @RequestBody UserDTO userDTO) {
+    public ApiResponseService update(@PathVariable String userId, @RequestBody UserDTO userDTO) throws EntryNotFoundException, NotAValidUUIDException {
         userDTO.setRoleIds(new String[0]);
 
-        String validateId = this.userValidator.validateId(userId);
+        final UUID id = this.userValidator.checkIfStringIsUUID(userId);
 
-        if (validateId != null) {
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateId);
-        }
+//        String validateDTO = this.userValidator.validateDTO(UUID.fromString(userId), userDTO);
 
-        String validateDTO = this.userValidator.validateDTO(UUID.fromString(userId), userDTO);
-
-        if (validateDTO != null) {
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
-        }
-
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(UUID.fromString(userId), userDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(id, userDTO));
     }
 
     @PutMapping(
@@ -169,20 +157,16 @@ public class UserController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService updateAdmin(@PathVariable String userId, @RequestBody UserDTO userDTO) {
-        String validateId = this.userValidator.validateId(userId);
+    public ApiResponseService updateAdmin(@PathVariable String userId, @RequestBody UserDTO userDTO) throws EntryNotFoundException, NotAValidUUIDException {
+        final UUID id = this.userValidator.checkIfStringIsUUID(userId);
+//
+//        String validateDTO = this.userValidator.validateDTO(UUID.fromString(userId), userDTO);
+//
+//        if (validateDTO != null) {
+//            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
+//        }
 
-        if (validateId != null) {
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateId);
-        }
-
-        String validateDTO = this.userValidator.validateDTO(UUID.fromString(userId), userDTO);
-        
-        if (validateDTO != null) {
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
-        }
-
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(UUID.fromString(userId), userDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(id, userDTO));
     }
 
     @DeleteMapping(
@@ -191,13 +175,9 @@ public class UserController {
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService delete(@PathVariable String userId) throws TokenNotFoundException {
+    public ApiResponseService delete(@PathVariable String userId) throws TokenNotFoundException, EntryNotFoundException, NotAValidUUIDException {
 
-        String validateId = this.userValidator.validateId(userId);
-
-        if (validateId != null) {
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateId);
-        }
+        UUID id = this.userValidator.checkIfStringIsUUID(userId);
 
         this.tokenDAO.deleteTokensByUserId(UUID.fromString(userId));
         this.userDAO.delete(UUID.fromString(userId));

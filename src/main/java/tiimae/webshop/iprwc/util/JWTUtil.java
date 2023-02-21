@@ -25,6 +25,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import tiimae.webshop.iprwc.DAO.TokenDAO;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.constants.TokenType;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.exception.token.InvalidTokenException;
 import tiimae.webshop.iprwc.exception.token.TokenAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.token.TokenExpiredException;
@@ -58,9 +59,11 @@ public class JWTUtil {
 
     public Token generateAccessToken(User user) {
         try {
-             if (!user.getAccessToken().hasExpired()) {
-                 return user.getAccessToken();
-             }
+            if (user.getAccessToken() != null) {
+                if (!user.getAccessToken().hasExpired()) {
+                    return user.getAccessToken();
+                }
+            }
 
             Instant issuedAt = Instant.now();
             Instant expiresAt = issuedAt.plusSeconds(this.accessTokenLifetime);
@@ -110,9 +113,11 @@ public class JWTUtil {
     }
 
     public Token generateRefreshToken(User user) {
-         if (!user.getRefreshToken().hasExpired()) {
-             return user.getRefreshToken();
-         }
+        if (user.getRefreshToken() != null) {
+            if (!user.getRefreshToken().hasExpired()) {
+                return user.getRefreshToken();
+            }
+        }
 
         String value = UUID.randomUUID().toString();
         TokenType type = TokenType.REFRESH_TOKEN;
@@ -159,8 +164,8 @@ public class JWTUtil {
       return null;
   }
 
-  public Authentication getAuthentication(String token) throws InvalidTokenException {
-      User user = this.userDAO.getUser(getUserId(token)).get();
+  public Authentication getAuthentication(String token) throws InvalidTokenException, EntryNotFoundException {
+      User user = this.userDAO.getUser(getUserId(token));
 
       if (user.getAccessToken() != null && !user.getAccessToken().getValue().isEmpty() && !Objects.equals(user.getAccessToken().getValue(), token)) {
          throw new InvalidTokenException();

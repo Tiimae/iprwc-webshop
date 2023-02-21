@@ -9,6 +9,8 @@ import org.springframework.stereotype.Component;
 import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.SupplierRepository;
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.SupplierMapper;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.Supplier;
@@ -21,36 +23,34 @@ public class SupplierDAO {
 
     private SupplierMapper supplierMapper;
 
-    public Supplier get(UUID supplierId) {
-        return this.supplierRepository.findById(supplierId).get();
+    public Supplier get(UUID supplierId) throws EntryNotFoundException {
+        final Optional<Supplier> byId = this.supplierRepository.findById(supplierId);
+        this.checkIfExists(byId);
+        return byId.get();
     }
 
     public List<Supplier> getAll() {
         return this.supplierRepository.findAll();
     }
 
-    public Supplier create(SupplierDTO supplierDTO) {
+    public Supplier create(SupplierDTO supplierDTO) throws EntryAlreadyExistsException {
+        this.checkIfSupplierNameExists(supplierDTO.getName(), null);
         return this.supplierRepository.save(this.supplierMapper.toSupplier(supplierDTO));
     }
 
-    public Supplier put(UUID supplierId, SupplierDTO supplierDTO) {
+    public Supplier put(UUID supplierId, SupplierDTO supplierDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
         final Optional<Supplier> byId = this.supplierRepository.findById(supplierId);
-
-        if (byId.isEmpty()) {
-            return null;
-        }
+        this.checkIfExists(byId);
+        this.checkIfSupplierNameExists(supplierDTO.getName(), supplierId);
 
         final Supplier supplier = this.supplierMapper.mergeSupplier(byId.get(), supplierDTO);
 
         return this.supplierRepository.saveAndFlush(supplier);
     }
 
-    public void delete(UUID supplierId) {
+    public void delete(UUID supplierId) throws EntryNotFoundException {
         final Optional<Supplier> byId = this.supplierRepository.findById(supplierId);
-
-        if (byId.isEmpty()) {
-            return;
-        }
+        this.checkIfExists(byId);
 
         for (Product product : byId.get().getProducts()) {
             product.setSupplier(null);
@@ -58,5 +58,26 @@ public class SupplierDAO {
 
         byId.get().getProducts().clear();
         this.supplierRepository.delete(byId.get());
+    }
+
+    public void checkIfExists(Optional<Supplier> supplier) throws EntryNotFoundException {
+        if (supplier.isEmpty()) {
+            throw new EntryNotFoundException("This product has not been found!");
+        }
+    }
+
+    public void checkIfSupplierNameExists(String supplierName, UUID id) throws EntryAlreadyExistsException {
+        Optional<Supplier> supplierByName = this.supplierRepository.findByName(supplierName);
+
+        if (supplierByName.isPresent()) {
+            if (id != null) {
+                if (supplierByName.get().getId() != id) {
+                    throw new EntryAlreadyExistsException("Supplier name already exists");
+                }
+            } else {
+
+                throw new EntryAlreadyExistsException("Supplier name already exists");
+            }
+        }
     }
 }

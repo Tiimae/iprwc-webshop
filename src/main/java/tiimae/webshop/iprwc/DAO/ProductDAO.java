@@ -9,7 +9,10 @@ import org.springframework.stereotype.Component;
 import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.ProductRepository;
 import tiimae.webshop.iprwc.DTO.ProductDTO;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.ProductMapper;
+import tiimae.webshop.iprwc.models.Category;
 import tiimae.webshop.iprwc.models.Product;
 
 @Component
@@ -20,37 +23,36 @@ public class ProductDAO {
 
     private ProductMapper productMapper;
 
-    public Product get(UUID productId) {
-        return this.productRepository.findById(productId).get();
+    public Product get(UUID productId) throws EntryNotFoundException {
+        final Optional<Product> byId = this.productRepository.findById(productId);
+        this.checkIfExists(byId);
+
+        return byId.get();
     }
 
     public List<Product> getAll() {
         return this.productRepository.findAll();
     }
 
-    public Product post(ProductDTO productDTO) {
+    public Product post(ProductDTO productDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
+        this.checkIfProductNameExists(productDTO.getName(), null);
         return this.productRepository.save(this.productMapper.toProduct(productDTO));
     }
 
-    public Product update(UUID productId, ProductDTO productDTO) {
+    public Product update(UUID productId, ProductDTO productDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
         final Optional<Product> byId = this.productRepository.findById(productId);
-
-        if (byId.isEmpty()) {
-            return null;
-        }
+        this.checkIfExists(byId);
+        this.checkIfProductNameExists(productDTO.getName(), productId);
 
         final Product product = this.productMapper.mergeProduct(byId.get(), productDTO);
 
         return this.productRepository.saveAndFlush(product);
     }
 
-    public Product delete(UUID productId) {
+    public Product delete(UUID productId) throws EntryNotFoundException {
 
         final Optional<Product> byId = this.productRepository.findById(productId);
-
-        if (byId.isEmpty()) {
-            return null;
-        }
+        this.checkIfExists(byId);
 
         final Product product = byId.get();
 
@@ -60,13 +62,10 @@ public class ProductDAO {
 
     }
 
-    public Product restore(UUID productId) {
+    public Product restore(UUID productId) throws EntryNotFoundException {
 
         final Optional<Product> byId = this.productRepository.findById(productId);
-
-        if (byId.isEmpty()) {
-            return null;
-        }
+        this.checkIfExists(byId);
 
         final Product product = byId.get();
 
@@ -74,5 +73,26 @@ public class ProductDAO {
 
         return this.productRepository.saveAndFlush(product);
 
+    }
+
+    public void checkIfExists(Optional<Product> product) throws EntryNotFoundException {
+        if (product.isEmpty()) {
+            throw new EntryNotFoundException("This product has not been found!");
+        }
+    }
+
+    public void checkIfProductNameExists(String productName, UUID id) throws EntryAlreadyExistsException {
+        Optional<Product> productByName = this.productRepository.findByProductName(productName);
+
+        if (productByName.isPresent()) {
+            if (id != null) {
+                if (productByName.get().getId() != id) {
+                    throw new EntryAlreadyExistsException("Product name already exists");
+                }
+            } else {
+
+                throw new EntryAlreadyExistsException("Product name already exists");
+            }
+        }
     }
 }

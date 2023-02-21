@@ -53,7 +53,7 @@ public class ProductImageDAO {
         }
     }
 
-    public void delete(UUID productId, Product product) throws IOException {
+    public void delete(UUID productId) throws IOException {
         final List<ProductImage> allByProduct = this.productImageRepository.findAllByProductId(productId);
 
         for (ProductImage productImage : allByProduct) {

@@ -1,70 +1,19 @@
 package tiimae.webshop.iprwc.validators;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import org.springframework.stereotype.Component;
 
-import tiimae.webshop.iprwc.DAO.CategoryDAO;
-import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
-import tiimae.webshop.iprwc.models.Category;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
 
 @Component
 public class CategoryValidator extends Validator {
 
-    private CategoryDAO categoryDAO;
+    public void validateDTO(CategoryDTO categoryDTO) throws InvalidDtoException {
 
-    public CategoryValidator(ProductDAO productDAO, CategoryDAO categoryDAO) {
-        super(productDAO);
-        this.categoryDAO = categoryDAO;
-    }
-
-    public String validateDTO(CategoryDTO categoryDTO, UUID id) {
-        final Optional<Category> byName = this.categoryDAO.getByName(categoryDTO.getCategoryName());
-
-        if (byName.isPresent()) {
-            if (id != null) {
-                if (byName.get().getId() != id) {
-                    return "Category with the name: " + categoryDTO.getCategoryName() + " already exists";
-                }
-            } else {
-                return "Category with the name: " + categoryDTO.getCategoryName() + " already exists";
-            }
+        if (categoryDTO.getCategoryName() == null) {
+            throw new InvalidDtoException("Category name can't be null");
         }
 
-        for (String productId : categoryDTO.getProductIds()) {
-            String checkIfStringIsUUID = this.checkIfStringIsUUID(productId);
-
-            if (checkIfStringIsUUID != null) { 
-                return checkIfStringIsUUID;
-            }
-
-            String checkIfProductExists = this.CheckIfProductExists(UUID.fromString(productId));
-
-            if (checkIfProductExists != null) {
-                return checkIfProductExists;
-            }
-        }
-
-        return null;
-    }
-
-    public String validateId(String id) {
-
-        String checkIfStringIsUUID = this.checkIfStringIsUUID(id);
-
-            if (checkIfStringIsUUID != null) { 
-                return checkIfStringIsUUID;
-            }
-
-        final Category byName = this.categoryDAO.get(UUID.fromString(id));
-
-        if (byName == null) {
-            return "The category with id: " + id + " doesn't exist";
-        }
-
-        return null;
     }
 
 }

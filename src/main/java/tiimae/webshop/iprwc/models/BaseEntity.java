@@ -21,7 +21,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @MappedSuperclass
-public class BaseEntity {
+public abstract class BaseEntity {
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -37,4 +37,5 @@ public class BaseEntity {
     @UpdateTimestamp
     @Column(name = "update_timestamp")
     private Timestamp updateDate;
+
 }

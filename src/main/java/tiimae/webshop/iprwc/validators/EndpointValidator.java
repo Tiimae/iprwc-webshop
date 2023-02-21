@@ -25,10 +25,10 @@ public class EndpointValidator {
     public Boolean ensureUserAccessWithOpenEndpoint(String userid, String email) throws AccessDeniedException, EntryNotFoundException {
         UUID id = UUID.fromString(userid);
 
-        Optional<tiimae.webshop.iprwc.models.User> user = this.userDAO.getByEmail(email);
-        UUID actualId = user.get().getId();
+        tiimae.webshop.iprwc.models.User user = this.userDAO.getByEmail(email);
+        UUID actualId = user.getId();
 
-        Set<Role> roles = user.get().getRoles();
+        Set<Role> roles = user.getRoles();
         ArrayList<String> roleCodeNames = new ArrayList<>();
 
 

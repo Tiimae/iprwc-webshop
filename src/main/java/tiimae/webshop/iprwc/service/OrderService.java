@@ -15,7 +15,6 @@ public class OrderService {
 
         long millis = System.currentTimeMillis();
 
-
         final OrderDTO orderDTO = new OrderDTO();
 
         orderDTO.setOrderDate(new Date(millis));

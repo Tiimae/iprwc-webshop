@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.DTO.UserDTO;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.UserMapper;
 import tiimae.webshop.iprwc.models.User;
 
@@ -17,22 +19,25 @@ public class UserDAO {
 
     private UserRepository userRepository;
     private UserMapper userMapper;
-    private UserAddressDAO userAddressDAO;
     private OrderDAO orderDAO;
 
-    public UserDAO(UserRepository userRepository, UserMapper userMapper, @Lazy UserAddressDAO userAddressDAO, @Lazy OrderDAO orderDAO) {
+    public UserDAO(UserRepository userRepository, @Lazy UserMapper userMapper, @Lazy OrderDAO orderDAO) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
-        this.userAddressDAO = userAddressDAO;
         this.orderDAO = orderDAO;
     }
 
-    public Optional<User> getUser(UUID userId) {
-        return this.userRepository.findById(userId);
+    public User getUser(UUID userId) throws EntryNotFoundException {
+        final Optional<User> byId = this.userRepository.findById(userId);
+        this.checkIfExists(byId);
+
+        return byId.get();
     }
 
-    public Optional<User> getByEmail(String email) {
-        return this.userRepository.findByEmail(email);
+    public User getByEmail(String email) throws EntryNotFoundException {
+        final Optional<User> byId = this.userRepository.findByEmail(email);
+        this.checkIfExists(byId);
+        return byId.get();
     }
 
     public List<User> getAllUsers() {
@@ -43,12 +48,9 @@ public class UserDAO {
         return this.userRepository.save(user);
     }
 
-    public User update(UUID id, UserDTO userDTO) {
+    public User update(UUID id, UserDTO userDTO) throws EntryNotFoundException {
         final Optional<User> byId = this.userRepository.findById(id);
-
-        if (byId.isEmpty()) {
-            return null;
-        }
+        this.checkIfExists(byId);
 
         if (userDTO.getPassword().isEmpty()) {
             userDTO.setPassword(byId.get().getPassword());
@@ -69,15 +71,11 @@ public class UserDAO {
         return this.userRepository.saveAndFlush(user);
     }
 
-    public void delete(UUID id) {
-        final Optional<User> user = this.getUser(id);
+    public void delete(UUID id) throws EntryNotFoundException {
+        User user = this.getUser(id);
 
-        if (user.isEmpty()) {
-            return;
-        }
-
-        user.get().setDeleted(true);
-        this.updateByObject(id, user.get());
+        user.setDeleted(true);
+        this.updateByObject(id, user);
     }
 
     public int verifyUser(UUID userId) {
@@ -86,5 +84,11 @@ public class UserDAO {
 
     public int resetUser(UUID userId) {
         return userRepository.resetUser(userId);
+    }
+
+    public void checkIfExists(Optional<User> user) throws EntryNotFoundException {
+        if (user.isEmpty()) {
+            throw new EntryNotFoundException("This address has not been found!");
+        }
     }
 }

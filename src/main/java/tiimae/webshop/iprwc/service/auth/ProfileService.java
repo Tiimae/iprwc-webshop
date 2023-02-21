@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.UserDAO;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 
@@ -17,8 +18,8 @@ public class ProfileService {
 
     private UserDAO userDAO;
 
-    public ApiResponseService<Optional<User>> getProfile(Principal securityPrincipal) {
-        Optional<User> foundUser = this.userDAO.getByEmail(securityPrincipal.getName());
+    public ApiResponseService<Optional<User>> getProfile(Principal securityPrincipal) throws EntryNotFoundException {
+        Optional<User> foundUser = Optional.ofNullable(this.userDAO.getByEmail(securityPrincipal.getName()));
 
         return new ApiResponseService<>(
                 HttpStatus.ACCEPTED,

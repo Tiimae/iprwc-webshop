@@ -22,6 +22,8 @@ import tiimae.webshop.iprwc.DAO.ProductImageDAO;
 import tiimae.webshop.iprwc.DTO.ProductDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 
@@ -34,7 +36,7 @@ public class ProductController {
 
     @GetMapping(ApiConstant.getOneProduct)
     @ResponseBody
-    public ApiResponseService get(@PathVariable UUID productId) {
+    public ApiResponseService get(@PathVariable UUID productId) throws EntryNotFoundException {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.productDAO.get(productId));
     }
 
@@ -47,7 +49,7 @@ public class ProductController {
     @PostMapping(ApiConstant.getAllProducts)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService post(@RequestParam(value = "product") JSONObject product, @RequestParam(value = "images") MultipartFile[] files) throws IOException {
+    public ApiResponseService post(@RequestParam(value = "product") JSONObject product, @RequestParam(value = "images") MultipartFile[] files) throws IOException, EntryNotFoundException, EntryAlreadyExistsException {
         final ProductDTO productDTO = new ProductDTO();
         productDTO.setName(product.getString("productName"));
         productDTO.setDescription(product.getString("description"));
@@ -73,7 +75,7 @@ public class ProductController {
             @RequestParam(value = "product") JSONObject product,
             @RequestParam(value = "newImages", required=false) MultipartFile[] files,
             @RequestParam(value = "deletedImages", required=false) String[] deletedFiles
-    ) throws IOException {
+    ) throws IOException, EntryNotFoundException, EntryAlreadyExistsException {
         final ProductDTO productDTO = new ProductDTO();
         productDTO.setName(product.getString("productName"));
         productDTO.setDescription(product.getString("description"));
@@ -91,14 +93,14 @@ public class ProductController {
     @DeleteMapping(ApiConstant.getOneProduct)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService delete(@PathVariable UUID productId) throws IOException {
+    public ApiResponseService delete(@PathVariable UUID productId) throws IOException, EntryNotFoundException {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.productDAO.delete(productId));
     }
 
     @DeleteMapping(ApiConstant.restoreOneProduct)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService restore(@PathVariable UUID productId) throws IOException {
+    public ApiResponseService restore(@PathVariable UUID productId) throws IOException, EntryNotFoundException {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.productDAO.restore(productId));
     }
 }

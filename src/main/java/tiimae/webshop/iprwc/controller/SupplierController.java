@@ -18,6 +18,8 @@ import tiimae.webshop.iprwc.DAO.SupplierDAO;
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 
 @RestController
@@ -28,7 +30,7 @@ public class SupplierController {
 
     @GetMapping(ApiConstant.getOneSupplier)
     @ResponseBody
-    public ApiResponseService get(@PathVariable UUID supplierId) {
+    public ApiResponseService get(@PathVariable UUID supplierId) throws EntryNotFoundException {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.supplierDAO.get(supplierId));
     }
 
@@ -41,21 +43,21 @@ public class SupplierController {
     @PostMapping(ApiConstant.getAllSupplier)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService post(@RequestBody SupplierDTO supplierDTO) {
+    public ApiResponseService post(@RequestBody SupplierDTO supplierDTO) throws EntryAlreadyExistsException {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.supplierDAO.create(supplierDTO));
     }
 
     @PutMapping(ApiConstant.getOneSupplier)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService put(@PathVariable UUID supplierId, @RequestBody SupplierDTO supplierDTO) {
+    public ApiResponseService put(@PathVariable UUID supplierId, @RequestBody SupplierDTO supplierDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.supplierDAO.put(supplierId, supplierDTO));
     }
 
     @DeleteMapping(ApiConstant.getOneSupplier)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService delete(@PathVariable UUID supplierId) {
+    public ApiResponseService delete(@PathVariable UUID supplierId) throws EntryNotFoundException {
         this.supplierDAO.delete(supplierId);
         return new ApiResponseService(HttpStatus.ACCEPTED, "Supplier has been deleted!");
     }

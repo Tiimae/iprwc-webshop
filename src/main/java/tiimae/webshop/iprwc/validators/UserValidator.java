@@ -14,59 +14,12 @@ import tiimae.webshop.iprwc.models.User;
 
 @Component
 public class UserValidator extends Validator {
-   private UserDAO userDAO;
-   private RoleDAO roleDAO;
 
-   public UserValidator(ProductDAO productDAO, UserDAO userDAO, RoleDAO roleDAO) {
-      super(productDAO);
-      this.userDAO = userDAO;
-      this.roleDAO = roleDAO;
+   public void validateDTO(UUID id, UserDTO userDTO) {
+
    }
 
-   public String validateDTO(UUID id, UserDTO userDTO) {
+   public void validateId(String userId) {
 
-      Optional<User> byEmail = this.userDAO.getByEmail(userDTO.getEmail());
-      
-      if (byEmail.isPresent()) {
-         if (id != null) {
-            if (!id.equals(byEmail.get().getId())) {
-               return "Something went wrong while updating the user";
-            }
-         } else {
-            return "Something went wrong while updating the user";
-         }
-      }
-
-      for (String roleId : userDTO.getRoleIds()) {
-         String checkIfStringIsUUID = this.checkIfStringIsUUID(roleId);
-
-         if (checkIfStringIsUUID != null) {
-            return checkIfStringIsUUID;
-         }
-
-         Optional<Role> role = this.roleDAO.getRole(UUID.fromString(roleId));
-
-         if (role.isEmpty()) {
-            return "De rol met de id: " + roleId + " bestaat niet!";
-         }
-      }
-
-      return null;
-   }
-
-   public String validateId(String userId) {
-      String checkIfStringIsUUID = this.checkIfStringIsUUID(userId);
-
-      if (checkIfStringIsUUID != null) { 
-          return checkIfStringIsUUID;
-      }
-
-      final Optional<User> byName = this.userDAO.getUser(UUID.fromString(userId));
-
-      if (byName == null) {
-          return "The user with id: " + userId + " doesn't exist";
-      }
-
-      return null;
    }
 }

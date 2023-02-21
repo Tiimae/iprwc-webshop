@@ -31,17 +31,15 @@ public class ResetPasswordController extends AuthController {
 
     @PostMapping(value = ApiConstant.forgotPassword, consumes = MediaType.ALL_VALUE)
     @ResponseBody
-    public ApiResponseService<Map<String, Object>> forgotPassword(@RequestParam String email) {
+    public ApiResponseService<Map<String, Object>> forgotPassword(@RequestParam String email) throws EntryNotFoundException {
         Map<String, Object> res = new HashMap<>();
 
-        Optional<User> foundUser = this.userDAO.getByEmail(email);
+        User user = this.userDAO.getByEmail(email);
 
-        if (!foundUser.isPresent()) {
-            res.put("message", "The user you are trying to reset the password for was not found");
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
-        }
-
-        User user = foundUser.get();
+//        if (!foundUser.isPresent()) {
+//            res.put("message", "The user you are trying to reset the password for was not found");
+//            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
+//        }
 
         // Create and save Token in DB
         final String url = this.passwordResetService.generatePasswordResetUrl(user);
@@ -63,21 +61,16 @@ public class ResetPasswordController extends AuthController {
         Map<String, Object> res = new HashMap<>();
 
         Optional<VerifyToken> verifyToken = this.verifyTokenDAO.getToken(token);
-        Optional<User> foundUser = this.userDAO.getByEmail(newUser.getEmail());
+        User foundUser = this.userDAO.getByEmail(newUser.getEmail());
 
         if (!verifyToken.isPresent() || !verifyToken.get().getType().equals(VerifyTokenEnum.PASSWORD.toString())) {
             res.put("message", "This token is invalid");
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
 
-        Optional<User> tokenUser = this.userDAO.getUser(verifyToken.get().getUser().getId());
+        User tokenUser = this.userDAO.getUser(verifyToken.get().getUser().getId());
 
-        if (!foundUser.isPresent() || !tokenUser.isPresent()) {
-            res.put("message", "The user you are trying to reset the password for was not found");
-            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
-        }
-
-        UUID foundUserId = foundUser.get().getId();
+        UUID foundUserId = foundUser.getId();
         UUID tokenUserId = verifyToken.get().getUser().getId();
 
         if (!foundUserId.equals(tokenUserId)) {
@@ -85,7 +78,7 @@ public class ResetPasswordController extends AuthController {
             return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
         }
 
-        User user = tokenUser.get();
+        User user = tokenUser;
 
         final UserDTO userDTO = this.passwordResetService.toUserDTOFromPasswordReset(user, newUser.getPassword(), encrypted);
 

@@ -9,6 +9,7 @@ import tiimae.webshop.iprwc.DAO.BrandDAO;
 import tiimae.webshop.iprwc.DAO.CategoryDAO;
 import tiimae.webshop.iprwc.DAO.SupplierDAO;
 import tiimae.webshop.iprwc.DTO.ProductDTO;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.Brand;
 import tiimae.webshop.iprwc.models.Category;
 import tiimae.webshop.iprwc.models.Product;
@@ -27,7 +28,7 @@ public class ProductMapper {
         this.supplierDAO = supplierDAO;
     }
 
-    public Product toProduct(ProductDTO productDTO) {
+    public Product toProduct(ProductDTO productDTO) throws EntryNotFoundException {
         final Brand brand = this.getBrand(productDTO.getBrandId());
         final Category category = this.getCategory(productDTO.getCategoryId());
         final Supplier supplier = this.getSupplier(productDTO.getSupplierId());
@@ -35,7 +36,7 @@ public class ProductMapper {
         return new Product(productDTO.getName(), productDTO.getDescription(), productDTO.getPrice(), brand, category, supplier, new HashSet<>(), new HashSet<>(), new HashSet<>(), false);
     }
 
-    public Product mergeProduct(Product base, ProductDTO update) {
+    public Product mergeProduct(Product base, ProductDTO update) throws EntryNotFoundException {
         base.setProductName(update.getName());
         base.setDescription(update.getDescription());
         base.setPrice(update.getPrice());
@@ -56,7 +57,7 @@ public class ProductMapper {
 
     }
 
-    public Brand getBrand(UUID brandId) {
+    public Brand getBrand(UUID brandId) throws EntryNotFoundException {
         Brand brand = null;
 
         if (brandId != null) {
@@ -66,7 +67,7 @@ public class ProductMapper {
         return brand;
     }
 
-    public Category getCategory(UUID categoryId) {
+    public Category getCategory(UUID categoryId) throws EntryNotFoundException {
         Category category = null;
 
         if (categoryId != null) {
@@ -76,7 +77,7 @@ public class ProductMapper {
         return category;
     }
 
-    public Supplier getSupplier(UUID supplierId) {
+    public Supplier getSupplier(UUID supplierId) throws EntryNotFoundException {
         Supplier supplier = null;
 
         if (supplierId != null) {

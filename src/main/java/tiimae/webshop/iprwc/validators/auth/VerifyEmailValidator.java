@@ -12,9 +12,6 @@ import tiimae.webshop.iprwc.validators.Validator;
 
 @Component
 public class VerifyEmailValidator extends Validator {
-    public VerifyEmailValidator(ProductDAO productDAO) {
-        super(productDAO);
-    }
 
     public String validateIfUserAleadyHasBeenVerified(Optional<User> user) {
         if (user.isEmpty()) {

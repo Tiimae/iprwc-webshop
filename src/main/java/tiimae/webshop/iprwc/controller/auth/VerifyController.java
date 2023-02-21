@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.constants.ApiConstant;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.VerifyToken;
 import tiimae.webshop.iprwc.service.auth.VerifyEmailService;
@@ -32,7 +33,7 @@ public class VerifyController extends AuthController {
 
     @GetMapping(value = ApiConstant.sendVerifyEmail, consumes = MediaType.ALL_VALUE)
     @ResponseBody
-    public ApiResponseService<Map<String, Object>> sendVerifyEmail() {
+    public ApiResponseService<Map<String, Object>> sendVerifyEmail() throws EntryNotFoundException {
         Map<String, Object> res = new HashMap<>();
 
         Optional<User> bearerUser = this.profileService.getProfile(SecurityContextHolder.getContext().getAuthentication()).getPayload();
@@ -58,7 +59,7 @@ public class VerifyController extends AuthController {
 
     @PostMapping(value = ApiConstant.verifyEmail, consumes = MediaType.ALL_VALUE)
     @ResponseBody
-    public ApiResponseService<Map<String, Object>> verifyEmail(@RequestParam UUID token) {
+    public ApiResponseService<Map<String, Object>> verifyEmail(@RequestParam UUID token) throws EntryNotFoundException {
         Map<String, Object> res = new HashMap<>();
 
         Optional<User> bearerUser = this.profileService.getProfile(SecurityContextHolder.getContext().getAuthentication()).getPayload();

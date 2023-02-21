@@ -50,13 +50,7 @@ public class UserAddressMapper {
         User user = null;
 
         if (userId != null) {
-            final Optional<User> user1 = this.userDAO.getUser(userId);
-
-            if (user1.isEmpty()) {
-                throw new EntryNotFoundException("User has not been found!");
-            }
-
-            user = user1.get();
+            user = this.userDAO.getUser(userId);
         }
 
         return user;

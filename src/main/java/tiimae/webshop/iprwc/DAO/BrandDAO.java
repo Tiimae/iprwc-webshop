@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.BrandRepository;
 import tiimae.webshop.iprwc.DTO.BrandDTO;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
+import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.BrandMapper;
 import tiimae.webshop.iprwc.models.Brand;
 import tiimae.webshop.iprwc.models.Product;
@@ -23,19 +25,18 @@ public class BrandDAO {
     private BrandMapper brandMapper;
     private ImageDAO imageDAO;
 
-    public Brand getBrand(UUID brandId) {
-        return this.brandRepository.findById(brandId).get();
-    }
-
-    public Optional<Brand> getBrandByName(String brandName) {
-        return this.brandRepository.findBrandByBrandName(brandName);
+    public Brand getBrand(UUID brandId) throws EntryNotFoundException {
+        final Optional<Brand> byId = this.brandRepository.findById(brandId);
+        this.checkIfExists(byId);
+        return byId.get();
     }
 
     public List<Brand> getAll() {
         return this.brandRepository.findAll();
     }
 
-    public Brand postBrand(BrandDTO brandDTO, MultipartFile file) throws IOException {
+    public Brand postBrand(BrandDTO brandDTO, MultipartFile file) throws IOException, EntryAlreadyExistsException {
+        this.checkIfBrandNameExists(brandDTO.getBrandName(), null);
         final Brand brand = this.brandMapper.toBrand(brandDTO);
 
         brand.setLogoUrl(this.imageDAO.saveBrandImage(file, brand.getBrandName(), "brand"));
@@ -43,12 +44,10 @@ public class BrandDAO {
         return this.brandRepository.save(brand);
     }
 
-    public Brand updateBrand(UUID brandId, BrandDTO brandDTO, MultipartFile file) throws IOException {
+    public Brand updateBrand(UUID brandId, BrandDTO brandDTO, MultipartFile file) throws IOException, EntryAlreadyExistsException, EntryNotFoundException {
         final Optional<Brand> byId = this.brandRepository.findById(brandId);
-
-        if (byId.isEmpty()) {
-            return null;
-        }
+        this.checkIfExists(byId);
+        this.checkIfBrandNameExists(brandDTO.getBrandName(), brandId);
 
         if (file != null) {
             final String[] split = byId.get().getLogoUrl().split("/");
@@ -64,12 +63,9 @@ public class BrandDAO {
         return this.brandRepository.saveAndFlush(newBrand);
     }
 
-    public void delete(UUID brandId) throws IOException {
+    public void delete(UUID brandId) throws IOException, EntryNotFoundException {
         final Optional<Brand> byId = this.brandRepository.findById(brandId);
-
-        if (byId.isEmpty()) {
-            return;
-        }
+        this.checkIfExists(byId);
 
         final String[] split = byId.get().getLogoUrl().split("/");
         final String file = split[split.length - 1];
@@ -82,6 +78,27 @@ public class BrandDAO {
         }
 
         this.brandRepository.deleteById(brandId);
+    }
+
+    public void checkIfExists(Optional<Brand> brand) throws EntryNotFoundException {
+        if (brand.isEmpty()) {
+            throw new EntryNotFoundException("This brand has not been found!");
+        }
+    }
+
+    public void checkIfBrandNameExists(String brandName, UUID id) throws EntryAlreadyExistsException {
+        Optional<Brand> brandByName = this.brandRepository.findBrandByBrandName(brandName);
+
+        if (brandByName.isPresent()) {
+            if (id != null) {
+                if (brandByName.get().getId() != id) {
+                    throw new EntryAlreadyExistsException("Brand name already exists");
+                }
+            } else {
+
+                throw new EntryAlreadyExistsException("Brand name already exists");
+            }
+        }
     }
 
 }
