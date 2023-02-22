@@ -17,6 +17,7 @@ import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.VerifyTokenEnum;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.VerifyToken;
@@ -36,11 +37,6 @@ public class ResetPasswordController extends AuthController {
 
         User user = this.userDAO.getByEmail(email);
 
-//        if (!foundUser.isPresent()) {
-//            res.put("message", "The user you are trying to reset the password for was not found");
-//            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, res);
-//        }
-
         // Create and save Token in DB
         final String url = this.passwordResetService.generatePasswordResetUrl(user);
 
@@ -57,7 +53,7 @@ public class ResetPasswordController extends AuthController {
 
     @PostMapping(value = ApiConstant.setNewPassword, consumes = {"application/json"})
     @ResponseBody
-    public ApiResponseService<Map<String, Object>> setNewPassword(@RequestBody UserDTO newUser, @RequestParam UUID token, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException {
+    public ApiResponseService<Map<String, Object>> setNewPassword(@RequestBody UserDTO newUser, @RequestParam UUID token, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException, EntryAlreadyExistsException {
         Map<String, Object> res = new HashMap<>();
 
         Optional<VerifyToken> verifyToken = this.verifyTokenDAO.getToken(token);

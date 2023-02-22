@@ -20,6 +20,7 @@ import tiimae.webshop.iprwc.DTO.OrderDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
 import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;
 import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.service.EmailService;
@@ -56,24 +57,15 @@ public class OrderController {
             @RequestParam(value = "delivery") String deliveryId,
             @RequestParam(value = "userId") String userId,
             @RequestParam(value = "products") JSONArray productIds
-    ) throws EntryNotFoundException {
+    ) throws EntryNotFoundException, InvalidDtoException {
         final OrderDTO orderDTO = this.orderService.toDTO(invoiceId, deliveryId, userId, new String[0]);
 
-//        String validateDTO = this.orderValidator.validateDTO(orderDTO);
-//
-//        if (validateDTO != null) {
-//            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
-//        }
-
-//        String validateOrderProducts = this.orderValidator.validateOrderProducts(productIds);
-//
-//        if (validateOrderProducts != null) {
-//            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateOrderProducts);
-//        }
+        this.orderValidator.validateDTO(orderDTO);
 
         final Order order = this.orderDAO.create(orderDTO);
 
         for (int i = 0; i < productIds.length(); i++) {
+            this.orderValidator.validateOrderProducts(productIds.getJSONObject(i));
             this.orderProductDAO.create(productIds.getJSONObject(i), order);
         }
 

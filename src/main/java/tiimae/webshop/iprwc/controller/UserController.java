@@ -26,7 +26,9 @@ import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.RoleEnum;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
 import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
 import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;
 import tiimae.webshop.iprwc.mapper.UserMapper;
@@ -51,8 +53,10 @@ public class UserController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService get(@PathVariable UUID userId) throws EntryNotFoundException {
-        final User user = this.userDAO.getUser(userId);
+    public ApiResponseService get(@PathVariable String userId) throws EntryNotFoundException, NotAValidUUIDException {
+
+        final UUID id = this.userValidator.checkIfStringIsUUID(userId);
+        final User user = this.userDAO.getUser(id);
 
         if (user.getDeleted()) {
             throw new EntryNotFoundException("User has not been found!");
@@ -69,8 +73,10 @@ public class UserController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService getWithRoles(@PathVariable UUID userId) {
-        final User user = this.userDAO.getUser(userId);
+    public ApiResponseService getWithRoles(@PathVariable String userId) throws EntryNotFoundException, NotAValidUUIDException {
+
+        final UUID id = this.userValidator.checkIfStringIsUUID(userId);
+        final User user = this.userDAO.getUser(id);
 
         if (user.getDeleted()) {
             throw new EntryNotFoundException("User has not been found!");
@@ -110,13 +116,9 @@ public class UserController {
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService create(@RequestBody UserDTO userDTO) {
+    public ApiResponseService create(@RequestBody UserDTO userDTO) throws InvalidDtoException, EntryAlreadyExistsException {
 
-//        String validateDTO = this.userValidator.validateDTO(null, userDTO);
-//
-//        if (validateDTO != null) {
-//            return new ApiResponseService(HttpStatus.BAD_REQUEST, validateDTO);
-//        }
+        this.userValidator.validateDTO(userDTO);
 
         final String password = passwordGeneratorService.generateNewPassword();
 
@@ -138,12 +140,11 @@ public class UserController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService update(@PathVariable String userId, @RequestBody UserDTO userDTO) throws EntryNotFoundException, NotAValidUUIDException {
+    public ApiResponseService update(@PathVariable String userId, @RequestBody UserDTO userDTO) throws EntryNotFoundException, NotAValidUUIDException, InvalidDtoException, EntryAlreadyExistsException {
         userDTO.setRoleIds(new String[0]);
 
         final UUID id = this.userValidator.checkIfStringIsUUID(userId);
-
-//        String validateDTO = this.userValidator.validateDTO(UUID.fromString(userId), userDTO);
+        this.userValidator.validateDTO(userDTO);
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(id, userDTO));
     }
@@ -157,14 +158,9 @@ public class UserController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService updateAdmin(@PathVariable String userId, @RequestBody UserDTO userDTO) throws EntryNotFoundException, NotAValidUUIDException {
+    public ApiResponseService updateAdmin(@PathVariable String userId, @RequestBody UserDTO userDTO) throws EntryNotFoundException, NotAValidUUIDException, InvalidDtoException, EntryAlreadyExistsException {
         final UUID id = this.userValidator.checkIfStringIsUUID(userId);
-//
-//        String validateDTO = this.userValidator.validateDTO(UUID.fromString(userId), userDTO);
-//
-//        if (validateDTO != null) {
-//            return new ApiResponseService<>(HttpStatus.BAD_REQUEST, validateDTO);
-//        }
+        this.userValidator.validateDTO(userDTO);
 
         return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(id, userDTO));
     }

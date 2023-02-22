@@ -16,6 +16,7 @@ import tiimae.webshop.iprwc.service.EmailService;
 import tiimae.webshop.iprwc.service.SecretService;
 import tiimae.webshop.iprwc.service.auth.LoginService;
 import tiimae.webshop.iprwc.service.auth.ProfileService;
+import tiimae.webshop.iprwc.validators.UserValidator;
 import tiimae.webshop.iprwc.validators.auth.AuthValidator;
 
 @RequestMapping(
@@ -36,6 +37,7 @@ public class AuthController {
     @Autowired protected ProfileService profileService;
 
     @Autowired protected AuthValidator authValidator;
+    @Autowired protected UserValidator userValidator;
 
     @Autowired protected UserDAO userDAO;
     @Autowired protected VerifyTokenDAO verifyTokenDAO;

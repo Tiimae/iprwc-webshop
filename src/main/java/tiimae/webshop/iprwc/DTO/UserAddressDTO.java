@@ -10,7 +10,7 @@ import lombok.Setter;
 public class UserAddressDTO {
 
     private String street;
-    private long houseNumber;
+    private Integer houseNumber;
     private String addition;
     private String zipcode;
     private String city;

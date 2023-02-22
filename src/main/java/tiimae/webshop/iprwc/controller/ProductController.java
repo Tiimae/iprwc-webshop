@@ -100,7 +100,7 @@ public class ProductController {
     @DeleteMapping(ApiConstant.restoreOneProduct)
     @ResponseBody
     @Secured(RoleEnum.Admin.CODENAME)
-    public ApiResponseService restore(@PathVariable UUID productId) throws IOException, EntryNotFoundException {
+    public ApiResponseService restore(@PathVariable UUID productId) throws EntryNotFoundException {
         return new ApiResponseService(HttpStatus.ACCEPTED, this.productDAO.restore(productId));
     }
 }

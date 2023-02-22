@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DTO.LoginDTO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.service.EncryptionService;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
@@ -24,7 +26,8 @@ public class LoginController extends AuthController {
 
     @PostMapping(value = ApiConstant.register)
     @ResponseBody
-    public ApiResponseService register(@Valid @RequestBody UserDTO user, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException {
+    public ApiResponseService register(@Valid @RequestBody UserDTO user, @RequestParam(required = false) boolean encrypted) throws InvalidDtoException, EntryAlreadyExistsException {
+        this.userValidator.validateDTO(user);
         user.setVerified(false);
         user.setResetRequired(false);
         String password = encrypted ? EncryptionService.decryptAes(user.getPassword(), this.sharedSecret) : user.getPassword();
@@ -42,10 +45,10 @@ public class LoginController extends AuthController {
 
     @PostMapping(value = ApiConstant.login)
     @ResponseBody
-    public ApiResponseService login(@RequestBody LoginDTO user, @RequestParam(required = false) boolean encrypted) throws AuthenticationException, IOException, EntryNotFoundException {
+    public ApiResponseService login(@RequestBody LoginDTO user, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException, InvalidDtoException {
         final HashMap<String, String> res = new HashMap<>();
 
-//        String validation = this.authValidator.loginValidation(user);
+        this.authValidator.loginValidation(user);
 
         if (encrypted) {
             user.setPassword(EncryptionService.decryptAes(user.getPassword(), sharedSecret));

@@ -10,8 +10,10 @@ import org.springframework.stereotype.Component;
 
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.DTO.UserDTO;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.UserMapper;
+import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.User;
 
 @Component
@@ -44,13 +46,15 @@ public class UserDAO {
         return this.userRepository.findAll();
     }
 
-    public User create(User user) {
+    public User create(User user) throws EntryAlreadyExistsException {
+        this.checkIfEmailExists(user.getEmail(), null);
         return this.userRepository.save(user);
     }
 
-    public User update(UUID id, UserDTO userDTO) throws EntryNotFoundException {
+    public User update(UUID id, UserDTO userDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
         final Optional<User> byId = this.userRepository.findById(id);
         this.checkIfExists(byId);
+        this.checkIfEmailExists(byId.get().getEmail(), null);
 
         if (userDTO.getPassword().isEmpty()) {
             userDTO.setPassword(byId.get().getPassword());
@@ -89,6 +93,21 @@ public class UserDAO {
     public void checkIfExists(Optional<User> user) throws EntryNotFoundException {
         if (user.isEmpty()) {
             throw new EntryNotFoundException("This address has not been found!");
+        }
+    }
+
+    public void checkIfEmailExists(String email, UUID id) throws EntryAlreadyExistsException {
+        Optional<User> user = this.userRepository.findByEmail(email);
+
+        if (user.isPresent()) {
+            if (id != null) {
+                if (user.get().getId() != id) {
+                    throw new EntryAlreadyExistsException("Something went wrong!");
+                }
+            } else {
+
+                throw new EntryAlreadyExistsException("Something went wrong!");
+            }
         }
     }
 }

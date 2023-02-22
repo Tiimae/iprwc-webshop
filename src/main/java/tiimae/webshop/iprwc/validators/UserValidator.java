@@ -1,25 +1,24 @@
 package tiimae.webshop.iprwc.validators;
 
-import java.util.Optional;
-import java.util.UUID;
-
 import org.springframework.stereotype.Component;
 
-import tiimae.webshop.iprwc.DAO.ProductDAO;
-import tiimae.webshop.iprwc.DAO.RoleDAO;
-import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
-import tiimae.webshop.iprwc.models.Role;
-import tiimae.webshop.iprwc.models.User;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
 
 @Component
 public class UserValidator extends Validator {
 
-   public void validateDTO(UUID id, UserDTO userDTO) {
+   public void validateDTO(UserDTO userDTO) throws InvalidDtoException {
+      if (userDTO.getEmail() == null) {
+         throw new InvalidDtoException("Email can not be null");
+      }
 
-   }
+      if (userDTO.getLastName() == null) {
+         throw new InvalidDtoException("Lastname can not be null");
+      }
 
-   public void validateId(String userId) {
-
+      if (userDTO.getFirstName() == null) {
+         throw new InvalidDtoException("Firstname can not be null");
+      }
    }
 }
