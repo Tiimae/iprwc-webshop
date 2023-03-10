@@ -23,6 +23,7 @@ public class ApiConstant {
     public static final String getOneUserAdmin = apiPrefix + "user/{userId}/admin";
     public static final String getAllUsers = apiPrefix + "user";
     public static final String getOneUserWithRole = apiPrefix + "user/{userId}/roles";
+    public static final String getOneUserHasRole = apiPrefix + "user/{userId}/has-role";
     public static final String getUsersWithRoles = apiPrefix + "user/roles";
 
     // Role API calls
@@ -50,4 +51,6 @@ public class ApiConstant {
     public static final String getAllOrders = apiPrefix + "order";
     public static final String getOrderByUserId = apiPrefix + "order/{userId}";
     public static final String getAllReview = apiPrefix + "review";
+
+    public static final String getCSRF = apiPrefix + "csrf";
 }

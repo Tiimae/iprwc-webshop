@@ -17,6 +17,7 @@ import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.exception.InvalidDtoException;
+import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.service.EncryptionService;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
@@ -45,7 +46,7 @@ public class LoginController extends AuthController {
 
     @PostMapping(value = ApiConstant.login)
     @ResponseBody
-    public ApiResponseService login(@RequestBody LoginDTO user, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException, InvalidDtoException {
+    public ApiResponseService login(@RequestBody LoginDTO user, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException, InvalidDtoException, TokenNotFoundException {
         final HashMap<String, String> res = new HashMap<>();
 
         this.authValidator.loginValidation(user);
@@ -67,9 +68,11 @@ public class LoginController extends AuthController {
 
         this.loginService.generateTokens(foundUser);
 
+
         res.put("jwtToken", foundUser.getAccessToken().getValue());
         res.put("refreshToken", foundUser.getRefreshToken().getValue());
-        res.put("verified", foundUser.getVerified().toString());
+//        res.put("userId", String.valueOf(foundUser.getId()));
+//        res.put("verified", foundUser.getVerified().toString());
         res.put("destination", "to-cookie");
 
         return new ApiResponseService<>(HttpStatus.OK, res);

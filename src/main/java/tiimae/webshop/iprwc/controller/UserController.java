@@ -54,7 +54,6 @@ public class UserController {
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService get(@PathVariable String userId) throws EntryNotFoundException, NotAValidUUIDException {
-
         final UUID id = this.userValidator.checkIfStringIsUUID(userId);
         final User user = this.userDAO.getUser(id);
 
@@ -180,4 +179,23 @@ public class UserController {
 
         return new ApiResponseService(HttpStatus.ACCEPTED, "User has been deleted");
     }
+
+    @PostMapping(value = ApiConstant.getOneUserHasRole)
+    @ResponseBody
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
+    @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
+    public ApiResponseService getIfHasRoles(@PathVariable String userId, @RequestBody ArrayList<String> roles) throws NotAValidUUIDException, EntryNotFoundException {
+
+        UUID id = this.userValidator.checkIfStringIsUUID(userId);
+        final User user = this.userDAO.getUser(id);
+
+        for (Role role : user.getRoles()) {
+            if (roles.contains(role.getName())) {
+                return new ApiResponseService(HttpStatus.ACCEPTED, true);
+            }
+        }
+
+        return new ApiResponseService(HttpStatus.ACCEPTED, false);
+    }
+
 }

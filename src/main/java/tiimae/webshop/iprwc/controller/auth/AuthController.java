@@ -13,6 +13,7 @@ import tiimae.webshop.iprwc.DAO.VerifyTokenDAO;
 import tiimae.webshop.iprwc.DAO.repo.RoleRepository;
 import tiimae.webshop.iprwc.mapper.UserMapper;
 import tiimae.webshop.iprwc.service.EmailService;
+import tiimae.webshop.iprwc.service.EncryptionService;
 import tiimae.webshop.iprwc.service.SecretService;
 import tiimae.webshop.iprwc.service.auth.LoginService;
 import tiimae.webshop.iprwc.service.auth.ProfileService;
@@ -35,6 +36,7 @@ public class AuthController {
     @Autowired protected LoginService loginService;
     @Autowired protected EmailService emailService;
     @Autowired protected ProfileService profileService;
+    @Autowired protected EncryptionService encryptionService;
 
     @Autowired protected AuthValidator authValidator;
     @Autowired protected UserValidator userValidator;
