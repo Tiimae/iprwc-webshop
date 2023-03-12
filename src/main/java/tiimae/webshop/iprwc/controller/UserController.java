@@ -1,9 +1,6 @@
 package tiimae.webshop.iprwc.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
@@ -86,6 +83,9 @@ public class UserController {
         for (Role role: user1.getRoles()) {
             role.getUsers().clear();
         }
+
+        user.getOrders().clear();
+        user.getAddresses().clear();
 
         return new ApiResponseService<>(HttpStatus.ACCEPTED, user1);
     }
@@ -184,14 +184,20 @@ public class UserController {
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService getIfHasRoles(@PathVariable String userId, @RequestBody ArrayList<String> roles) throws NotAValidUUIDException, EntryNotFoundException {
+    public ApiResponseService getIfHasRoles(@PathVariable String userId, @RequestBody String url) throws NotAValidUUIDException, EntryNotFoundException {
 
         UUID id = this.userValidator.checkIfStringIsUUID(userId);
         final User user = this.userDAO.getUser(id);
 
-        for (Role role : user.getRoles()) {
-            if (roles.contains(role.getName())) {
-                return new ApiResponseService(HttpStatus.ACCEPTED, true);
+        final String[] split = url.split("%2F");
+
+        for (String segment : split) {
+            if (segment.equals("admin=")) {
+                for (Role role : user.getRoles()) {
+                    if (role.getName().equals("Admin") || role.getName().equals("Owner")) {
+                        return new ApiResponseService(HttpStatus.ACCEPTED, true);
+                    }
+                }
             }
         }
 

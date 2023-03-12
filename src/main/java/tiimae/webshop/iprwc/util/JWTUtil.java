@@ -68,15 +68,9 @@ public class JWTUtil {
             Instant issuedAt = Instant.now();
             Instant expiresAt = issuedAt.plusSeconds(this.accessTokenLifetime);
 
-            ArrayList<String> roles = new ArrayList<>();
-            for (Role role : user.getRoles()) {
-                roles.add(role.getName());
-            }
-
             String tokenValue = JWT.create()
                     .withIssuer(this.issuer)
                     .withClaim("userId", user.getId().toString())
-                    .withClaim("roles", roles)
                     .withIssuedAt(issuedAt)
                     .withExpiresAt(expiresAt)
                     .sign(Algorithm.HMAC256(this.secret));

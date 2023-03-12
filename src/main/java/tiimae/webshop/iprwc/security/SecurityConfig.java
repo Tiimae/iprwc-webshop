@@ -60,8 +60,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(this.filterChainExceptionHandler, JWTFilter.class)
                 .csrf().csrfTokenRepository(this.csrfTokenRepository()).ignoringAntMatchers(publicUrls)
                 .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
                 .antMatchers(HttpMethod.GET, "/api/v1.0/product/**").permitAll()
@@ -70,7 +69,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/v1.0/brand").permitAll()
                 .antMatchers(HttpMethod.GET,"/api/v1.0/csrf").permitAll()
                 .antMatchers("/api/v1.0/review/**").permitAll()
-                .antMatchers("/api/v1.0/auth/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/api/v1.0/auth/**").permitAll()
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/api/v1.0/to-cookie").permitAll()
                 .anyRequest().authenticated();
@@ -86,6 +85,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CsrfTokenRepository csrfTokenRepository() {
         CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         repository.setCookiePath("/");
+        repository.setCookieDomain("localhost");
         return repository;
     }
 
