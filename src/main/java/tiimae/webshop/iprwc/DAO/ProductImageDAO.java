@@ -26,7 +26,8 @@ public class ProductImageDAO {
 
         final String path = this.imageDAO.saveBrandImage(file, product.getProductName(), "product");
 
-        this.productImageRepository.save(this.productImageMapper.toProductImage(path, product));
+        final ProductImage save = this.productImageRepository.save(this.productImageMapper.toProductImage(path, product));
+        product.getProductImages().add(save);
 
     }
 

@@ -23,4 +23,5 @@ public interface VerifyTokenRepository extends JpaRepository<VerifyToken, UUID> 
     int updateConfirmedAt(UUID token, LocalDateTime confirmedAt);
 
     Optional<VerifyToken> getVerifyTokenByUser(User user);
+    Optional<VerifyToken> getVerifyTokenByUserId(UUID userId);
 }

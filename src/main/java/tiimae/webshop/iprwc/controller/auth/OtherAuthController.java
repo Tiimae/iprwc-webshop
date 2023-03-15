@@ -24,28 +24,6 @@ import tiimae.webshop.iprwc.service.response.ApiResponseService;
 @RestController
 public class OtherAuthController extends AuthController {
 
-    @GetMapping(value = ApiConstant.toCookie, consumes = MediaType.ALL_VALUE)
-    public ModelAndView redirectWithUsingForwardPrefix(ModelMap model, HttpServletRequest request, HttpServletResponse response) {
-
-        model.addAttribute("attribute", "forwardWithForwardPrefix");
-        response.addCookie(this.secretService.createCookie());
-        return new ModelAndView("redirect:" + request.getHeader(HttpHeaders.REFERER) + "", model);
-    }
-
-    @GetMapping(value = ApiConstant.secret, consumes = MediaType.ALL_VALUE)
-    @ResponseBody
-    public ApiResponseService secret(HttpServletRequest request) {
-        String secret = this.secretService.getSecret(request);
-
-        if (secret == null || secret.isBlank() || secret.isEmpty()) {
-            return new ApiResponseService(HttpStatus.FORBIDDEN, "You are not authenticated");
-        }
-
-        secret = new EncryptionService().decrypt(secret, this.jwtSecret);
-
-        return new ApiResponseService(HttpStatus.ACCEPTED, secret);
-    }
-
     @GetMapping(value = ApiConstant.profile, consumes = MediaType.ALL_VALUE)
     @ResponseBody
     public ApiResponseService<Optional<User>> profile(Principal securityPrincipal) throws EntryNotFoundException {

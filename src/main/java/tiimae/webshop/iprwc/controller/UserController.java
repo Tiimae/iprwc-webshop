@@ -5,6 +5,7 @@ import java.util.*;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.Nullable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -180,24 +181,18 @@ public class UserController {
         return new ApiResponseService(HttpStatus.ACCEPTED, "User has been deleted");
     }
 
-    @PostMapping(value = ApiConstant.getOneUserHasRole)
+    @GetMapping(value = ApiConstant.getOneUserHasRole)
     @ResponseBody
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
-    public ApiResponseService getIfHasRoles(@PathVariable String userId, @RequestBody String url) throws NotAValidUUIDException, EntryNotFoundException {
+    public ApiResponseService getIfHasRoles(@PathVariable String userId) throws NotAValidUUIDException, EntryNotFoundException {
 
         UUID id = this.userValidator.checkIfStringIsUUID(userId);
         final User user = this.userDAO.getUser(id);
 
-        final String[] split = url.split("%2F");
-
-        for (String segment : split) {
-            if (segment.equals("admin=")) {
-                for (Role role : user.getRoles()) {
-                    if (role.getName().equals("Admin") || role.getName().equals("Owner")) {
-                        return new ApiResponseService(HttpStatus.ACCEPTED, true);
-                    }
-                }
+        for (Role role : user.getRoles()) {
+            if (role.getName().equals("Admin") || role.getName().equals("Owner")) {
+                return new ApiResponseService(HttpStatus.ACCEPTED, true);
             }
         }
 

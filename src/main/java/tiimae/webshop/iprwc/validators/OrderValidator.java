@@ -27,10 +27,6 @@ public class OrderValidator extends Validator {
       if (orderDTO.getUserId() == null) {
          throw new InvalidDtoException("A user needs to be specified");
       }
-
-      if (orderDTO.getProductIds().length < 1) {
-         throw new InvalidDtoException("There need to be more than one product");
-      }
    }
 
    public void validateOrderProducts(JSONObject product) throws InvalidDtoException {

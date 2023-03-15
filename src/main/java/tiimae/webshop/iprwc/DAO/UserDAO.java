@@ -54,7 +54,7 @@ public class UserDAO {
     public User update(UUID id, UserDTO userDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
         final Optional<User> byId = this.userRepository.findById(id);
         this.checkIfExists(byId);
-        this.checkIfEmailExists(byId.get().getEmail(), null);
+        this.checkIfEmailExists(byId.get().getEmail(), id);
 
         if (userDTO.getPassword().isEmpty()) {
             userDTO.setPassword(byId.get().getPassword());

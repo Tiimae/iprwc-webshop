@@ -26,6 +26,10 @@ public class VerifyTokenDAO {
         return verifyTokenRepository.findByToken(token);
     }
 
+    public Optional<VerifyToken> getTokenByUserId(UUID userId) {
+        return verifyTokenRepository.getVerifyTokenByUserId(userId);
+    }
+
     public int setConfirmedAt(UUID token) {
         return verifyTokenRepository.updateConfirmedAt(token, LocalDateTime.now());
     }

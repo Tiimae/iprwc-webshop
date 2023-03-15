@@ -28,10 +28,11 @@ public class LoginController extends AuthController {
     @PostMapping(value = ApiConstant.register)
     @ResponseBody
     public ApiResponseService register(@Valid @RequestBody UserDTO user, @RequestParam(required = false) boolean encrypted) throws InvalidDtoException, EntryAlreadyExistsException {
-        this.userValidator.validateDTO(user);
         user.setVerified(false);
         user.setResetRequired(false);
         String password = encrypted ? EncryptionService.decryptAes(user.getPassword(), this.sharedSecret) : user.getPassword();
+        user.setPassword(password);
+        this.authValidator.registerValidation(user);
 
         String encodedPass = this.passwordEncoder.encode(password);
 
@@ -68,12 +69,8 @@ public class LoginController extends AuthController {
 
         this.loginService.generateTokens(foundUser);
 
-
         res.put("jwtToken", foundUser.getAccessToken().getValue());
         res.put("refreshToken", foundUser.getRefreshToken().getValue());
-//        res.put("userId", String.valueOf(foundUser.getId()));
-//        res.put("verified", foundUser.getVerified().toString());
-        res.put("destination", "to-cookie");
 
         return new ApiResponseService<>(HttpStatus.OK, res);
     }

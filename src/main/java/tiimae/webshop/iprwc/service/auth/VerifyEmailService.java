@@ -1,6 +1,7 @@
 package tiimae.webshop.iprwc.service.auth;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,11 @@ public class VerifyEmailService {
     @Value("${frontendUrl}")
     private String url;
 
-    public String generateVerifyUrl(User user) {
+    public UUID generateVerifyUrl(User user) {
         UUID token = UUID.randomUUID();
         VerifyToken verifyToken = new VerifyToken(token, VerifyTokenEnum.VERIFY.toString(), LocalDateTime.now(), LocalDateTime.now().plusMinutes(15), null, user);
         this.verifyTokenDAO.saveVerifyToken(verifyToken);
 
-        return this.url + "/auth/verify?token=" + token;
+        return token;
     }
 }

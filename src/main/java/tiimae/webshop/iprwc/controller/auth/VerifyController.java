@@ -50,7 +50,7 @@ public class VerifyController extends AuthController {
         this.emailService.setData(
                 "Email verification timdekok.nl",
                 user.getEmail(),
-                "<p>Hi " + user.getFirstName() + ", click <a href='" + this.verifyEmailService.generateVerifyUrl(user) + "'>here</a> to verify your email</p>");
+                "<p>Hi " + user.getFirstName() + ", this is de code to verify your email address. " + String.valueOf(this.verifyEmailService.generateVerifyUrl(user)) + "</p>");
         this.emailService.run();
 
         res.put("message", "Successfully sent a verify token to " + user.getEmail());

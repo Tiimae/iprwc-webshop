@@ -19,6 +19,7 @@ import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.VerifyTokenEnum;
 import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
+import tiimae.webshop.iprwc.exception.InvalidDtoException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.VerifyToken;
 import tiimae.webshop.iprwc.service.auth.PasswordResetService;
@@ -53,7 +54,9 @@ public class ResetPasswordController extends AuthController {
 
     @PostMapping(value = ApiConstant.setNewPassword, consumes = {"application/json"})
     @ResponseBody
-    public ApiResponseService<Map<String, Object>> setNewPassword(@RequestBody UserDTO newUser, @RequestParam UUID token, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException, EntryAlreadyExistsException {
+    public ApiResponseService<Map<String, Object>> setNewPassword(@RequestBody UserDTO newUser, @RequestParam UUID token, @RequestParam(required = false) boolean encrypted) throws EntryNotFoundException, EntryAlreadyExistsException, InvalidDtoException {
+        this.authValidator.resetPasswordValidation(newUser);
+
         Map<String, Object> res = new HashMap<>();
 
         Optional<VerifyToken> verifyToken = this.verifyTokenDAO.getToken(token);
@@ -76,16 +79,16 @@ public class ResetPasswordController extends AuthController {
 
         User user = tokenUser;
 
-        final UserDTO userDTO = this.passwordResetService.toUserDTOFromPasswordReset(user, newUser.getPassword(), encrypted);
-
+        final UserDTO userDTO = this.passwordResetService.toUserDTOFromPasswordReset(user, newUser.getPassword(), encrypted);;
         this.userDAO.update(user.getId(), userDTO);
+
 
         this.emailService.setData(
                 "your password on timdekok.nl has been changed",
                 user.getEmail(),
                 "<p>Hi " + user.getFirstName() + ", Your password has been changed! If you didn't change password send a message to us.</p>"
         );
-        this.emailService.start();
+        this.emailService.run();
 
         try {
             this.verifyTokenDAO.confirmToken(token);
