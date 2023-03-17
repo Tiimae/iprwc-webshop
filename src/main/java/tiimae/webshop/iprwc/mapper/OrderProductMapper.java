@@ -21,7 +21,7 @@ public class OrderProductMapper {
     }
 
     public OrderProduct toOrderProduct(JSONObject product, Order order) throws EntryNotFoundException {
-        return new OrderProduct(product.getLong("amount"), "delivered", order, this.getProduct(UUID.fromString(product.getString("id"))));
+        return new OrderProduct(product.getLong("amount"), "delivered", order, this.getProduct(UUID.fromString(product.getString("productId"))));
     }
 
     public Product getProduct(UUID id) throws EntryNotFoundException {

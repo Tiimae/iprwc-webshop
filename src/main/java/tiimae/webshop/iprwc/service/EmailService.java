@@ -48,6 +48,7 @@ public class EmailService extends Thread {
     public void run() {
         try {
             this.sendMessage();
+            Thread.currentThread().interrupt();
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }

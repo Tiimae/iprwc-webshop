@@ -58,14 +58,18 @@ public class OrderController {
             @RequestParam(value = "userId") String userId,
             @RequestParam(value = "products") JSONArray productIds
     ) throws EntryNotFoundException, InvalidDtoException {
+
         final OrderDTO orderDTO = this.orderService.toDTO(invoiceId, deliveryId, userId, new String[0]);
 
         this.orderValidator.validateDTO(orderDTO);
 
+        for (int i = 0; i < productIds.length(); i++) {
+            this.orderValidator.validateOrderProducts(productIds.getJSONObject(i));
+        }
+
         final Order order = this.orderDAO.create(orderDTO);
 
         for (int i = 0; i < productIds.length(); i++) {
-            this.orderValidator.validateOrderProducts(productIds.getJSONObject(i));
             this.orderProductDAO.create(productIds.getJSONObject(i), order);
         }
 

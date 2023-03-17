@@ -51,4 +51,8 @@ public class ApiConstant {
     public static final String getAllReview = apiPrefix + "review";
 
     public static final String getCSRF = apiPrefix + "csrf";
+
+    public static final String setNewCartItem = apiPrefix + "cart";
+    public static final String getCartById = apiPrefix + "cart/{userId}";
+    public static final String removeCartById = apiPrefix + "cart/{userId}/{productId}";
 }
