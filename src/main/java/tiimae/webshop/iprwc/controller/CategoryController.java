@@ -1,19 +1,9 @@
 package tiimae.webshop.iprwc.controller;
 
-import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DAO.CategoryDAO;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
@@ -26,6 +16,8 @@ import tiimae.webshop.iprwc.mapper.CategoryMapper;
 import tiimae.webshop.iprwc.models.Category;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.CategoryValidator;
+
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor

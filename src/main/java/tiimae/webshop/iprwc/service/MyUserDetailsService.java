@@ -1,10 +1,5 @@
 package tiimae.webshop.iprwc.service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,12 +7,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {

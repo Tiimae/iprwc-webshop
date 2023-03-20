@@ -1,14 +1,6 @@
 package tiimae.webshop.iprwc.mapper;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Component;
-
 import tiimae.webshop.iprwc.DAO.OrderProductDAO;
 import tiimae.webshop.iprwc.DAO.UserAddressDAO;
 import tiimae.webshop.iprwc.DAO.UserDAO;
@@ -18,6 +10,12 @@ import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.models.OrderProduct;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.UserAddress;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class OrderMapper {

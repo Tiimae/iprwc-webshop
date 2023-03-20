@@ -1,12 +1,7 @@
 package tiimae.webshop.iprwc.DAO;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import tiimae.webshop.iprwc.DAO.repo.CategoryRepository;
 import tiimae.webshop.iprwc.DTO.CategoryDTO;
 import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
@@ -14,6 +9,11 @@ import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.CategoryMapper;
 import tiimae.webshop.iprwc.models.Category;
 import tiimae.webshop.iprwc.models.Product;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @AllArgsConstructor
@@ -43,6 +43,7 @@ public class CategoryDAO {
         return this.categoryRepository.save(category);
     }
 
+    @Transactional
     public Category update(UUID id, CategoryDTO categoryDTO) throws EntryAlreadyExistsException, EntryNotFoundException {
         final Optional<Category> byId = this.categoryRepository.findById(id);
         this.checkIfExists(byId);
@@ -52,6 +53,7 @@ public class CategoryDAO {
         return this.categoryRepository.saveAndFlush(category);
     }
 
+    @Transactional
     public void delete(UUID id) throws EntryNotFoundException {
         final Optional<Category> byId = this.categoryRepository.findById(id);
         this.checkIfExists(byId);
@@ -75,7 +77,7 @@ public class CategoryDAO {
 
         if (categoryByName.isPresent()) {
             if (id != null) {
-                if (categoryByName.get().getId() != id) {
+                if (!categoryByName.get().getId().equals(id)) {
                     throw new EntryAlreadyExistsException("Category name already exists");
                 }
             } else {

@@ -1,10 +1,6 @@
 package tiimae.webshop.iprwc.mapper;
 
-import java.util.HashSet;
-import java.util.UUID;
-
 import org.springframework.stereotype.Component;
-
 import tiimae.webshop.iprwc.DAO.BrandDAO;
 import tiimae.webshop.iprwc.DAO.CategoryDAO;
 import tiimae.webshop.iprwc.DAO.SupplierDAO;
@@ -14,6 +10,9 @@ import tiimae.webshop.iprwc.models.Brand;
 import tiimae.webshop.iprwc.models.Category;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.Supplier;
+
+import java.util.HashSet;
+import java.util.UUID;
 
 @Component
 public class ProductMapper {

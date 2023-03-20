@@ -1,19 +1,18 @@
 package tiimae.webshop.iprwc.DAO;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import tiimae.webshop.iprwc.DAO.repo.ProductRepository;
 import tiimae.webshop.iprwc.DTO.ProductDTO;
 import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.ProductMapper;
-import tiimae.webshop.iprwc.models.Category;
 import tiimae.webshop.iprwc.models.Product;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @AllArgsConstructor
@@ -39,6 +38,7 @@ public class ProductDAO {
         return this.productRepository.save(this.productMapper.toProduct(productDTO));
     }
 
+    @Transactional
     public Product update(UUID productId, ProductDTO productDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
         final Optional<Product> byId = this.productRepository.findById(productId);
         this.checkIfExists(byId);
@@ -86,7 +86,7 @@ public class ProductDAO {
 
         if (productByName.isPresent()) {
             if (id != null) {
-                if (productByName.get().getId() != id) {
+                if (!productByName.get().getId().equals(id)) {
                     throw new EntryAlreadyExistsException("Product name already exists");
                 }
             } else {

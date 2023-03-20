@@ -1,20 +1,18 @@
 package tiimae.webshop.iprwc.DAO;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
-
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.UserMapper;
-import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.User;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class UserDAO {
@@ -51,6 +49,7 @@ public class UserDAO {
         return this.userRepository.save(user);
     }
 
+    @Transactional
     public User update(UUID id, UserDTO userDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
         final Optional<User> byId = this.userRepository.findById(id);
         this.checkIfExists(byId);
@@ -65,6 +64,7 @@ public class UserDAO {
         return this.userRepository.saveAndFlush(user);
     }
 
+    @Transactional
     public User updateByObject(UUID id, User user) {
         final Optional<User> byId = this.userRepository.findById(id);
 
@@ -75,6 +75,7 @@ public class UserDAO {
         return this.userRepository.saveAndFlush(user);
     }
 
+    @Transactional
     public void delete(UUID id) throws EntryNotFoundException {
         User user = this.getUser(id);
 
@@ -98,10 +99,9 @@ public class UserDAO {
 
     public void checkIfEmailExists(String email, UUID id) throws EntryAlreadyExistsException {
         Optional<User> user = this.userRepository.findByEmail(email);
-
         if (user.isPresent()) {
             if (id != null) {
-                if (user.get().getId() != id) {
+                if (!user.get().getId().equals(id)) {
                     throw new EntryAlreadyExistsException("Something went wrong!");
                 }
             } else {

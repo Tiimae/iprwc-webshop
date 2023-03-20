@@ -1,19 +1,9 @@
 package tiimae.webshop.iprwc.controller.auth;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
 import tiimae.webshop.iprwc.constants.VerifyTokenEnum;
@@ -24,6 +14,11 @@ import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.VerifyToken;
 import tiimae.webshop.iprwc.service.auth.PasswordResetService;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor

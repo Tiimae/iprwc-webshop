@@ -1,16 +1,8 @@
 package tiimae.webshop.iprwc.controller.auth;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Optional;
-
-import javax.naming.AuthenticationException;
-import javax.validation.Valid;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
-
 import tiimae.webshop.iprwc.DTO.LoginDTO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.ApiConstant;
@@ -21,6 +13,9 @@ import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.service.EncryptionService;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
+
+import javax.validation.Valid;
+import java.util.HashMap;
 
 @RestController
 public class LoginController extends AuthController {

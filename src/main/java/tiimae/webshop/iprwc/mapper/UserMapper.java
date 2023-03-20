@@ -1,19 +1,18 @@
 package tiimae.webshop.iprwc.mapper;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.springframework.stereotype.Component;
-
 import tiimae.webshop.iprwc.DAO.RoleDAO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.models.Order;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.UserAddress;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class UserMapper {

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.exception.InvalidDtoException;
 import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
@@ -32,6 +33,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
             EntityExistsException.class,
             NotAValidUUIDException.class,
             InvalidDtoException.class,
+            EntryAlreadyExistsException.class
     })
     public ResponseEntity<Object> handleBadRequestException(Exception e, WebRequest request) {
         return handleExceptionInternal(e, new ApiResponseService<>(HttpStatus.BAD_REQUEST, e.getMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);

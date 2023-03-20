@@ -1,15 +1,12 @@
 package tiimae.webshop.iprwc.service.auth;
 
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
 import tiimae.webshop.iprwc.models.Token;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.util.JWTUtil;
-
-import java.util.UUID;
 
 @Component
 @AllArgsConstructor

@@ -1,9 +1,9 @@
 package tiimae.webshop.iprwc.DTO;
 
-import java.sql.Date;
-
 import lombok.Getter;
 import lombok.Setter;
+
+import java.sql.Date;
 
 @Getter
 @Setter

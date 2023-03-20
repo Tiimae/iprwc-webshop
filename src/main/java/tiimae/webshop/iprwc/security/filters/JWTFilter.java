@@ -1,23 +1,20 @@
 package tiimae.webshop.iprwc.security.filters;
 
-import java.io.IOException;
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+import tiimae.webshop.iprwc.exception.token.InvalidTokenException;
+import tiimae.webshop.iprwc.exception.token.TokenExpiredException;
+import tiimae.webshop.iprwc.util.JWTUtil;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.lang.NonNullApi;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
-
-import lombok.SneakyThrows;
-import tiimae.webshop.iprwc.exception.token.InvalidTokenException;
-import tiimae.webshop.iprwc.exception.token.TokenExpiredException;
-import tiimae.webshop.iprwc.util.JWTUtil;
+import java.io.IOException;
 
 
 @Component

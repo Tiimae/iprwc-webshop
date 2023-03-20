@@ -1,5 +1,6 @@
 package tiimae.webshop.iprwc.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,10 +33,12 @@ public abstract class BaseEntity {
 
     @CreationTimestamp
     @Column(name = "create_timestamp")
+    @JsonIgnore
     private Timestamp creationDate;
 
     @UpdateTimestamp
     @Column(name = "update_timestamp")
+    @JsonIgnore
     private Timestamp updateDate;
 
 }

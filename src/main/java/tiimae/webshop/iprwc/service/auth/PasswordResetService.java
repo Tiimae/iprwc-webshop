@@ -1,19 +1,18 @@
 package tiimae.webshop.iprwc.service.auth;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import tiimae.webshop.iprwc.DAO.VerifyTokenDAO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
 import tiimae.webshop.iprwc.constants.VerifyTokenEnum;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.models.VerifyToken;
 import tiimae.webshop.iprwc.service.EncryptionService;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Service
 public class PasswordResetService {

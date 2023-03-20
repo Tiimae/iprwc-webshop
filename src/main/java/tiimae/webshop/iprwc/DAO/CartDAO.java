@@ -1,6 +1,5 @@
 package tiimae.webshop.iprwc.DAO;
 
-import kong.unirest.json.JSONArray;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import tiimae.webshop.iprwc.DAO.repo.CartRepository;
@@ -8,7 +7,6 @@ import tiimae.webshop.iprwc.DTO.CartDTO;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.CartMapper;
 import tiimae.webshop.iprwc.models.Cart;
-import tiimae.webshop.iprwc.models.Product;
 
 import javax.transaction.Transactional;
 import java.util.*;

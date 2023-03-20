@@ -1,34 +1,19 @@
 package tiimae.webshop.iprwc.models;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import lombok.AllArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.sun.istack.NotNull;
-
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -55,6 +40,7 @@ public class User extends BaseEntity {
     private String password;
 
     @NotNull
+    @JsonIgnore
     private Boolean verified;
 
     @NotNull
@@ -65,13 +51,15 @@ public class User extends BaseEntity {
     private Boolean deleted = false;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+//    @JsonManagedReference
+    @JsonIgnoreProperties("user")
     @JsonIgnore
     private Set<UserAddress> addresses = new HashSet<>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonManagedReference
+//    @JsonBackReference
     @JsonIgnore
+    @JsonIgnoreProperties("user")
     private Set<Order> orders = new HashSet<>();
 
     @ManyToMany(cascade = {CascadeType.DETACH}, fetch = FetchType.EAGER)

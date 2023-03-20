@@ -1,8 +1,6 @@
 package tiimae.webshop.iprwc.validators;
 
 import org.springframework.stereotype.Component;
-
-import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
 import tiimae.webshop.iprwc.exception.InvalidDtoException;
 

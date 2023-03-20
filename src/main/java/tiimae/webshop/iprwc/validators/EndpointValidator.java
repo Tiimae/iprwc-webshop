@@ -1,19 +1,17 @@
 package tiimae.webshop.iprwc.validators;
 
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.constants.RoleEnum;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.Role;
+
+import java.util.ArrayList;
+import java.util.Objects;
+import java.util.Set;
+import java.util.UUID;
 
 
 @AllArgsConstructor

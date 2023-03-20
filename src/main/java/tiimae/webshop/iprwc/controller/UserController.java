@@ -1,24 +1,13 @@
 package tiimae.webshop.iprwc.controller;
 
-import java.util.*;
-
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.lang.Nullable;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DAO.TokenDAO;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.DTO.UserDTO;
@@ -35,6 +24,10 @@ import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.service.auth.PasswordGeneratorService;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.UserValidator;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -141,12 +134,15 @@ public class UserController {
     @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService update(@PathVariable String userId, @RequestBody UserDTO userDTO) throws EntryNotFoundException, NotAValidUUIDException, InvalidDtoException, EntryAlreadyExistsException {
+
         userDTO.setRoleIds(new String[0]);
 
         final UUID id = this.userValidator.checkIfStringIsUUID(userId);
         this.userValidator.validateDTO(userDTO);
+        final User update = this.userDAO.update(id, userDTO);
+        update.getRoles().clear();
 
-        return new ApiResponseService(HttpStatus.ACCEPTED, this.userDAO.update(id, userDTO));
+        return new ApiResponseService(HttpStatus.ACCEPTED, update);
     }
 
     @PutMapping(
@@ -159,6 +155,7 @@ public class UserController {
     @Secured({RoleEnum.Admin.CODENAME})
     @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
     public ApiResponseService updateAdmin(@PathVariable String userId, @RequestBody UserDTO userDTO) throws EntryNotFoundException, NotAValidUUIDException, InvalidDtoException, EntryAlreadyExistsException {
+
         final UUID id = this.userValidator.checkIfStringIsUUID(userId);
         this.userValidator.validateDTO(userDTO);
 
@@ -197,6 +194,18 @@ public class UserController {
         }
 
         return new ApiResponseService(HttpStatus.ACCEPTED, false);
+    }
+
+    @GetMapping(value = ApiConstant.getOneUserVerified)
+    @ResponseBody
+    @Secured({RoleEnum.Admin.CODENAME, RoleEnum.User.CODENAME})
+    @PreAuthorize("@endpointValidator.ensureUserAccessWithOpenEndpoint(#userId, authentication.name)")
+    public ApiResponseService getIfVerified(@PathVariable String userId) throws NotAValidUUIDException, EntryNotFoundException {
+
+        UUID id = this.userValidator.checkIfStringIsUUID(userId);
+        final User user = this.userDAO.getUser(id);
+
+        return new ApiResponseService(HttpStatus.ACCEPTED, user.getVerified());
     }
 
 }

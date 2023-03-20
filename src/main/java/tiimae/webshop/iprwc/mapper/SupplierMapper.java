@@ -1,11 +1,10 @@
 package tiimae.webshop.iprwc.mapper;
 
-import java.util.HashSet;
-
 import org.springframework.stereotype.Component;
-
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
 import tiimae.webshop.iprwc.models.Supplier;
+
+import java.util.HashSet;
 
 @Component
 public class SupplierMapper {

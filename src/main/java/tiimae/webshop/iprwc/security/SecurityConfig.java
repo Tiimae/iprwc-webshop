@@ -1,8 +1,6 @@
 package tiimae.webshop.iprwc.security;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -15,15 +13,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import lombok.AllArgsConstructor;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.util.matcher.RegexRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import tiimae.webshop.iprwc.security.filters.FilterChainExceptionHandler;
 import tiimae.webshop.iprwc.security.filters.JWTFilter;
 import tiimae.webshop.iprwc.service.MyUserDetailsService;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Configuration
 @EnableWebSecurity
@@ -37,17 +33,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private FilterChainExceptionHandler filterChainExceptionHandler;
     private MyUserDetailsService uds;
 
-    /**
-     * Configure Spring's Security Filter Chain for HTTP Security.
-     */
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        String [] publicUrls = new String [] {
+        String[] publicUrls = new String[]{
                 "/api/v1.0/to-cookie",
                 "/images/**"
         };
 
-        // Enable CORS and disable CSRF
         http.cors()
                 .and()
                 .userDetailsService(this.uds)
@@ -67,15 +59,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/api/v1.0/supplier").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1.0/category/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1.0/brand").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/v1.0/csrf").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1.0/csrf").permitAll()
                 .antMatchers("/api/v1.0/review/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1.0/auth/**").permitAll()
                 .antMatchers("/images/**").permitAll()
                 .antMatchers("/api/v1.0/to-cookie").permitAll()
                 .anyRequest().authenticated();
-
-//        return http.build();
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

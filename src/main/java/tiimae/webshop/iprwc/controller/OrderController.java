@@ -1,19 +1,11 @@
 package tiimae.webshop.iprwc.controller;
 
-import java.util.UUID;
-
+import kong.unirest.json.JSONArray;
+import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import kong.unirest.json.JSONArray;
-import lombok.AllArgsConstructor;
+import org.springframework.web.bind.annotation.*;
 import tiimae.webshop.iprwc.DAO.OrderDAO;
 import tiimae.webshop.iprwc.DAO.OrderProductDAO;
 import tiimae.webshop.iprwc.DTO.OrderDTO;
@@ -27,6 +19,8 @@ import tiimae.webshop.iprwc.service.EmailService;
 import tiimae.webshop.iprwc.service.OrderService;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 import tiimae.webshop.iprwc.validators.OrderValidator;
+
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -72,13 +66,6 @@ public class OrderController {
         for (int i = 0; i < productIds.length(); i++) {
             this.orderProductDAO.create(productIds.getJSONObject(i), order);
         }
-
-        this.emailService.setData(
-                "Your order by timdekok.nl",
-                order.getUser().getEmail(),
-                this.orderService.generateHtmlForMail(order)
-        );
-        this.emailService.start();
 
         return new ApiResponseService(HttpStatus.ACCEPTED, order);
     }

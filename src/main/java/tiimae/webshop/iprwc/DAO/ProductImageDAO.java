@@ -1,18 +1,18 @@
 package tiimae.webshop.iprwc.DAO;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
-import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.ProductImageRepository;
 import tiimae.webshop.iprwc.mapper.ProductImageMapper;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.ProductImage;
+
+import javax.transaction.Transactional;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Component
 @AllArgsConstructor
@@ -31,6 +31,7 @@ public class ProductImageDAO {
 
     }
 
+    @Transactional
     public void update(String[] deleteImage, MultipartFile[] newImage, Product product) throws IOException {
         final List<ProductImage> allByProduct = this.productImageRepository.findAllByProductId(product.getId());
 
@@ -54,6 +55,7 @@ public class ProductImageDAO {
         }
     }
 
+    @Transactional
     public void delete(UUID productId) throws IOException {
         final List<ProductImage> allByProduct = this.productImageRepository.findAllByProductId(productId);
 

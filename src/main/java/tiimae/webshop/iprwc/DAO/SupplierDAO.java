@@ -1,12 +1,7 @@
 package tiimae.webshop.iprwc.DAO;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.springframework.stereotype.Component;
-
 import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
 import tiimae.webshop.iprwc.DAO.repo.SupplierRepository;
 import tiimae.webshop.iprwc.DTO.SupplierDTO;
 import tiimae.webshop.iprwc.exception.EntryAlreadyExistsException;
@@ -14,6 +9,11 @@ import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.SupplierMapper;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.Supplier;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @AllArgsConstructor
@@ -38,6 +38,7 @@ public class SupplierDAO {
         return this.supplierRepository.save(this.supplierMapper.toSupplier(supplierDTO));
     }
 
+    @Transactional
     public Supplier put(UUID supplierId, SupplierDTO supplierDTO) throws EntryNotFoundException, EntryAlreadyExistsException {
         final Optional<Supplier> byId = this.supplierRepository.findById(supplierId);
         this.checkIfExists(byId);
@@ -48,6 +49,7 @@ public class SupplierDAO {
         return this.supplierRepository.saveAndFlush(supplier);
     }
 
+    @Transactional
     public void delete(UUID supplierId) throws EntryNotFoundException {
         final Optional<Supplier> byId = this.supplierRepository.findById(supplierId);
         this.checkIfExists(byId);
@@ -71,7 +73,7 @@ public class SupplierDAO {
 
         if (supplierByName.isPresent()) {
             if (id != null) {
-                if (supplierByName.get().getId() != id) {
+                if (!supplierByName.get().getId().equals(id)) {
                     throw new EntryAlreadyExistsException("Supplier name already exists");
                 }
             } else {

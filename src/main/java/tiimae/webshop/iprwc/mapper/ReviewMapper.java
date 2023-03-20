@@ -1,14 +1,13 @@
 package tiimae.webshop.iprwc.mapper;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Component;
-
 import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DTO.ReviewDTO;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.models.Product;
 import tiimae.webshop.iprwc.models.Review;
+
+import java.util.UUID;
 
 @Component
 public class ReviewMapper {

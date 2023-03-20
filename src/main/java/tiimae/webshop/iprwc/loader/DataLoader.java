@@ -1,19 +1,18 @@
 package tiimae.webshop.iprwc.loader;
 
-import java.util.HashSet;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
 import tiimae.webshop.iprwc.DAO.repo.RoleRepository;
 import tiimae.webshop.iprwc.DAO.repo.UserRepository;
 import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.User;
+
+import java.util.HashSet;
+import java.util.List;
 @Component
 public class DataLoader implements ApplicationRunner {
     private RoleRepository roleRepository;

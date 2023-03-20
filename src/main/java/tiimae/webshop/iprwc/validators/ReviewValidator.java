@@ -1,10 +1,6 @@
 package tiimae.webshop.iprwc.validators;
 
-import java.util.UUID;
-
 import org.springframework.stereotype.Component;
-
-import tiimae.webshop.iprwc.DAO.ProductDAO;
 import tiimae.webshop.iprwc.DTO.ReviewDTO;
 import tiimae.webshop.iprwc.exception.InvalidDtoException;
 import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;

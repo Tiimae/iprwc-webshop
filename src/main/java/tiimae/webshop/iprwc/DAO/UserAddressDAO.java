@@ -1,19 +1,16 @@
 package tiimae.webshop.iprwc.DAO;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import org.hibernate.validator.internal.util.stereotypes.Lazy;
 import org.springframework.stereotype.Component;
-
-import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.UserAddressRepository;
 import tiimae.webshop.iprwc.DTO.UserAddressDTO;
 import tiimae.webshop.iprwc.exception.EntryNotFoundException;
 import tiimae.webshop.iprwc.mapper.UserAddressMapper;
-import tiimae.webshop.iprwc.models.Supplier;
 import tiimae.webshop.iprwc.models.UserAddress;
+
+import javax.transaction.Transactional;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 public class UserAddressDAO {
@@ -44,12 +41,14 @@ public class UserAddressDAO {
         return this.userAddressRepository.save(this.userAddressMapper.toUserAddress(userAddressDTO));
     }
 
+    @Transactional
     public UserAddress update(UUID id, UserAddressDTO userAddressDTO) throws EntryNotFoundException {
         final Optional<UserAddress> byId = this.userAddressRepository.findById(id);
         this.checkIfExists(byId);
         return byId.map(userAddress -> this.userAddressRepository.saveAndFlush(this.userAddressMapper.mergeUserAddress(userAddress, userAddressDTO))).orElse(null);
     }
 
+    @Transactional
     public void remove(UUID id) throws EntryNotFoundException {
         final Optional<UserAddress> byId = this.userAddressRepository.findById(id);
         this.checkIfExists(byId);

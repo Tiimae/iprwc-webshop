@@ -1,12 +1,11 @@
 package tiimae.webshop.iprwc.util;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Objects;
-import java.util.UUID;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -14,14 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTCreationException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.interfaces.DecodedJWT;
-
 import tiimae.webshop.iprwc.DAO.TokenDAO;
 import tiimae.webshop.iprwc.DAO.UserDAO;
 import tiimae.webshop.iprwc.constants.TokenType;
@@ -30,10 +21,14 @@ import tiimae.webshop.iprwc.exception.token.InvalidTokenException;
 import tiimae.webshop.iprwc.exception.token.TokenAlreadyExistsException;
 import tiimae.webshop.iprwc.exception.token.TokenExpiredException;
 import tiimae.webshop.iprwc.exception.token.TokenNotFoundException;
-import tiimae.webshop.iprwc.models.Role;
 import tiimae.webshop.iprwc.models.Token;
 import tiimae.webshop.iprwc.models.User;
 import tiimae.webshop.iprwc.service.MyUserDetailsService;
+
+import javax.servlet.http.HttpServletRequest;
+import java.time.Instant;
+import java.util.Objects;
+import java.util.UUID;
 
 @Component
 public class JWTUtil {

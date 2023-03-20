@@ -1,16 +1,15 @@
 package tiimae.webshop.iprwc.DAO;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.UUID;
-
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import lombok.AllArgsConstructor;
 import tiimae.webshop.iprwc.DAO.repo.VerifyTokenRepository;
 import tiimae.webshop.iprwc.constants.VerifyTokenEnum;
 import tiimae.webshop.iprwc.models.VerifyToken;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+import java.util.UUID;
 
 @Component
 @AllArgsConstructor
