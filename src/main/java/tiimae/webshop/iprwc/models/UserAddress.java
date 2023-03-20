@@ -40,7 +40,7 @@ public class UserAddress extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String type;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonIgnoreProperties("userAddresses")
     @JsonIgnore
     private User user;

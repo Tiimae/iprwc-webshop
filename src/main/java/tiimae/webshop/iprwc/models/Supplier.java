@@ -33,7 +33,7 @@ public class Supplier extends BaseEntity {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String country;
 
-    @OneToMany(mappedBy = "supplier", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @OneToMany(mappedBy = "supplier", fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JsonBackReference
     private Set<Product> products = new HashSet<>();
 

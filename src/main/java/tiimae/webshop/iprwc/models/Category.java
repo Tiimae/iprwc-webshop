@@ -20,7 +20,7 @@ public class Category extends BaseEntity {
     @Column(unique = true, nullable = false, columnDefinition = "TEXT")
     private String categoryName;
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.DETACH)
     @JsonBackReference
     private Set<Product> products = new HashSet<>();
 }

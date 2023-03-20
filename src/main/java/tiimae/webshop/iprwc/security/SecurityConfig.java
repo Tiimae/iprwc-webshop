@@ -1,6 +1,7 @@
 package tiimae.webshop.iprwc.security;
 
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -32,6 +33,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JWTFilter jwtFilter;
     private FilterChainExceptionHandler filterChainExceptionHandler;
     private MyUserDetailsService uds;
+    @Value("${domain}")
+    private String domain;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -76,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CsrfTokenRepository csrfTokenRepository() {
         CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         repository.setCookiePath("/");
-        repository.setCookieDomain("localhost");
+        repository.setCookieDomain(this.domain);
         return repository;
     }
 

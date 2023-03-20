@@ -16,6 +16,7 @@ import tiimae.webshop.iprwc.exception.uuid.NotAValidUUIDException;
 import tiimae.webshop.iprwc.service.response.ApiResponseService;
 
 import javax.persistence.EntityExistsException;
+import java.nio.file.AccessDeniedException;
 
 @ControllerAdvice
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
@@ -37,6 +38,13 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     })
     public ResponseEntity<Object> handleBadRequestException(Exception e, WebRequest request) {
         return handleExceptionInternal(e, new ApiResponseService<>(HttpStatus.BAD_REQUEST, e.getMessage()), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler({
+            AccessDeniedException.class
+    })
+    public ResponseEntity<Object> handleForbiddenException(Exception e, WebRequest request) {
+        return handleExceptionInternal(e, new ApiResponseService<>(HttpStatus.FORBIDDEN, e.getMessage()), new HttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
     @ExceptionHandler({

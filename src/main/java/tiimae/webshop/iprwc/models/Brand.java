@@ -27,7 +27,7 @@ public class Brand extends BaseEntity {
     @Column(columnDefinition = "TEXT")
     private String logoUrl;
 
-    @OneToMany(mappedBy = "brand", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "brand", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<Product> products = new HashSet<>();
 }

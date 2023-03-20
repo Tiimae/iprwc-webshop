@@ -50,13 +50,13 @@ public class User extends BaseEntity {
     @NotNull
     private Boolean deleted = false;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JsonManagedReference
     @JsonIgnoreProperties("user")
     @JsonIgnore
     private Set<UserAddress> addresses = new HashSet<>();
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 //    @JsonBackReference
     @JsonIgnore
     @JsonIgnoreProperties("user")

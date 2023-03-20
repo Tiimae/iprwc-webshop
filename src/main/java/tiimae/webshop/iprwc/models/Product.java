@@ -49,7 +49,7 @@ public class Product extends BaseEntity {
     @JsonManagedReference
     private Set<Review> reviews = new HashSet<>();
 
-    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonBackReference
     private Set<OrderProduct> orderProducts = new HashSet<>();
 
