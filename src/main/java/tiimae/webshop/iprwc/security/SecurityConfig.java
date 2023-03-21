@@ -33,8 +33,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private JWTFilter jwtFilter;
     private FilterChainExceptionHandler filterChainExceptionHandler;
     private MyUserDetailsService uds;
-    @Value("${domain}")
-    private String domain;
 
     @Override
     public void configure(HttpSecurity http) throws Exception {
@@ -79,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public CsrfTokenRepository csrfTokenRepository() {
         CookieCsrfTokenRepository repository = CookieCsrfTokenRepository.withHttpOnlyFalse();
         repository.setCookiePath("/");
-        repository.setCookieDomain(this.domain);
+        repository.setCookieDomain("localhost");
         return repository;
     }
 
