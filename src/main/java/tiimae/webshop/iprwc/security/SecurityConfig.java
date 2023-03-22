@@ -37,7 +37,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(HttpSecurity http) throws Exception {
         String[] publicUrls = new String[]{
-                "/api/v1.0/to-cookie",
                 "/images/**"
         };
 
@@ -58,13 +57,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeHttpRequests()
                 .antMatchers(HttpMethod.GET, "/api/v1.0/product/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1.0/supplier").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/v1.0/category/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/v1.0/category").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1.0/brand").permitAll()
                 .antMatchers(HttpMethod.GET, "/api/v1.0/csrf").permitAll()
                 .antMatchers("/api/v1.0/review/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/api/v1.0/auth/**").permitAll()
                 .antMatchers("/images/**").permitAll()
-                .antMatchers("/api/v1.0/to-cookie").permitAll()
                 .anyRequest().authenticated();
     }
 
